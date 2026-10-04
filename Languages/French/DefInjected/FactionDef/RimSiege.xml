@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+
+  <RimSiege_Envoys.label>émissaires</RimSiege_Envoys.label>
+  <RimSiege_Envoys.description>Hérauts et messagers envoyés pour traiter sous bannière de trêve.</RimSiege_Envoys.description>
+  <RimSiege_Envoys.pawnSingular>émissaire</RimSiege_Envoys.pawnSingular>
+  <RimSiege_Envoys.pawnsPlural>émissaires</RimSiege_Envoys.pawnsPlural>
+  <RimSiege_Envoys.leaderTitle>héraut</RimSiege_Envoys.leaderTitle>
+  <RimSiege_Envoys.fixedName>Émissaires</RimSiege_Envoys.fixedName>
+
+</LanguageData>

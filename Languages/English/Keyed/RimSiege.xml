@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+
+  <!-- siege letters -->
+  <RimSiege_LabelFootAssault>Medieval assault</RimSiege_LabelFootAssault>
+  <RimSiege_TextFootAssault>A war party of {0} is setting up camp outside your walls, readying an assault on foot. No siege engines this time - hold the line and break their charge.</RimSiege_TextFootAssault>
+  <RimSiege_LabelTower>Siege: assault tower</RimSiege_LabelTower>
+  <RimSiege_TextTower>A force of {0} is setting up camp outside your walls and raising a SIEGE TOWER. Once built, it will be pushed against your rampart to pour attackers over the top. Wreck their worksite before it's ready.</RimSiege_TextTower>
+  <RimSiege_LabelRam>Medieval siege</RimSiege_LabelRam>
+  <RimSiege_TextRam>A force of {0} is setting up camp outside your walls. They are building a BATTERING RAM to smash your gate. Sally out and sabotage the worksite - kill the builders, burn their blueprints and supplies - or get ready to hold the breach.</RimSiege_TextRam>
+  <RimSiege_TrebOne>A trebuchet will support the assault from a distance.</RimSiege_TrebOne>
+  <RimSiege_TrebMany>A battery of {0} trebuchets will pound your walls from a distance.</RimSiege_TrebMany>
+  <RimSiege_BallistaHint>Ballistas will guard their camp - a sally will ride into bolt fire.</RimSiege_BallistaHint>
+  <RimSiege_BombardBegins>The siege engines are complete. The bombardment begins.</RimSiege_BombardBegins>
+  <RimSiege_SappersHint>Sappers will try to blow a second breach elsewhere in your wall.</RimSiege_SappersHint>
+  <RimSiege_CaptainHint>Their captain, {0}, leads the host - look for the gilded helm and his two bodyguards. Bring him down early and the siege will collapse.</RimSiege_CaptainHint>
+  <RimSiege_CaptainFell>{0} has fallen - the besiegers lose heart and break camp!</RimSiege_CaptainFell>
+
+  <!-- ultimatum -->
+  <RimSiege_UltimatumLabel>Ultimatum: tribute or siege</RimSiege_UltimatumLabel>
+  <RimSiege_UltimatumText>A force of {0} has made camp within reach of your walls and demands a tribute of {1} silver.\n\nPay, and they will break camp without a fight - nothing will besiege you.\nRefuse (or let the deadline pass), and the siege begins: they will build their engines and march on your walls.\n\nYou have a few hours to decide.</RimSiege_UltimatumText>
+  <RimSiege_TributePaid>Tribute paid ({0} silver). {1} breaks camp.</RimSiege_TributePaid>
+  <RimSiege_PayOption>Pay the tribute ({0} silver)</RimSiege_PayOption>
+  <RimSiege_NotEnoughSilver>Not enough silver in your home area or storage ({0} needed, {1} on hand).</RimSiege_NotEnoughSilver>
+  <RimSiege_DefyOption>Defy them - let them come</RimSiege_DefyOption>
+  <RimSiege_LateLabel>Last offer: tribute or the walls</RimSiege_LateLabel>
+  <RimSiege_LateText>{0}'s engines stand ready. Their envoy makes one last offer: {1} silver, and the host breaks camp and leaves its machines where they stand.\n\nThe price has gone up. So has the cost of refusing.</RimSiege_LateText>
+  <RimSiege_LateTributePaid>Late tribute paid ({0} silver). {1} breaks camp and abandons the siege engines.</RimSiege_LateTributePaid>
+  <RimSiege_LateTooLate>Too late - they are already inside your walls.</RimSiege_LateTooLate>
+  <RimSiege_ReinforceLabel>Reinforcements</RimSiege_ReinforceLabel>
+  <RimSiege_ReinforceText>{0} more fighters have marched in to join {1}'s siege camp.</RimSiege_ReinforceText>
+  <RimSiege_UltimatumPaidBefore>\n\nWord of your gold has spread. The price has gone up.</RimSiege_UltimatumPaidBefore>
+
+  <!-- captain ransom -->
+  <RimSiege_RansomLabel>Ransom offer: {0}</RimSiege_RansomLabel>
+  <RimSiege_RansomText>{0} wants their captain back. {1} sits in your jail, and his house offers {2} silver for his safe return.\n\nAccept, and a truce party will come to collect him under a flag of parley: hand him over (your wardens will see to it), and the silver is yours.\nRefuse, and he stays your prisoner.\n\nOr take his head - and live with what follows.</RimSiege_RansomText>
+  <RimSiege_RansomAccept>Accept the ransom ({0} silver)</RimSiege_RansomAccept>
+  <RimSiege_RansomRefuse>Keep him</RimSiege_RansomRefuse>
+  <RimSiege_RansomExecute>Execute him</RimSiege_RansomExecute>
+  <RimSiege_EnvoysComing>A truce party from {0} is on its way to collect {1}.</RimSiege_EnvoysComing>
+  <RimSiege_RansomPaid>The ransom is paid: {0} silver. {1} is going home.</RimSiege_RansomPaid>
+  <RimSiege_RansomFailed>The envoys have left without their captain. The offer is dead.</RimSiege_RansomFailed>
+  <RimSiege_EnvoysBetrayed>The truce party was attacked under the white flag. Word of this will spread.</RimSiege_EnvoysBetrayed>
+  <RimSiege_VendettaLabel>Vendetta: {0}</RimSiege_VendettaLabel>
+  <RimSiege_VendettaText>{0} has sworn vengeance for {1}. They will come, and they will not parley.</RimSiege_VendettaText>
+  <RimSiege_VendettaHint>This host marches to avenge {0}. They did not come to talk.</RimSiege_VendettaHint>
+  <RimSiege_CaptainDiedCustody>{0} has died in your custody. {1} holds you responsible.</RimSiege_CaptainDiedCustody>
+  <RimSiege_CaptainFreed>You freed {0} and asked for nothing. {1} will remember the gesture, for a time.</RimSiege_CaptainFreed>
+  <RimSiege_PickExecutioner>Who swings the blade?</RimSiege_PickExecutioner>
+  <RimSiege_ExecutionerOption>{0} (melee {1})</RimSiege_ExecutionerOption>
+  <RimSiege_FlingOption>Catapult him over the walls ({0} does the honors)</RimSiege_FlingOption>
+  <RimSiege_Flung>{0} is sent sailing over the walls.</RimSiege_Flung>
+  <RimSiege_ExecutionOrdered>{0} marches to execute {1}. The drums begin.</RimSiege_ExecutionOrdered>
+  <RimSiege_CaptainExecuted>{0} has been executed. {1} will not forget.</RimSiege_CaptainExecuted>
+
+  <!-- mod settings -->
+  <RimSiege_SecParley>Parley</RimSiege_SecParley>
+  <RimSiege_SecHost>The host</RimSiege_SecHost>
+  <RimSiege_SecTrain>Siege train</RimSiege_SecTrain>
+
+  <RimSiege_SetUltimatum>Ultimatum (tribute) before the siege</RimSiege_SetUltimatum>
+  <RimSiege_SetUltimatumTip>The besiegers demand a tribute before attacking. Unchecked: the siege launches immediately.</RimSiege_SetUltimatumTip>
+  <RimSiege_SetTribute>Tribute amount: {0} x threat points (clamped 200-5000)</RimSiege_SetTribute>
+  <RimSiege_SetHours>Time to decide: {0} h</RimSiege_SetHours>
+  <RimSiege_SetEngineFloor>Minimum threat points - siege engine (ram/tower): {0}</RimSiege_SetEngineFloor>
+  <RimSiege_SetTrebFloor>Minimum points - trebuchets: {0}</RimSiege_SetTrebFloor>
+  <RimSiege_SetMaxTrebs>Maximum trebuchets: {0}</RimSiege_SetMaxTrebs>
+  <RimSiege_SetSapperFloor>Minimum points - sappers: {0}</RimSiege_SetSapperFloor>
+  <RimSiege_SetMaxSappers>Maximum sappers: {0}</RimSiege_SetMaxSappers>
+  <RimSiege_SetBallistaFloor>Minimum points - camp ballistas: {0}</RimSiege_SetBallistaFloor>
+  <RimSiege_SetMaxBallistas>Maximum ballistas: {0}</RimSiege_SetMaxBallistas>
+  <RimSiege_SetBombard>Bombardment before the assault: {0} h</RimSiege_SetBombard>
+  <RimSiege_SetTarFloor>Minimum points - tarred fire boulders: {0}</RimSiege_SetTarFloor>
+  <RimSiege_SetCarrion>Biological warfare (carcass shots)</RimSiege_SetCarrion>
+  <RimSiege_SetReinforce>Reinforcements during the bombardment</RimSiege_SetReinforce>
+  <RimSiege_SetReinforceTip>Halfway through the bombardment a second column arrives and joins the camp, about a third of the original host. Waiting them out gets more expensive.</RimSiege_SetReinforceTip>
+  <RimSiege_SetReinforceFloor>Minimum points - reinforcements: {0}</RimSiege_SetReinforceFloor>
+  <RimSiege_SetCarrionTip>The richest sieges (tarred boulder threshold + 2000 points) fling rotting carcasses over your walls: stench clouds, a corpse to haul away, and a chance of plague for anyone near the impact. Uncheck if that's too grim for your colony.</RimSiege_SetCarrionTip>
+  <RimSiege_SetWarband>Siege warband size: x{0} threat points</RimSiege_SetWarband>
+  <RimSiege_SetPushers>Pushers per engine: {0}</RimSiege_SetPushers>
+  <RimSiege_SetCaptainRout>Rout when the captain falls</RimSiege_SetCaptainRout>
+  <RimSiege_SetCaptainRoutTip>Killing the captain (gilded helm) before the breach makes the whole siege flee.</RimSiege_SetCaptainRoutTip>
+  <RimSiege_SetDanegeld>Factions remember (danegeld)</RimSiege_SetDanegeld>
+  <RimSiege_SetDanegeldTip>Pay a tribute and that faction will come back for more, at a higher price. Rout a siege and word spreads: a long respite before the next one.</RimSiege_SetDanegeldTip>
+  <RimSiege_SetRansom>Captains can be ransomed (and avenged)</RimSiege_SetRansom>
+  <RimSiege_SetRansomTip>Capture a siege captain alive and his house will offer silver to get him back. Execute him, betray the truce party or let him die in your jail, and they swear a vendetta: the next siege comes sooner, angrier, and without an ultimatum. Free him for nothing and they will leave your walls alone, for a time.</RimSiege_SetRansomTip>
+
+</LanguageData>

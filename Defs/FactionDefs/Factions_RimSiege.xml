@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+	<!-- faction cachée neutre pour les cortèges de rançon, sinon les tourelles les allument -->
+	<FactionDef ParentName="FactionBase">
+		<defName>RimSiege_Envoys</defName>
+		<label>envoys</label>
+		<description>Heralds and go-betweens sent to treat under a flag of truce.</description>
+		<pawnSingular>envoy</pawnSingular>
+		<pawnsPlural>envoys</pawnsPlural>
+		<fixedName>Envoys</fixedName>
+		<leaderTitle>herald</leaderTitle>
+		<techLevel>Medieval</techLevel>
+		<hidden>true</hidden>
+		<requiredCountAtGameStart>1</requiredCountAtGameStart>
+		<displayInFactionSelection>false</displayInFactionSelection>
+		<canGenerateQuestSites>false</canGenerateQuestSites>
+		<factionIconPath>World/WorldObjects/Expanding/Sites/DownedRefugee</factionIconPath>
+		<basicMemberKind>DankPyon_Medieval_Peasant</basicMemberKind>
+		<backstoryFilters>
+			<li>
+				<categories>
+					<li>Tribal</li>
+				</categories>
+			</li>
+		</backstoryFilters>
+	</FactionDef>
+
+</Defs>

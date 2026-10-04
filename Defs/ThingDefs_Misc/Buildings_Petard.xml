@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+	<!-- charge posée par le sapeur, 40 PV donc on peut la tirer avant qu'elle pète -->
+	<ThingDef ParentName="BuildingBase">
+		<defName>RimSiege_Petard</defName>
+		<label>siege petard</label>
+		<description>A powder charge planted against a wall by a sapper. The fuse burns for a few seconds before it detonates. Kill the sapper, or shoot the charge, before it blows a breach.</description>
+		<tickerType>Normal</tickerType>
+		<altitudeLayer>Building</altitudeLayer>
+		<drawerType>MapMeshAndRealTime</drawerType>
+		<!-- tonneau MO teinté en baril de poudre -->
+		<graphicData>
+			<texPath>Things/Building/Storage/BarrelClosed</texPath>
+			<graphicClass>Graphic_Single</graphicClass>
+			<shaderType>Cutout</shaderType>
+			<color>(0.55, 0.42, 0.28)</color>
+			<drawSize>(0.9, 0.9)</drawSize>
+		</graphicData>
+		<selectable>true</selectable>
+		<useHitPoints>true</useHitPoints>
+		<statBases>
+			<MaxHitPoints>40</MaxHitPoints>
+			<Flammability>1.0</Flammability>
+		</statBases>
+		<passability>PassThroughOnly</passability>
+		<fillPercent>0.2</fillPercent>
+		<rotatable>false</rotatable>
+		<building>
+			<isEdifice>false</isEdifice>
+			<claimable>false</claimable>
+		</building>
+		<comps>
+			<li Class="CompProperties_Explosive">
+				<explosiveRadius>3.5</explosiveRadius>
+				<explosiveDamageType>Bomb</explosiveDamageType>
+				<wickTicks>360~480</wickTicks>       <!-- ~6-8 s pour réagir -->
+				<startWickOnDamageTaken>
+					<li>Flame</li>
+				</startWickOnDamageTaken>
+			</li>
+		</comps>
+	</ThingDef>
+
+</Defs>

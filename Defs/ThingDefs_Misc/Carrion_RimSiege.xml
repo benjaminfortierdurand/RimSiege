@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+	<!-- obus fantôme : jamais posé au sol, le tas au camp c'est de vraies carcasses.
+	     le chargeur consomme un cadavre et charge ce def -->
+	<ThingDef ParentName="ResourceBase">
+		<defName>RimSiege_CarrionShell</defName>
+		<label>bound carcass</label>
+		<description>A rotting carcass, wrapped and bound for the sling. The oldest way to end a siege.</description>
+		<graphicData>
+			<texPath>Things/Item/Resource/StoneBoulder</texPath>
+			<graphicClass>Graphic_StackCount</graphicClass>
+			<color>(115,100,70)</color>
+		</graphicData>
+		<statBases>
+			<MaxHitPoints>50</MaxHitPoints>
+			<MarketValue>0</MarketValue>
+			<Mass>30</Mass>
+			<Flammability>0.6</Flammability>
+			<DeteriorationRate>4</DeteriorationRate>
+		</statBases>
+		<stackLimit>10</stackLimit>
+		<techLevel>Medieval</techLevel>
+		<tradeability>None</tradeability>
+		<projectileWhenLoaded>RimSiege_Artillery_Carrion</projectileWhenLoaded>
+	</ThingDef>
+
+	<ThingDef ParentName="BaseBullet">
+		<defName>RimSiege_Artillery_Carrion</defName>
+		<label>carcass</label>
+		<graphicData>
+			<texPath>Things/Projectile/BoulderBullet</texPath>
+			<graphicClass>Graphic_Single</graphicClass>
+			<color>(125,110,75)</color>
+			<drawSize>(1.2,1.2)</drawSize>
+		</graphicData>
+		<thingClass>RimSiege.Things.Projectile_Carrion</thingClass>
+		<projectile>
+			<speed>33</speed>
+			<flyOverhead>true</flyOverhead>
+			<damageDef>Blunt</damageDef>
+			<damageAmountBase>20</damageAmountBase>
+			<stoppingPower>2</stoppingPower>
+			<soundImpactAnticipate>MortarRound_PreImpact</soundImpactAnticipate>
+			<soundAmbient>MortarRound_Ambient</soundAmbient>
+		</projectile>
+	</ThingDef>
+
+</Defs>

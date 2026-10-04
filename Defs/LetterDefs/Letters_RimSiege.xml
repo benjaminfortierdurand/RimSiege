@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+  <!-- même look qu'une grosse menace, mais avec nos boutons payer/défier -->
+  <LetterDef ParentName="ThreatBig">
+    <defName>RimSiege_SiegeDemand</defName>
+    <letterClass>RimSiege.ChoiceLetter_SiegeDemand</letterClass>
+  </LetterDef>
+
+  <!-- offre de rançon pour le capitaine capturé -->
+  <LetterDef ParentName="PositiveEvent">
+    <defName>RimSiege_RansomOffer</defName>
+    <letterClass>RimSiege.ChoiceLetter_CaptainRansom</letterClass>
+  </LetterDef>
+
+</Defs>

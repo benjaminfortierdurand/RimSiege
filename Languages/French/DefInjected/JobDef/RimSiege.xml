@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+
+  <RimSiege_PushSiegeEngine.reportString>pousse le bélier.</RimSiege_PushSiegeEngine.reportString>
+  <RimSiege_SapJob.reportString>place une charge contre le mur.</RimSiege_SapJob.reportString>
+  <RimSiege_ManTrebuchetJob.reportString>sert le trébuchet.</RimSiege_ManTrebuchetJob.reportString>
+  <RimSiege_ExecuteCaptainJob.reportString>exécute TargetA.</RimSiege_ExecuteCaptainJob.reportString>
+  <RimSiege_ExecutionCeremonyJob.reportString>mène TargetA au billot.</RimSiege_ExecutionCeremonyJob.reportString>
+  <RimSiege_TrebuchetExecutionJob.reportString>charge TargetA sur le trébuchet.</RimSiege_TrebuchetExecutionJob.reportString>
+  <RimSiege_WatchExecutionJob.reportString>assiste à une exécution.</RimSiege_WatchExecutionJob.reportString>
+
+</LanguageData>

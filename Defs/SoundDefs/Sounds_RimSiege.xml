@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+	<!-- Impact du bélier sur le mur -->
+	<SoundDef>
+		<defName>RimSiege_RamImpact</defName>
+		<context>MapOnly</context>
+		<maxSimultaneous>3</maxSimultaneous>
+		<subSounds>
+			<li>
+				<grains>
+					<li Class="AudioGrain_Clip">
+						<clipPath>RimSiege/RimSiege_RamImpact</clipPath>
+					</li>
+				</grains>
+				<volumeRange><min>48</min><max>56</max></volumeRange>
+				<pitchRange><min>0.9</min><max>1.05</max></pitchRange>
+			</li>
+		</subSounds>
+	</SoundDef>
+
+	<!-- Roulement (roues du bélier qui avance) -->
+	<SoundDef>
+		<defName>RimSiege_RamRolling</defName>
+		<context>MapOnly</context>
+		<maxSimultaneous>3</maxSimultaneous>
+		<subSounds>
+			<li>
+				<grains>
+					<li Class="AudioGrain_Clip">
+						<clipPath>RimSiege/RimSiege_RamRolling</clipPath>
+					</li>
+				</grains>
+				<volumeRange><min>32</min><max>40</max></volumeRange>
+				<pitchRange><min>0.95</min><max>1.05</max></pitchRange>
+			</li>
+		</subSounds>
+	</SoundDef>
+
+	<!-- Effort de l'équipage qui pousse -->
+	<SoundDef>
+		<defName>RimSiege_CrewPush</defName>
+		<context>MapOnly</context>
+		<maxSimultaneous>2</maxSimultaneous>
+		<subSounds>
+			<li>
+				<grains>
+					<li Class="AudioGrain_Clip">
+						<clipPath>RimSiege/RimSiege_CrewPush</clipPath>
+					</li>
+				</grains>
+				<volumeRange><min>36</min><max>44</max></volumeRange>
+				<pitchRange><min>0.95</min><max>1.05</max></pitchRange>
+			</li>
+		</subSounds>
+	</SoundDef>
+
+	<!-- Cor de guerre : sonne quand les assiégeants lancent l'assaut à pied -->
+	<SoundDef>
+		<defName>RimSiege_WarHorn</defName>
+		<context>MapOnly</context>
+		<maxSimultaneous>1</maxSimultaneous>
+		<subSounds>
+			<li>
+				<grains>
+					<li Class="AudioGrain_Clip">
+						<clipPath>RimSiege/RimSiege_WarHorn</clipPath>
+					</li>
+				</grains>
+				<volumeRange><min>54</min><max>60</max></volumeRange>
+				<pitchRange><min>1.0</min><max>1.0</max></pitchRange>
+			</li>
+		</subSounds>
+	</SoundDef>
+
+	<!-- Tambours de guerre : accompagnent la charge à pied -->
+	<SoundDef>
+		<defName>RimSiege_WarDrums</defName>
+		<context>MapOnly</context>
+		<maxSimultaneous>1</maxSimultaneous>
+		<subSounds>
+			<li>
+				<grains>
+					<li Class="AudioGrain_Clip">
+						<clipPath>RimSiege/RimSiege_WarDrums</clipPath>
+					</li>
+				</grains>
+				<volumeRange><min>54</min><max>60</max></volumeRange>
+				<pitchRange><min>1.0</min><max>1.0</max></pitchRange>
+			</li>
+		</subSounds>
+	</SoundDef>
+
+</Defs>
