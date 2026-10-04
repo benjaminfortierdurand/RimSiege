@@ -267,7 +267,7 @@ namespace RimSiege
 					Messages.Message("RimSiege_TributePaid".Translate(d.tribute, d.faction?.Name),
 						MessageTypeDefOf.NeutralEvent);
 
-				// paying works. thats the problem — they WILL be back for more
+				// paying works. thats the problem, they will be back for more
 				if (RimSiegeMod.S.danegeld)
 				{
 					FactionSiegeMemory m = MemoryFor(d.faction, true);
