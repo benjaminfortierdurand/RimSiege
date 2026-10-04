@@ -5,10 +5,10 @@
   <RimSiege_BatteringRam.description>Un bélier sous toit de bois, monté sur roues. Un équipage s'abrite dessous et enfonce la tête ferrée dans une porte ou un mur. Lent, mais aucun mur n'apprécie.</RimSiege_BatteringRam.description>
 
   <RimSiege_SiegeTower.label>tour de siège</RimSiege_SiegeTower.label>
-  <RimSiege_SiegeTower.description>Une haute tour de bois sur roues. Un équipage la pousse jusqu'au rempart ; arrivée au contact, la passerelle se rabat et les assaillants franchissent le mur pour se déverser à l'intérieur. Le mur reste debout — c'est par-dessus qu'on passe.</RimSiege_SiegeTower.description>
+  <RimSiege_SiegeTower.description>Une haute tour de bois sur roues. Un équipage la pousse jusqu'au rempart ; arrivée au contact, la passerelle se rabat et les assaillants franchissent le mur pour se déverser à l'intérieur. Le mur reste debout. C'est par-dessus qu'on passe.</RimSiege_SiegeTower.description>
 
   <RimSiege_Petard.label>pétard de siège</RimSiege_Petard.label>
-  <RimSiege_Petard.description>Une charge de poudre placée contre un mur par un sapeur. La mèche brûle quelques secondes avant de détoner. Abattez le sapeur, ou tirez sur la charge, avant l'explosion — sinon elle ouvre une brèche.</RimSiege_Petard.description>
+  <RimSiege_Petard.description>Une charge de poudre placée contre un mur par un sapeur. La mèche brûle quelques secondes avant de détoner. Abattez le sapeur, ou tirez sur la charge, avant l'explosion, sinon elle ouvre une brèche.</RimSiege_Petard.description>
 
   <RimSiege_TrebuchetBoulder.label>boulet de trébuchet</RimSiege_TrebuchetBoulder.label>
 
