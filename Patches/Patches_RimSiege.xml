@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Patch>
+
+	<!-- bug latent MO : cliquer une baliste EN CONSTRUCTION crashe chaque frame, le def de frame
+	     généré n'a pas de turretGunDef et PlaceWorker_TurretTop.DrawGhost le déréférence sans garde.
+	     on retire juste le fantôme décoratif, l'anneau de portée reste. signalé upstream -->
+	<Operation Class="PatchOperationRemove">
+		<xpath>Defs/ThingDef[defName="DankPyon_Turret_Ballista" or defName="DankPyon_Turret_RepeaterBallista"]/placeWorkers/li[text()="PlaceWorker_TurretTop"]</xpath>
+	</Operation>
+
+</Patch>

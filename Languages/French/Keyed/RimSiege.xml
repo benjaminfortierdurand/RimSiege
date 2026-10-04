@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+
+  <!-- lettres de siège -->
+  <RimSiege_LabelFootAssault>Assaut médiéval</RimSiege_LabelFootAssault>
+  <RimSiege_TextFootAssault>Une troupe de {0} dresse un camp devant vos murs et s'apprête à donner l'assaut à pied. Pas d'engin de siège cette fois — tenez la ligne et brisez leur charge.</RimSiege_TextFootAssault>
+  <RimSiege_LabelTower>Siège : tour d'assaut</RimSiege_LabelTower>
+  <RimSiege_TextTower>Une force de {0} dresse un camp devant vos murs et entreprend d'ériger une TOUR DE SIÈGE. Une fois montée, elle sera poussée contre le rempart pour déverser les assaillants par-dessus. Détruisez leur chantier avant qu'ils ne soient prêts.</RimSiege_TextTower>
+  <RimSiege_LabelRam>Siège médiéval</RimSiege_LabelRam>
+  <RimSiege_TextRam>Une force de {0} dresse un camp devant vos murs. Ils bâtissent un BÉLIER pour enfoncer votre porte. Sortez saboter le chantier — tuez les bâtisseurs, brûlez leurs plans et leurs ressources — ou préparez-vous à tenir la brèche.</RimSiege_TextRam>
+  <RimSiege_TrebOne>Un trébuchet appuiera l'assaut à distance.</RimSiege_TrebOne>
+  <RimSiege_TrebMany>Une batterie de {0} trébuchets pilonnera vos murs à distance.</RimSiege_TrebMany>
+  <RimSiege_BallistaHint>Des balistes garderont leur camp - toute sortie chevauchera sous les carreaux.</RimSiege_BallistaHint>
+  <RimSiege_BombardBegins>Les engins de siège sont achevés. Le bombardement commence.</RimSiege_BombardBegins>
+  <RimSiege_SappersHint>Des sapeurs tenteront d'ouvrir une seconde brèche ailleurs sur votre muraille.</RimSiege_SappersHint>
+  <RimSiege_CaptainHint>Leur capitaine, {0}, mène la troupe : repérez le heaume doré et ses deux gardes du corps. Abattez-le tôt et le siège s'effondrera.</RimSiege_CaptainHint>
+  <RimSiege_CaptainFell>{0} est tombé — les assiégeants perdent courage et lèvent le camp !</RimSiege_CaptainFell>
+
+  <!-- ultimatum -->
+  <RimSiege_UltimatumLabel>Ultimatum : tribut ou siège</RimSiege_UltimatumLabel>
+  <RimSiege_UltimatumText>Une force de {0} a dressé son camp en approche de vos murs et vous somme de payer un tribut de {1} argent.\n\nPayez, et ils lèveront le camp sans combattre — rien ne vous assiégera.\nRefusez (ou laissez passer le délai), et le siège commencera : ils bâtiront leurs engins et marcheront sur vos murs.\n\nVous avez quelques heures pour décider.</RimSiege_UltimatumText>
+  <RimSiege_TributePaid>Tribut payé ({0} argent). {1} lève le camp.</RimSiege_TributePaid>
+  <RimSiege_PayOption>Payer le tribut ({0} argent)</RimSiege_PayOption>
+  <RimSiege_NotEnoughSilver>Pas assez d'argent en zone d'habitation ou en stockage ({0} requis, {1} disponible).</RimSiege_NotEnoughSilver>
+  <RimSiege_DefyOption>Les défier — qu'ils viennent</RimSiege_DefyOption>
+  <RimSiege_LateLabel>Dernière offre : le tribut ou les murs</RimSiege_LateLabel>
+  <RimSiege_LateText>Les engins de {0} sont prêts. Leur émissaire fait une dernière offre : {1} argent, et l'ost lève le camp en laissant ses machines sur place.\n\nLe prix a monté. Le coût d'un refus aussi.</RimSiege_LateText>
+  <RimSiege_LateTributePaid>Tribut tardif payé ({0} argent). {1} lève le camp et abandonne ses engins de siège.</RimSiege_LateTributePaid>
+  <RimSiege_LateTooLate>Trop tard — ils sont déjà dans vos murs.</RimSiege_LateTooLate>
+  <RimSiege_ReinforceLabel>Renforts</RimSiege_ReinforceLabel>
+  <RimSiege_ReinforceText>{0} combattants de plus ont rejoint le camp de siège de {1}.</RimSiege_ReinforceText>
+  <RimSiege_UltimatumPaidBefore>\n\nLa nouvelle de votre or s'est répandue. Le prix a monté.</RimSiege_UltimatumPaidBefore>
+
+  <!-- rançon du capitaine -->
+  <RimSiege_RansomLabel>Offre de rançon : {0}</RimSiege_RansomLabel>
+  <RimSiege_RansomText>{0} veut récupérer son capitaine. {1} croupit dans votre geôle, et sa maison offre {2} argent pour son retour sain et sauf.\n\nAcceptez, et un cortège de trêve viendra le chercher sous bannière de parlementaire : livrez-le (vos geôliers s'en chargeront), et l'argent est à vous.\nRefusez, et il reste votre prisonnier.\n\nOu prenez sa tête - et assumez ce qui suivra.</RimSiege_RansomText>
+  <RimSiege_RansomAccept>Accepter la rançon ({0} argent)</RimSiege_RansomAccept>
+  <RimSiege_RansomRefuse>Le garder</RimSiege_RansomRefuse>
+  <RimSiege_RansomExecute>L'exécuter</RimSiege_RansomExecute>
+  <RimSiege_EnvoysComing>Un cortège de trêve de {0} est en route pour récupérer {1}.</RimSiege_EnvoysComing>
+  <RimSiege_RansomPaid>La rançon est payée : {0} argent. {1} rentre chez lui.</RimSiege_RansomPaid>
+  <RimSiege_RansomFailed>Les émissaires sont repartis sans leur capitaine. L'offre est morte.</RimSiege_RansomFailed>
+  <RimSiege_EnvoysBetrayed>Le cortège de trêve a été attaqué sous le drapeau blanc. La nouvelle va se répandre.</RimSiege_EnvoysBetrayed>
+  <RimSiege_VendettaLabel>Vendetta : {0}</RimSiege_VendettaLabel>
+  <RimSiege_VendettaText>{0} a juré de venger {1}. Ils viendront, et ils ne parlementeront pas.</RimSiege_VendettaText>
+  <RimSiege_VendettaHint>Cet ost marche pour venger {0}. Ils ne sont pas venus parler.</RimSiege_VendettaHint>
+  <RimSiege_CaptainDiedCustody>{0} est mort entre vos murs. {1} vous en tient responsable.</RimSiege_CaptainDiedCustody>
+  <RimSiege_CaptainFreed>Vous avez libéré {0} sans rien demander. {1} s'en souviendra, pour un temps.</RimSiege_CaptainFreed>
+  <RimSiege_PickExecutioner>Qui portera la lame ?</RimSiege_PickExecutioner>
+  <RimSiege_ExecutionerOption>{0} (mêlée {1})</RimSiege_ExecutionerOption>
+  <RimSiege_FlingOption>Le catapulter par-dessus les murs ({0} s'en charge)</RimSiege_FlingOption>
+  <RimSiege_Flung>{0} s'envole par-dessus les murs.</RimSiege_Flung>
+  <RimSiege_ExecutionOrdered>{0} part exécuter {1}. Les tambours commencent.</RimSiege_ExecutionOrdered>
+  <RimSiege_CaptainExecuted>{0} a été exécuté. {1} n'oubliera pas.</RimSiege_CaptainExecuted>
+
+  <!-- réglages du mod -->
+  <RimSiege_SecParley>Parlementer</RimSiege_SecParley>
+  <RimSiege_SecHost>L'ost</RimSiege_SecHost>
+  <RimSiege_SecTrain>Train de siège</RimSiege_SecTrain>
+
+  <RimSiege_SetUltimatum>Ultimatum (tribut) avant le siège</RimSiege_SetUltimatum>
+  <RimSiege_SetUltimatumTip>Les assiégeants réclament un tribut avant d'attaquer. Décoché : le siège se lance directement.</RimSiege_SetUltimatumTip>
+  <RimSiege_SetTribute>Montant du tribut : {0} × points de menace (borné 200-5000)</RimSiege_SetTribute>
+  <RimSiege_SetHours>Délai pour décider : {0} h</RimSiege_SetHours>
+  <RimSiege_SetEngineFloor>Points de menace minimum — engin de siège (bélier/tour) : {0}</RimSiege_SetEngineFloor>
+  <RimSiege_SetTrebFloor>Points minimum — trébuchets : {0}</RimSiege_SetTrebFloor>
+  <RimSiege_SetMaxTrebs>Trébuchets maximum : {0}</RimSiege_SetMaxTrebs>
+  <RimSiege_SetSapperFloor>Points minimum — sapeurs : {0}</RimSiege_SetSapperFloor>
+  <RimSiege_SetMaxSappers>Sapeurs maximum : {0}</RimSiege_SetMaxSappers>
+  <RimSiege_SetBallistaFloor>Points minimum — balistes de camp : {0}</RimSiege_SetBallistaFloor>
+  <RimSiege_SetMaxBallistas>Balistes maximum : {0}</RimSiege_SetMaxBallistas>
+  <RimSiege_SetBombard>Bombardement avant l'assaut : {0} h</RimSiege_SetBombard>
+  <RimSiege_SetTarFloor>Points minimum — boulets goudronnés : {0}</RimSiege_SetTarFloor>
+  <RimSiege_SetCarrion>Guerre biologique (tirs de charognes)</RimSiege_SetCarrion>
+  <RimSiege_SetReinforce>Renforts pendant le bombardement</RimSiege_SetReinforce>
+  <RimSiege_SetReinforceTip>À mi-bombardement, une seconde colonne arrive et rejoint le camp, environ un tiers de l'ost initial. Attendre coûte plus cher.</RimSiege_SetReinforceTip>
+  <RimSiege_SetReinforceFloor>Points minimum — renforts : {0}</RimSiege_SetReinforceFloor>
+  <RimSiege_SetCarrionTip>Les sièges les plus riches (seuil des boulets goudronnés + 2000 points) catapultent des charognes par-dessus vos murs : nuages de puanteur, un cadavre à évacuer, et un risque de peste pour quiconque est proche de l'impact. Décochez si c'est trop sordide pour votre colonie.</RimSiege_SetCarrionTip>
+  <RimSiege_SetWarband>Taille de la troupe de siège : x{0} points de menace</RimSiege_SetWarband>
+  <RimSiege_SetPushers>Pousseurs par engin : {0}</RimSiege_SetPushers>
+  <RimSiege_SetCaptainRout>Déroute à la mort du capitaine</RimSiege_SetCaptainRout>
+  <RimSiege_SetCaptainRoutTip>Abattre le capitaine (heaume doré) avant la brèche fait fuir tout le siège.</RimSiege_SetCaptainRoutTip>
+  <RimSiege_SetDanegeld>Les factions se souviennent (danegeld)</RimSiege_SetDanegeld>
+  <RimSiege_SetDanegeldTip>Payez un tribut et la faction reviendra en demander plus, plus cher. Mettez un siège en déroute et la nouvelle se répand : long répit avant le prochain.</RimSiege_SetDanegeldTip>
+  <RimSiege_SetRansom>Capitaines rançonnables (et vengés)</RimSiege_SetRansom>
+  <RimSiege_SetRansomTip>Capturez un capitaine de siège vivant et sa maison offrira de l'argent pour le récupérer. Exécutez-le, trahissez le cortège de trêve ou laissez-le mourir en cellule, et ils jurent une vendetta : le prochain siège arrive plus tôt, plus enragé, et sans ultimatum. Libérez-le gratuitement et ils épargneront vos murs, pour un temps.</RimSiege_SetRansomTip>
+
+</LanguageData>

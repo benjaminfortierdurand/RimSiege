@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+	<!-- bâtiment déplacé à la main par le code, pas un pawn (sinon anim de marche moche) -->
+	<ThingDef ParentName="BuildingBase">
+		<defName>RimSiege_BatteringRam</defName>
+		<label>battering ram</label>
+		<description>A wheeled ram under a wooden roof. A crew shelters beneath it and drives the iron head into a door or wall. Slow, but no wall likes it.</description>
+		<thingClass>RimSiege.Things.Building_BatteringRam</thingClass>
+		<drawerType>RealtimeOnly</drawerType>
+		<tickerType>Normal</tickerType>
+		<altitudeLayer>Pawn</altitudeLayer>
+		<selectable>true</selectable>
+		<useHitPoints>true</useHitPoints>
+		<fillPercent>0.35</fillPercent>
+		<passability>Standable</passability>
+		<castEdgeShadows>false</castEdgeShadows>
+		<rotatable>true</rotatable>
+		<statBases>
+			<MaxHitPoints>900</MaxHitPoints>
+			<Flammability>1.0</Flammability>
+			<WorkToBuild>3500</WorkToBuild>
+		</statBases>
+		<!-- constructible = les blueprints existent pour le chantier ennemi.
+		     Archotech le cache du menu du joueur sans bloquer les assiégeants -->
+		<designationCategory>Security</designationCategory>
+		<minTechLevelToBuild>Archotech</minTechLevelToBuild>
+		<constructionSkillPrerequisite>4</constructionSkillPrerequisite>
+		<costList>
+			<WoodLog>220</WoodLog>
+			<Steel>40</Steel>
+		</costList>
+		<!-- sprites 4 directions (art: Tom), canvas carré donc drawSize carré -->
+		<graphicData>
+			<texPath>Things/Pawn/SiegeEngine/BatteringRam</texPath>
+			<graphicClass>Graphic_Multi</graphicClass>
+			<drawSize>(4,4)</drawSize>
+		</graphicData>
+		<building>
+			<isEdifice>false</isEdifice>
+		</building>
+	</ThingDef>
+
+	<!-- même principe, mais au mur elle dépose les assaillants derrière au lieu de casser -->
+	<ThingDef ParentName="BuildingBase">
+		<defName>RimSiege_SiegeTower</defName>
+		<label>siege tower</label>
+		<description>A tall wooden tower on wheels. A crew pushes it up to the rampart; once docked, the drawbridge drops and the attackers pour over the wall. The wall stays standing - they come over the top.</description>
+		<thingClass>RimSiege.Things.Building_SiegeTower</thingClass>
+		<drawerType>RealtimeOnly</drawerType>
+		<tickerType>Normal</tickerType>
+		<altitudeLayer>Pawn</altitudeLayer>
+		<selectable>true</selectable>
+		<useHitPoints>true</useHitPoints>
+		<fillPercent>0.4</fillPercent>
+		<passability>Standable</passability>
+		<castEdgeShadows>false</castEdgeShadows>
+		<rotatable>true</rotatable>
+		<statBases>
+			<MaxHitPoints>1200</MaxHitPoints>
+			<Flammability>1.0</Flammability>
+			<WorkToBuild>5000</WorkToBuild>
+		</statBases>
+		<designationCategory>Security</designationCategory>
+		<minTechLevelToBuild>Archotech</minTechLevelToBuild>
+		<constructionSkillPrerequisite>5</constructionSkillPrerequisite>
+		<costList>
+			<WoodLog>350</WoodLog>
+			<Steel>60</Steel>
+		</costList>
+		<!-- sprites 4 directions (art: Tom) -->
+		<graphicData>
+			<texPath>Things/Building/SiegeTower/SiegeTower</texPath>
+			<graphicClass>Graphic_Multi</graphicClass>
+			<drawSize>(5,5)</drawSize>
+		</graphicData>
+		<building>
+			<isEdifice>false</isEdifice>
+		</building>
+	</ThingDef>
+
+</Defs>

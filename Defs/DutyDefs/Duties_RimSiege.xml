@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+	<!-- équipage de l'engin -->
+	<DutyDef>
+		<defName>RimSiege_PushRam</defName>
+		<hook>HighPriority</hook>
+		<thinkNode Class="ThinkNode_Priority">
+			<subNodes>
+				<li Class="RimSiege.AI.JobGiver_PushSiegeEngine" />
+				<li Class="JobGiver_WanderNearDutyLocation">
+					<wanderRadius>6</wanderRadius>
+				</li>
+			</subNodes>
+		</thinkNode>
+	</DutyDef>
+
+	<!-- assaut post-breche, pas de sape ni de casse : ils passent par l'ouverture -->
+	<DutyDef>
+		<defName>RimSiege_AssaultThroughBreach</defName>
+		<alwaysShowWeapon>true</alwaysShowWeapon>
+		<thinkNode Class="ThinkNode_Priority">
+			<subNodes>
+				<li Class="JobGiver_TakeCombatEnhancingDrug" />
+				<li Class="JobGiver_AIFightEnemies">
+					<targetAcquireRadius>40</targetAcquireRadius>
+					<targetKeepRadius>45</targetKeepRadius>
+				</li>
+				<li Class="JobGiver_AIGotoNearestHostile" />
+			</subNodes>
+		</thinkNode>
+	</DutyDef>
+
+	<!-- servant de trebuchet -->
+	<DutyDef>
+		<defName>RimSiege_ManTrebuchet</defName>
+		<thinkNode Class="ThinkNode_Priority">
+			<subNodes>
+				<li Class="RimSiege.AI.JobGiver_ManTrebuchet" />
+				<li Class="JobGiver_WanderNearDutyLocation">
+					<wanderRadius>4</wanderRadius>
+				</li>
+			</subNodes>
+		</thinkNode>
+	</DutyDef>
+
+	<!-- émissaire désigné : entre chercher le capitaine blessé et le porte dehors -->
+	<DutyDef>
+		<defName>RimSiege_RetrieveCaptain</defName>
+		<thinkNode Class="ThinkNode_Priority">
+			<subNodes>
+				<li Class="RimSiege.AI.JobGiver_RetrieveCaptain" />
+				<li Class="JobGiver_WanderNearDutyLocation">
+					<wanderRadius>4</wanderRadius>
+				</li>
+			</subNodes>
+		</thinkNode>
+	</DutyDef>
+
+	<!-- sapeur : pose le pétard et se fout sur la gueule -->
+	<DutyDef>
+		<defName>RimSiege_Sap</defName>
+		<alwaysShowWeapon>true</alwaysShowWeapon>
+		<thinkNode Class="ThinkNode_Priority">
+			<subNodes>
+				<li Class="RimSiege.AI.JobGiver_Sap" />
+				<li Class="JobGiver_AIFightEnemies">
+					<targetAcquireRadius>30</targetAcquireRadius>
+					<targetKeepRadius>35</targetKeepRadius>
+				</li>
+				<li Class="JobGiver_AIGotoNearestHostile" />
+			</subNodes>
+		</thinkNode>
+	</DutyDef>
+
+</Defs>

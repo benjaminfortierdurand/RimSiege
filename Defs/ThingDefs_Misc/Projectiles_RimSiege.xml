@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+	<!-- fallback si le boulet MO manque, texture vanilla en attendant -->
+	<ThingDef ParentName="BaseBullet">
+		<defName>RimSiege_TrebuchetBoulder</defName>
+		<label>trebuchet boulder</label>
+		<graphicData>
+			<texPath>Things/Projectile/ShellHighExplosive</texPath>
+			<graphicClass>Graphic_Single</graphicClass>
+			<drawSize>1.4</drawSize>
+			<shaderType>TransparentPostLight</shaderType>
+		</graphicData>
+		<thingClass>Projectile_Explosive</thingClass>
+		<projectile>
+			<damageDef>Bomb</damageDef>
+			<damageAmountBase>80</damageAmountBase>
+			<explosionRadius>2.4</explosionRadius>
+			<speed>32</speed>
+			<flyOverhead>true</flyOverhead>
+			<soundImpactAnticipate>MortarRound_PreImpact</soundImpactAnticipate>
+			<soundExplode>MortarBomb_Explode</soundExplode>
+			<soundAmbient>MortarRound_Ambient</soundAmbient>
+			<ai_IsIncendiary>false</ai_IsIncendiary>
+		</projectile>
+	</ThingDef>
+
+</Defs>

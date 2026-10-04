@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+	<!-- ThreatBig comme un raid, plus rare (gros événement) -->
+	<IncidentDef>
+		<defName>RimSiege_MedievalSiege</defName>
+		<label>medieval siege</label>
+		<targetTags>
+			<li>Map_PlayerHome</li>
+		</targetTags>
+		<workerClass>RimSiege.IncidentWorker_MedievalSiege</workerClass>
+		<category>ThreatBig</category>
+		<baseChance>3.0</baseChance>
+		<pointsScaleable>true</pointsScaleable>
+		<minRefireDays>10</minRefireDays>
+	</IncidentDef>
+
+</Defs>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+	<JobDef>
+		<defName>RimSiege_PushSiegeEngine</defName>
+		<driverClass>RimSiege.Jobs.JobDriver_PushSiegeEngine</driverClass>
+		<reportString>pushing the siege engine.</reportString>
+		<casualInterruptible>false</casualInterruptible>
+	</JobDef>
+
+	<JobDef>
+		<defName>RimSiege_SapJob</defName>
+		<driverClass>RimSiege.Jobs.JobDriver_Sap</driverClass>
+		<reportString>planting a charge against the wall.</reportString>
+		<casualInterruptible>false</casualInterruptible>
+	</JobDef>
+
+	<JobDef>
+		<defName>RimSiege_ManTrebuchetJob</defName>
+		<driverClass>RimSiege.Jobs.JobDriver_ManTrebuchet</driverClass>
+		<reportString>manning the trebuchet.</reportString>
+		<casualInterruptible>false</casualInterruptible>
+	</JobDef>
+
+	<JobDef>
+		<defName>RimSiege_ExecuteCaptainJob</defName>
+		<driverClass>RimSiege.Jobs.JobDriver_ExecuteCaptain</driverClass>
+		<reportString>executing TargetA.</reportString>
+		<casualInterruptible>false</casualInterruptible>
+	</JobDef>
+
+	<JobDef>
+		<defName>RimSiege_ExecutionCeremonyJob</defName>
+		<driverClass>RimSiege.Jobs.JobDriver_ExecutionCeremony</driverClass>
+		<reportString>leading TargetA to the block.</reportString>
+		<casualInterruptible>false</casualInterruptible>
+	</JobDef>
+
+	<JobDef>
+		<defName>RimSiege_TrebuchetExecutionJob</defName>
+		<driverClass>RimSiege.Jobs.JobDriver_TrebuchetExecution</driverClass>
+		<reportString>loading TargetA onto the trebuchet.</reportString>
+		<casualInterruptible>false</casualInterruptible>
+	</JobDef>
+
+	<JobDef>
+		<defName>RimSiege_WatchExecutionJob</defName>
+		<driverClass>RimSiege.Jobs.JobDriver_WatchExecution</driverClass>
+		<reportString>watching an execution.</reportString>
+		<neverShowWeapon>true</neverShowWeapon>
+		<casualInterruptible>false</casualInterruptible>
+	</JobDef>
+
+</Defs>

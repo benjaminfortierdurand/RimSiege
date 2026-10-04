@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+	<!-- le condamné en vol, tiré au trébuchet -->
+	<ThingDef ParentName="PawnFlyerBase">
+		<defName>RimSiege_CondemnedFlyer</defName>
+		<thingClass>RimSiege.Things.PawnFlyer_Condemned</thingClass>
+		<pawnFlyer>
+			<flightDurationMin>0.9</flightDurationMin>
+			<flightSpeed>16</flightSpeed>
+			<heightFactor>2.5</heightFactor>
+		</pawnFlyer>
+	</ThingDef>
+
+</Defs>

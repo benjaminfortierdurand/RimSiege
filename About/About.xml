@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ModMetaData>
+	<name>RimSiege</name>
+	<author>BenFD</author>
+	<packageId>forti.rimsiege</packageId>
+	<supportedVersions>
+		<li>1.6</li>
+	</supportedVersions>
+	<modVersion>1.3.0</modVersion>
+	<modIconPath>UI/RimSiegeIcon</modIconPath>
+	<description>Medieval sieges that actually siege.
+
+Vanilla sieges are mortars in a field. In RimSiege the enemy shows up with a plan: they demand a tribute first, and if you refuse they set up a war camp (banner, campfire, tents, stakes) and build their siege engines on site.
+
+[b]What they bring[/b]
+- A battering ram for your gate. Crewed: kill the pushers and it stops. Double gates wont save you, it keeps going.
+- Or a siege tower that goes OVER your walls. The wall stays intact, the whole army climbs it one by one.
+- Trebuchet batteries (Medieval Overhaul), manned and reloaded from an ammo pile at the camp.
+- Sappers planting petards on a second wall while the ram hits the front. Pincer assaults.
+- A captain in a gilded helm, guarded by two bodyguards. Kill him before the breach and the whole siege routs - they even retreat back over their tower.
+- Capture the captain alive and his house sends a truce party to ransom him back, silver in hand. Execute him or let him rot and they swear a vendetta: the next siege comes sooner, angrier, and without an ultimatum.
+
+Everything scales with threat points: small war parties just camp and charge on foot, late game sieges bring the full siege train. Settings page to tune all the thresholds.
+
+[b]Counterplay[/b]: pay the tribute, raid the camp before the engines are built, kill the crews, burn the wooden engines, steal the trebuchet boulders, snipe the captain - or take him alive and sell him back to his own house.
+
+[b]Requires Medieval Overhaul.[/b] Camping Tent optional (adds tents to the camp).
+
+Siege tower and battering ram art by Tom.
+
+BenFD</description>
+
+	<modDependencies>
+		<li>
+			<packageId>DankPyon.Medieval.Overhaul</packageId>
+			<displayName>Medieval Overhaul</displayName>
+			<steamWorkshopUrl>steam://url/CommunityFilePage/3219596926</steamWorkshopUrl>
+		</li>
+	</modDependencies>
+	<loadAfter>
+		<li>brrainz.harmony</li>
+		<li>OskarPotocki.VanillaFactionsExpanded.Core</li>
+		<li>DankPyon.Medieval.Overhaul</li>
+		<li>Aoba.Tent</li>
+	</loadAfter>
+</ModMetaData>
