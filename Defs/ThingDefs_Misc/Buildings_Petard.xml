@@ -10,11 +10,11 @@
 		<altitudeLayer>Building</altitudeLayer>
 		<drawerType>MapMeshAndRealTime</drawerType>
 		<!-- tonneau MO teinté en baril de poudre -->
+		<!-- IED vanilla par défaut, le patch remet le tonneau de MO quand il est là -->
 		<graphicData>
-			<texPath>Things/Building/Storage/BarrelClosed</texPath>
+			<texPath>Things/Building/Security/IEDHighExplosive</texPath>
 			<graphicClass>Graphic_Single</graphicClass>
 			<shaderType>Cutout</shaderType>
-			<color>(0.55, 0.42, 0.28)</color>
 			<drawSize>(0.9, 0.9)</drawSize>
 		</graphicData>
 		<selectable>true</selectable>

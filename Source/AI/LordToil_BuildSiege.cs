@@ -153,7 +153,7 @@ namespace RimSiege.AI
 						TrySpawnDeco(torch, ts);
 
 			ThingDef spikeDef = DefDatabase<ThingDef>.GetNamedSilentFail("DankPyon_CavalrySpike");
-			if (spikeDef != null)
+			if (spikeDef != null && SiegeLauncher.OldWorld(lord.faction))
 			{
 				int spikes = 0;
 				foreach (IntVec3 c in GenRadial.RadialCellsAround(center, 6f, useCenter: false))

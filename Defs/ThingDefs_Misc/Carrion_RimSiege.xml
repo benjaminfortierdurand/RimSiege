@@ -7,8 +7,9 @@
 		<defName>RimSiege_CarrionShell</defName>
 		<label>bound carcass</label>
 		<description>A rotting carcass, wrapped and bound for the sling. The oldest way to end a siege.</description>
+		<!-- textures vanilla par défaut, le patch remet les boulets de MO quand il est là -->
 		<graphicData>
-			<texPath>Things/Item/Resource/StoneBoulder</texPath>
+			<texPath>Things/Item/Resource/Shell/Shell_HighExplosive</texPath>
 			<graphicClass>Graphic_StackCount</graphicClass>
 			<color>(115,100,70)</color>
 		</graphicData>
@@ -29,7 +30,7 @@
 		<defName>RimSiege_Artillery_Carrion</defName>
 		<label>carcass</label>
 		<graphicData>
-			<texPath>Things/Projectile/BoulderBullet</texPath>
+			<texPath>Things/Projectile/ShellHighExplosive</texPath>
 			<graphicClass>Graphic_Single</graphicClass>
 			<color>(125,110,75)</color>
 			<drawSize>(1.2,1.2)</drawSize>
