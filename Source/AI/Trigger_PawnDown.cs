@@ -3,7 +3,8 @@ using Verse.AI.Group;
 
 namespace RimSiege.AI
 {
-	// fires once the tracked pawn is dead/downed/gone (used for the captain-rout)
+	// fires once the tracked pawn is dead or downed (used for the captain-rout). walking off the map
+	// alive used to count too and threw a fake captain-fell message
 	public class Trigger_PawnDown : Trigger
 	{
 		private Pawn pawn;
@@ -14,7 +15,7 @@ namespace RimSiege.AI
 		public override bool ActivateOn(Lord lord, TriggerSignal signal)
 		{
 			if (signal.type != TriggerSignalType.Tick) return false;
-			return pawn == null || pawn.Dead || pawn.Downed || !pawn.Spawned;
+			return pawn == null || pawn.Dead || pawn.Downed;
 		}
 	}
 }

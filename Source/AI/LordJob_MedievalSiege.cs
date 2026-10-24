@@ -3,6 +3,7 @@ using RimWorld;
 using Verse;
 using Verse.AI;
 using Verse.AI.Group;
+using RimSiege.Things;
 
 namespace RimSiege.AI
 {
@@ -21,6 +22,11 @@ namespace RimSiege.AI
 		private Pawn captain;
 		public bool reinforced;     // second column already marched in
 		public bool lateOfferSent;  // the engines-are-up tribute letter went out
+		public bool supplied;       // another mod's army (SiegeApi): no second column, no late tribute
+		// this siege's own engine. engines from older sieges stay on the map and the same house comes back,
+		// so finding "the faction's ram" picked up the old one
+		public Building_SiegeEngine engine;
+		public IntVec3 engineSpot = IntVec3.Invalid; // where its blueprint went down
 
 		public float Points => points;
 
@@ -97,12 +103,14 @@ namespace RimSiege.AI
 				var toExit = new Transition(push, exit);
 				toExit.AddSource(breachAssault);
 				toExit.AddSource(assault);
+				toExit.AddSource(build);
 				toExit.AddTrigger(new Trigger_BecameNonHostileToPlayer());
 				graph.AddTransition(toExit);
 			}
 			else
 			{
 				var toExit = new Transition(assault, exit);
+				toExit.AddSource(build);
 				toExit.AddTrigger(new Trigger_BecameNonHostileToPlayer());
 				graph.AddTransition(toExit);
 			}
@@ -174,6 +182,10 @@ namespace RimSiege.AI
 			Scribe_Values.Look(ref points, "points");
 			Scribe_Values.Look(ref reinforced, "reinforced");
 			Scribe_Values.Look(ref lateOfferSent, "lateOfferSent");
+			Scribe_Values.Look(ref supplied, "supplied");
+			if (Scribe.mode == LoadSaveMode.Saving && engine != null && engine.Destroyed) engine = null;
+			Scribe_References.Look(ref engine, "engine");
+			Scribe_Values.Look(ref engineSpot, "engineSpot", IntVec3.Invalid);
 			Scribe_References.Look(ref captain, "captain");
 		}
 	}

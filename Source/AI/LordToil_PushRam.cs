@@ -84,7 +84,8 @@ namespace RimSiege.AI
 						IntVec3 c = hole + step * i;
 						if (!c.InBounds(Map)) break;
 						if (BlocksBreach(c)) { Retarget(engine, c); return; }
-						if (c.Standable(Map) && SiegeLauncher.HostileCanReachColonyFrom(Map, c)) { open = true; break; }
+						if (c.Standable(Map) && Map.reachability.CanReach(c, engine.sealedBehind, PathEndMode.OnCell, SiegeLauncher.NoDoors))
+						{ open = true; break; }
 					}
 				}
 			}

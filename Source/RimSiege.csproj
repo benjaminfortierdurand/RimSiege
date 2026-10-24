@@ -1,50 +1,55 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
+	<!--
+		Deux builds depuis le meme code, comme RimJoust et RimFeast :
+		  dotnet build Source/RimSiege.csproj -c Release                     -> 1.7/Assemblies (par defaut)
+		  dotnet build Source/RimSiege.csproj -c Release -p:GameVersion=1.6  -> 1.6/Assemblies
+		La 1.7 tourne sur .NET 10 (plus de Unity) : SDK .NET 10, DLL du jeu installe.
+		La 1.6 n'est plus installee : on compile contre le paquet NuGet Krafs.Rimworld.Ref 1.6.
+	-->
 	<PropertyGroup>
-		<TargetFramework>net48</TargetFramework>
+		<GameVersion Condition="'$(GameVersion)' == ''">1.7</GameVersion>
 		<AssemblyName>RimSiege</AssemblyName>
 		<RootNamespace>RimSiege</RootNamespace>
 		<LangVersion>latest</LangVersion>
 		<Nullable>disable</Nullable>
 
-		<!-- Sortie directement dans 1.6/Assemblies/ pour que RimWorld le charge -->
-		<OutputPath>..\1.6\Assemblies\</OutputPath>
+		<OutputPath>..\$(GameVersion)\Assemblies\</OutputPath>
+		<IntermediateOutputPath>obj\$(Configuration)\$(GameVersion)\</IntermediateOutputPath>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
 		<CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<GenerateDependencyFile>false</GenerateDependencyFile>
 		<DebugType>none</DebugType>
 		<DebugSymbols>false</DebugSymbols>
 	</PropertyGroup>
 
-	<!-- Chemin des DLLs de référence. Édite si ton install est ailleurs. -->
+	<!-- Chemin du jeu installe. Edite si ton install est ailleurs. -->
 	<PropertyGroup>
-		<RimWorldManagedDir>D:\Steam\steamapps\common\RimWorld\RimWorldWin64_Data\Managed</RimWorldManagedDir>
+		<RimWorldDir>D:\Steam\steamapps\common\RimWorld</RimWorldDir>
+		<Refs17Dir>D:\RimWorldMods\_refs\1.7</Refs17Dir>
 	</PropertyGroup>
 
-	<ItemGroup>
-		<!-- Fournit les reference assemblies .NET Framework 4.8 pour builder avec le SDK dotnet -->
+	<PropertyGroup Condition="'$(GameVersion)' == '1.6'">
+		<TargetFramework>net48</TargetFramework>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(GameVersion)' == '1.7'">
+		<TargetFramework>net10.0</TargetFramework>
+	</PropertyGroup>
+
+	<!-- RimWorld 1.6 + Unity : paquets de references NuGet (deja en cache) -->
+	<ItemGroup Condition="'$(GameVersion)' == '1.6'">
 		<PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3">
 			<PrivateAssets>all</PrivateAssets>
 		</PackageReference>
+		<PackageReference Include="Krafs.Rimworld.Ref" Version="1.6.4871" ExcludeAssets="runtime" />
 	</ItemGroup>
 
-	<ItemGroup>
-		<!-- RimWorld + Unity -->
-		<Reference Include="Assembly-CSharp">
-			<HintPath>$(RimWorldManagedDir)\Assembly-CSharp.dll</HintPath>
-			<Private>false</Private>
-		</Reference>
-		<Reference Include="UnityEngine.CoreModule">
-			<HintPath>$(RimWorldManagedDir)\UnityEngine.CoreModule.dll</HintPath>
-			<Private>false</Private>
-		</Reference>
-		<Reference Include="UnityEngine.IMGUIModule">
-			<HintPath>$(RimWorldManagedDir)\UnityEngine.IMGUIModule.dll</HintPath>
-			<Private>false</Private>
-		</Reference>
-		<Reference Include="UnityEngine.TextRenderingModule">
-			<HintPath>$(RimWorldManagedDir)\UnityEngine.TextRenderingModule.dll</HintPath>
+	<!-- RimWorld 1.7 : copie des DLL du jeu 1.7 dans _refs\1.7 (a recopier apres une MAJ de la beta) (runtime .NET 10, Unity remplace par UnityStubs) -->
+	<ItemGroup Condition="'$(GameVersion)' == '1.7'">
+		<Reference Include="$(Refs17Dir)\Assembly-CSharp.dll;$(Refs17Dir)\UnityStubs.dll;$(Refs17Dir)\Waylith.UnityCompat.dll;$(Refs17Dir)\Waylith.dll;$(Refs17Dir)\Brutal.Core.Logging.dll">
 			<Private>false</Private>
 		</Reference>
 	</ItemGroup>

@@ -14,6 +14,9 @@ namespace RimSiege
 		public static List<Pawn> GenerateWarband(Map map, Faction faction, float points)
 		{
 			if (map == null || faction == null) return new List<Pawn>();
+			// same floor as vanilla raids (IncidentWorker_Raid): below it the group comes out empty and a
+			// refused ultimatum would just never show up
+			points = Mathf.Max(points, faction.def.MinPointsToGeneratePawnGroup(PawnGroupKindDefOf.Combat) * 1.05f);
 			var parms = new PawnGroupMakerParms
 			{
 				groupKind = PawnGroupKindDefOf.Combat,
@@ -27,7 +30,14 @@ namespace RimSiege
 
 		// engineDef null = no engine, they camp then charge on foot
 		public static bool LaunchGroup(Map map, IntVec3 breach, ThingDef engineDef, int trebuchetCount, int ballistaCount,
-			bool tarAmmo, bool carrionAmmo, float points, List<Pawn> group, Faction faction, out IntVec3 muster, out IntVec3 entry, out Pawn captain)
+			bool tarAmmo, bool carrionAmmo, float points, List<Pawn> group, Faction faction, out IntVec3 muster, out IntVec3 entry, out Pawn captain) =>
+			LaunchGroup(map, breach, engineDef, trebuchetCount, ballistaCount, tarAmmo, carrionAmmo, points, group, faction,
+				out muster, out entry, out captain, supplied: false);
+
+		// supplied = another mod's own pawns: leave them as they came, no ransom case
+		public static bool LaunchGroup(Map map, IntVec3 breach, ThingDef engineDef, int trebuchetCount, int ballistaCount,
+			bool tarAmmo, bool carrionAmmo, float points, List<Pawn> group, Faction faction, out IntVec3 muster, out IntVec3 entry, out Pawn captain,
+			bool supplied)
 		{
 			muster = breach;
 			entry = IntVec3.Invalid;
@@ -37,15 +47,17 @@ namespace RimSiege
 			if (!faction.HostileTo(Faction.OfPlayer))
 				faction.SetRelationDirect(Faction.OfPlayer, FactionRelationKind.Hostile, canSendHostilityLetter: false);
 
-			// vanilla order: entry cell first, camp spot from it. only extra: camp must reach the breach
-			entry = FindEntryCell(map);
+			// vanilla order: entry cell first, camp spot from it. only extra: camp must reach the breach.
+			// a supplied army can already stand on the map or ride pods down onto it: camp off where it is
+			Pawn here = group.FirstOrDefault(p => p.MapHeld == map);
+			entry = here != null ? here.PositionHeld : FindEntryCell(map);
 			TraverseParms tp = TraverseParms.For(TraverseMode.NoPassClosedDoors, Danger.Deadly);
 			muster = RCellFinder.FindSiegePositionFrom(entry, map, allowRoofed: false, errorOnFail: false,
 				c => map.reachability.CanReach(c, breach, PathEndMode.Touch, tp));
 
 			foreach (Pawn crew in group)
 			{
-				if (crew.Spawned) continue;
+				if (crew.Spawned || crew.MapHeld != null) continue; // in a pod: lands and joins on its own
 				GenSpawn.Spawn(crew, CellFinder.RandomClosewalkCellNear(entry, map, 8), map);
 			}
 
@@ -53,7 +65,7 @@ namespace RimSiege
 			// and no hands, so they never lead the host
 			captain = group.Where(p => !p.Dead && CanCrew(p))
 				.OrderByDescending(p => p.kindDef.combatPower).FirstOrDefault();
-			if (captain != null)
+			if (captain != null && !supplied)
 			{
 				MakeCaptain(captain);
 				GameComponent_SiegeDemands.Get()?.RegisterCaptain(captain, faction, map,
@@ -61,7 +73,8 @@ namespace RimSiege
 			}
 
 			LordMaker.MakeNewLord(faction,
-				new LordJob_MedievalSiege(faction, muster, breach, engineDef, trebuchetCount, ballistaCount, tarAmmo, carrionAmmo, points, captain), map, group);
+				new LordJob_MedievalSiege(faction, muster, breach, engineDef, trebuchetCount, ballistaCount, tarAmmo, carrionAmmo, points, captain)
+					{ supplied = supplied }, map, group);
 			return true;
 		}
 
@@ -98,13 +111,7 @@ namespace RimSiege
 			List<Pawn> group = GenerateWarband(map, faction, points * s.warbandFactor);
 			if (group.NullOrEmpty()) return false;
 
-			ThingDef engineDef = null;
-			bool tower = false;
-			if (Rand.Chance(Mathf.Clamp01((points - s.enginePointsFloor) / 1300f)))
-			{
-				tower = Rand.Bool;
-				engineDef = tower ? RimSiegeDefOf.RimSiege_SiegeTower : RimSiegeDefOf.RimSiege_BatteringRam;
-			}
+			ThingDef engineDef = RollEngine(points, s, out bool tower);
 
 			// engine rolled first, the tower prefers walls
 			if (!TryFindSiegeTarget(map, preferWalls: tower, out IntVec3 breach))
@@ -115,19 +122,7 @@ namespace RimSiege
 
 			int trebuchetCount = 0;
 			int ballistaCount = 0;
-			if (engineDef != null)
-			{
-				float tf = s.trebuchetPointsFloor;
-				if (Rand.Chance(Mathf.Clamp01((points - tf) / 2000f))) trebuchetCount = 1;
-				if (trebuchetCount == 1 && Rand.Chance(Mathf.Clamp01((points - (tf + 2000f)) / 2500f))) trebuchetCount = 2;
-				if (trebuchetCount == 2 && Rand.Chance(Mathf.Clamp01((points - (tf + 4500f)) / 3000f))) trebuchetCount = 3;
-				trebuchetCount = Mathf.Min(trebuchetCount, s.maxTrebuchets);
-
-				float bf = s.ballistaPointsFloor;
-				if (Rand.Chance(Mathf.Clamp01((points - bf) / 2500f))) ballistaCount = 1;
-				if (ballistaCount == 1 && Rand.Chance(Mathf.Clamp01((points - (bf + 2500f)) / 3000f))) ballistaCount = 2;
-				ballistaCount = Mathf.Min(ballistaCount, s.maxBallistas);
-			}
+			if (engineDef != null) RollArtillery(points, s, out trebuchetCount, out ballistaCount);
 			bool tarAmmo = trebuchetCount > 0 && points >= s.tarBoulderPointsFloor;
 			bool carrionAmmo = s.carrionEnabled && trebuchetCount > 0 && points >= s.tarBoulderPointsFloor + 2000f;
 
@@ -147,9 +142,7 @@ namespace RimSiege
 			if (!LaunchGroup(map, breach, engineDef, trebuchetCount, ballistaCount, tarAmmo, carrionAmmo, points, group, faction, out IntVec3 muster, out IntVec3 entry, out Pawn captain))
 				return false;
 
-			int sappers = 0;
-			if (Rand.Chance(Mathf.Clamp01((points - s.sapperPointsFloor) / 2300f)))
-				sappers = Mathf.Min(points >= s.sapperPointsFloor + 1800f ? 2 : 1, s.maxSappers);
+			int sappers = RollSappers(points, s);
 			if (sappers > 0)
 			{
 				PawnKindDef crewKind = CrewKindFor(faction);
@@ -158,6 +151,89 @@ namespace RimSiege
 
 			SendSiegeBeginsLetter(faction, engineDef, tower, trebuchetCount, ballistaCount, sappers, muster, map, captain, avenging);
 			return true;
+		}
+
+		// hands a supplied host must keep for the engine: captain, 3 pushers, one spare
+		private const int SuppliedEngineHands = 5;
+
+		// another mod's own army (SiegeApi). same siege, but nothing comes from thin air: no siege crews,
+		// sappers carved out of the host, no second column, no late tribute, no ransom or vendetta,
+		// captain gets no gold helm or skill bump. caller checked faction, pawns and hostility
+		public static bool LaunchSupplied(Map map, Faction faction, List<Pawn> troops, bool sendLetter)
+		{
+			RimSiegeSettings s = RimSiegeMod.S;
+			float points = troops.Sum(p => p.kindDef.combatPower);
+			int hands = troops.Count(CanCrew);
+
+			bool tower = false;
+			ThingDef engineDef = null;
+			if (hands >= SuppliedEngineHands) engineDef = RollEngine(points, s, out tower);
+			if (!TryFindSiegeTarget(map, preferWalls: tower, out IntVec3 breach)) return false;
+
+			// guns get manned out of the host, so only what it can spare
+			int spare = hands - SuppliedEngineHands;
+			int trebuchetCount = 0;
+			int ballistaCount = 0;
+			if (engineDef != null)
+			{
+				RollArtillery(points, s, out trebuchetCount, out ballistaCount);
+				trebuchetCount = Mathf.Clamp(trebuchetCount, 0, spare);
+				ballistaCount = Mathf.Clamp(ballistaCount, 0, spare - trebuchetCount);
+				spare -= trebuchetCount + ballistaCount;
+			}
+			bool tarAmmo = trebuchetCount > 0 && points >= s.tarBoulderPointsFloor;
+			bool carrionAmmo = s.carrionEnabled && trebuchetCount > 0 && points >= s.tarBoulderPointsFloor + 2000f;
+
+			// sappers only off a big enough host, cheapest hands, the main body keeps 3 more fighters
+			var group = new List<Pawn>(troops);
+			var squad = new List<Pawn>();
+			IntVec3 sapWall = IntVec3.Invalid;
+			int sappers = Mathf.Min(RollSappers(points, s), spare - 3);
+			if (sappers > 0 && TryFindSiegeTargetAwayFrom(map, breach, 15f, out sapWall))
+			{
+				squad = group.Where(CanCrew).OrderBy(p => p.kindDef.combatPower).Take(sappers).ToList();
+				group.RemoveAll(squad.Contains);
+			}
+
+			if (!LaunchGroup(map, breach, engineDef, trebuchetCount, ballistaCount, tarAmmo, carrionAmmo, points, group, faction,
+					out IntVec3 muster, out IntVec3 entry, out Pawn captain, supplied: true))
+				return false;
+			if (squad.Count > 0) SendSappers(map, faction, squad, sapWall, entry, muster);
+
+			if (sendLetter)
+				SendSiegeBeginsLetter(faction, engineDef, tower, trebuchetCount, ballistaCount, squad.Count, muster, map, captain,
+					supplied: true);
+			return true;
+		}
+
+		private static ThingDef RollEngine(float points, RimSiegeSettings s, out bool tower)
+		{
+			tower = false;
+			if (!Rand.Chance(Mathf.Clamp01((points - s.enginePointsFloor) / 1300f))) return null;
+			tower = Rand.Bool;
+			return tower ? RimSiegeDefOf.RimSiege_SiegeTower : RimSiegeDefOf.RimSiege_BatteringRam;
+		}
+
+		private static void RollArtillery(float points, RimSiegeSettings s, out int trebuchetCount, out int ballistaCount)
+		{
+			trebuchetCount = 0;
+			ballistaCount = 0;
+			float tf = s.trebuchetPointsFloor;
+			if (Rand.Chance(Mathf.Clamp01((points - tf) / 2000f))) trebuchetCount = 1;
+			if (trebuchetCount == 1 && Rand.Chance(Mathf.Clamp01((points - (tf + 2000f)) / 2500f))) trebuchetCount = 2;
+			if (trebuchetCount == 2 && Rand.Chance(Mathf.Clamp01((points - (tf + 4500f)) / 3000f))) trebuchetCount = 3;
+			trebuchetCount = Mathf.Min(trebuchetCount, s.maxTrebuchets);
+
+			float bf = s.ballistaPointsFloor;
+			if (Rand.Chance(Mathf.Clamp01((points - bf) / 2500f))) ballistaCount = 1;
+			if (ballistaCount == 1 && Rand.Chance(Mathf.Clamp01((points - (bf + 2500f)) / 3000f))) ballistaCount = 2;
+			ballistaCount = Mathf.Min(ballistaCount, s.maxBallistas);
+		}
+
+		private static int RollSappers(float points, RimSiegeSettings s)
+		{
+			if (!Rand.Chance(Mathf.Clamp01((points - s.sapperPointsFloor) / 2300f))) return 0;
+			return Mathf.Min(points >= s.sapperPointsFloor + 1800f ? 2 : 1, s.maxSappers);
 		}
 
 		public static PawnKindDef CrewKindFor(Faction f) => GetHumanlikeKind(f);
@@ -187,8 +263,10 @@ namespace RimSiege
 		// man engines, guard the captain, or get ransomed
 		public static bool CanCrew(Pawn p) => p?.RaceProps?.Humanlike ?? false;
 
+		// supplied captain has no gilded helm and maybe no guards, the hint cant promise them
 		private static void SendSiegeBeginsLetter(Faction faction, ThingDef engineDef, bool tower,
-			int trebuchetCount, int ballistaCount, int sappers, IntVec3 muster, Map map, Pawn captain, string avenging = null)
+			int trebuchetCount, int ballistaCount, int sappers, IntVec3 muster, Map map, Pawn captain, string avenging = null,
+			bool supplied = false)
 		{
 			string label, text;
 			if (engineDef == null)
@@ -212,7 +290,8 @@ namespace RimSiege
 			if (ballistaCount > 0) text += " " + "RimSiege_BallistaHint".Translate();
 			if (sappers > 0) text += " " + "RimSiege_SappersHint".Translate();
 			if (RimSiegeMod.S.captainRout && captain != null)
-				text += " " + "RimSiege_CaptainHint".Translate(captain.Name?.ToStringFull ?? captain.LabelShort);
+				text += " " + (supplied ? "RimSiege_CaptainHintPlain" : "RimSiege_CaptainHint")
+					.Translate(captain.Name?.ToStringFull ?? captain.LabelShort);
 			if (!avenging.NullOrEmpty())
 				text += "\n\n" + "RimSiege_VendettaHint".Translate(avenging);
 
@@ -261,18 +340,22 @@ namespace RimSiege
 			if (!faction.HostileTo(Faction.OfPlayer))
 				faction.SetRelationDirect(Faction.OfPlayer, FactionRelationKind.Hostile, canSendHostilityLetter: false);
 
-			IntVec3 entry = spawnAt.IsValid ? spawnAt : EntryCellFor(map, sapWall);
 			var group = new List<Pawn>();
 			for (int i = 0; i < count; i++)
-			{
-				var s = PawnGenerator.GeneratePawn(new PawnGenerationRequest(
+				group.Add(PawnGenerator.GeneratePawn(new PawnGenerationRequest(
 					crewKind, faction, PawnGenerationContext.NonPlayer,
 					tile: map.Tile, forceGenerateNewPawn: true, mustBeCapableOfViolence: true,
-					canGeneratePawnRelations: false));
-				GenSpawn.Spawn(s, CellFinder.RandomClosewalkCellNear(entry, map, 8), map);
-				group.Add(s);
-			}
-			LordMaker.MakeNewLord(faction, new LordJob_Sappers(sapWall, rally), map, group);
+					canGeneratePawnRelations: false)));
+			SendSappers(map, faction, group, sapWall, spawnAt, rally);
+		}
+
+		// unspawned ones walk in at spawnAt, then off to the second wall
+		private static void SendSappers(Map map, Faction faction, List<Pawn> squad, IntVec3 sapWall, IntVec3 spawnAt, IntVec3 rally)
+		{
+			IntVec3 entry = spawnAt.IsValid ? spawnAt : EntryCellFor(map, sapWall);
+			foreach (Pawn s in squad)
+				if (!s.Spawned && s.MapHeld == null) GenSpawn.Spawn(s, CellFinder.RandomClosewalkCellNear(entry, map, 8), map);
+			LordMaker.MakeNewLord(faction, new LordJob_Sappers(sapWall, rally), map, squad);
 		}
 
 		// walls only, a petard on a door is pointless

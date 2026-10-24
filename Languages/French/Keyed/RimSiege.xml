@@ -14,6 +14,7 @@
   <RimSiege_BombardBegins>Les engins de siège sont achevés. Le bombardement commence.</RimSiege_BombardBegins>
   <RimSiege_SappersHint>Des sapeurs tenteront d'ouvrir une seconde brèche ailleurs sur votre muraille.</RimSiege_SappersHint>
   <RimSiege_CaptainHint>Leur capitaine, {0}, mène la troupe : repérez le heaume doré et ses deux gardes du corps. Abattez-le tôt et le siège s'effondrera.</RimSiege_CaptainHint>
+  <RimSiege_CaptainHintPlain>Leur capitaine, {0}, mène la troupe. Abattez-le tôt et le siège s'effondrera.</RimSiege_CaptainHintPlain>
   <RimSiege_CaptainFell>{0} est tombé, les assiégeants perdent courage et lèvent le camp !</RimSiege_CaptainFell>
 
   <!-- ultimatum -->

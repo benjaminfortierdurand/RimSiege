@@ -340,13 +340,13 @@ namespace RimSiege
 		{
 			CaptainCase c = GetCase(id);
 			if (c == null) return;
-			RemoveRansomLetter(c);
 			Pawn cap = c.captain;
-			if (cap == null || cap.Dead) return;
-			if (!cap.IsPrisonerOfColony) { c.state = CaptainCase.Kept; return; } // slipped away first
+			if (cap == null || cap.Dead) { RemoveRansomLetter(c); return; }
+			if (!cap.IsPrisonerOfColony) { RemoveRansomLetter(c); c.state = CaptainCase.Kept; return; } // slipped away first
 
 			List<Pawn> candidates = ExecutionerCandidates(cap);
-			if (candidates.Count == 0) { ExecuteNow(c); return; }
+			if (candidates.Count == 0) { RemoveRansomLetter(c); ExecuteNow(c); return; }
+			// the letter stays until someone is picked: closing the menu used to lose the offer
 
 			var opts = new List<FloatMenuOption>();
 			foreach (Pawn p in candidates)
@@ -370,6 +370,7 @@ namespace RimSiege
 		{
 			CaptainCase c = GetCase(id);
 			if (c == null) return;
+			RemoveRansomLetter(c);
 			Pawn cap = c.captain;
 			if (cap == null || cap.Dead) return;
 			if (!cap.IsPrisonerOfColony) { c.state = CaptainCase.Kept; return; }
@@ -879,6 +880,8 @@ namespace RimSiege
 		{
 			if (d.late) return;
 			if (d.faction == null || d.faction.defeated) return;
+			// peace made while the ultimatum ran: no siege, the launcher would have flipped them hostile again
+			if (!d.faction.HostileTo(Faction.OfPlayer)) return;
 			if (d.map == null || !Find.Maps.Contains(d.map)) return;
 			SiegeLauncher.ExecuteSiege(d.map, d.faction, d.points);
 		}
