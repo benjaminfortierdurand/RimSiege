@@ -16,7 +16,8 @@
 		<displayInFactionSelection>false</displayInFactionSelection>
 		<canGenerateQuestSites>false</canGenerateQuestSites>
 		<factionIconPath>World/WorldObjects/Expanding/Sites/DownedRefugee</factionIconPath>
-		<basicMemberKind>DankPyon_Medieval_Peasant</basicMemberKind>
+		<!-- pion vanilla pour marcher sans MO. ne sert qu'au chef de cette faction cachée, les émissaires viennent de la maison du capitaine -->
+		<basicMemberKind>Tribal_Warrior</basicMemberKind>
 		<backstoryFilters>
 			<li>
 				<categories>

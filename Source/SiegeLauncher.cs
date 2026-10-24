@@ -67,7 +67,7 @@ namespace RimSiege
 				.OrderByDescending(p => p.kindDef.combatPower).FirstOrDefault();
 			if (captain != null && !supplied)
 			{
-				MakeCaptain(captain);
+				MakeCaptain(captain, faction);
 				GameComponent_SiegeDemands.Get()?.RegisterCaptain(captain, faction, map,
 					group.Sum(p => p.kindDef.combatPower));
 			}
@@ -78,17 +78,27 @@ namespace RimSiege
 			return true;
 		}
 
-		private static void MakeCaptain(Pawn p)
+		// wooden engines, slings, banners: a pre-gunpowder thing. pirates with rifles get no ram
+		public static bool OldWorld(Faction f) => f?.def != null && f.def.techLevel <= TechLevel.Medieval;
+
+		private static readonly string[] GildedHelms =
+			{ "DankPyon_Headgear_ArmetGilded", "DankPyon_Headgear_SalletGryphon", "DankPyon_Headgear_HeraldicGreatHelm1c" };
+
+		private static bool HasDef(string defName) => DefDatabase<ThingDef>.GetNamedSilentFail(defName) != null;
+
+		private static void MakeCaptain(Pawn p, Faction faction)
 		{
 			p.skills?.GetSkill(SkillDefOf.Shooting)?.EnsureMinLevelWithMargin(11);
 			p.skills?.GetSkill(SkillDefOf.Melee)?.EnsureMinLevelWithMargin(11);
 
-			// gold helm so the player can spot him
-			ThingDef hat =
-				DefDatabase<ThingDef>.GetNamedSilentFail("DankPyon_Headgear_ArmetGilded")
-				?? DefDatabase<ThingDef>.GetNamedSilentFail("DankPyon_Headgear_SalletGryphon")
-				?? DefDatabase<ThingDef>.GetNamedSilentFail("DankPyon_Headgear_HeraldicGreatHelm1c")
-				?? DefDatabase<ThingDef>.GetNamedSilentFail("Apparel_TribalHeaddress");
+			// gold helm so the player can spot him (MO). a tribe chief gets a headdress, a gun era
+			// captain keeps his own lid
+			ThingDef headdress = DefDatabase<ThingDef>.GetNamedSilentFail("Apparel_TribalHeaddress");
+			ThingDef hat = null;
+			if (faction?.def?.techLevel == TechLevel.Neolithic) hat = headdress;
+			else if (OldWorld(faction))
+				hat = GildedHelms.Select(n => DefDatabase<ThingDef>.GetNamedSilentFail(n)).FirstOrDefault(d => d != null)
+					?? headdress;
 			if (hat == null || p.apparel == null) return;
 
 			ThingDef stuff = null;
@@ -111,7 +121,8 @@ namespace RimSiege
 			List<Pawn> group = GenerateWarband(map, faction, points * s.warbandFactor);
 			if (group.NullOrEmpty()) return false;
 
-			ThingDef engineDef = RollEngine(points, s, out bool tower);
+			bool tower = false;
+			ThingDef engineDef = OldWorld(faction) ? RollEngine(points, s, out tower) : null;
 
 			// engine rolled first, the tower prefers walls
 			if (!TryFindSiegeTarget(map, preferWalls: tower, out IntVec3 breach))
@@ -167,7 +178,7 @@ namespace RimSiege
 
 			bool tower = false;
 			ThingDef engineDef = null;
-			if (hands >= SuppliedEngineHands) engineDef = RollEngine(points, s, out tower);
+			if (hands >= SuppliedEngineHands && OldWorld(faction)) engineDef = RollEngine(points, s, out tower);
 			if (!TryFindSiegeTarget(map, preferWalls: tower, out IntVec3 breach)) return false;
 
 			// guns get manned out of the host, so only what it can spare
@@ -201,8 +212,7 @@ namespace RimSiege
 			if (squad.Count > 0) SendSappers(map, faction, squad, sapWall, entry, muster);
 
 			if (sendLetter)
-				SendSiegeBeginsLetter(faction, engineDef, tower, trebuchetCount, ballistaCount, squad.Count, muster, map, captain,
-					supplied: true);
+				SendSiegeBeginsLetter(faction, engineDef, tower, trebuchetCount, ballistaCount, squad.Count, muster, map, captain);
 			return true;
 		}
 
@@ -228,6 +238,10 @@ namespace RimSiege
 			if (Rand.Chance(Mathf.Clamp01((points - bf) / 2500f))) ballistaCount = 1;
 			if (ballistaCount == 1 && Rand.Chance(Mathf.Clamp01((points - (bf + 2500f)) / 3000f))) ballistaCount = 2;
 			ballistaCount = Mathf.Min(ballistaCount, s.maxBallistas);
+
+			// MO brings the slings and bolt throwers. without it the ram or tower goes alone
+			if (!HasDef("DankPyon_Turret_Trebuchet") || !HasDef("DankPyon_StoneBoulder")) trebuchetCount = 0;
+			if (!HasDef("DankPyon_Turret_Ballista") || !HasDef("DankPyon_BallistaBolt")) ballistaCount = 0;
 		}
 
 		private static int RollSappers(float points, RimSiegeSettings s)
@@ -263,10 +277,8 @@ namespace RimSiege
 		// man engines, guard the captain, or get ransomed
 		public static bool CanCrew(Pawn p) => p?.RaceProps?.Humanlike ?? false;
 
-		// supplied captain has no gilded helm and maybe no guards, the hint cant promise them
 		private static void SendSiegeBeginsLetter(Faction faction, ThingDef engineDef, bool tower,
-			int trebuchetCount, int ballistaCount, int sappers, IntVec3 muster, Map map, Pawn captain, string avenging = null,
-			bool supplied = false)
+			int trebuchetCount, int ballistaCount, int sappers, IntVec3 muster, Map map, Pawn captain, string avenging = null)
 		{
 			string label, text;
 			if (engineDef == null)
@@ -290,8 +302,12 @@ namespace RimSiege
 			if (ballistaCount > 0) text += " " + "RimSiege_BallistaHint".Translate();
 			if (sappers > 0) text += " " + "RimSiege_SappersHint".Translate();
 			if (RimSiegeMod.S.captainRout && captain != null)
-				text += " " + (supplied ? "RimSiege_CaptainHintPlain" : "RimSiege_CaptainHint")
+			{
+				// only promise the gilded helm when he actually wears one. tribe chiefs and gun era captains dont get it
+				bool gilded = captain.apparel?.WornApparel?.Any(a => GildedHelms.Contains(a.def.defName)) ?? false;
+				text += " " + (gilded ? "RimSiege_CaptainHint" : "RimSiege_CaptainHintPlain")
 					.Translate(captain.Name?.ToStringFull ?? captain.LabelShort);
+			}
 			if (!avenging.NullOrEmpty())
 				text += "\n\n" + "RimSiege_VendettaHint".Translate(avenging);
 
@@ -546,8 +562,10 @@ namespace RimSiege
 			return null;
 		}
 
+		// MO banners. a gun era camp flies none
 		public static ThingDef HouseBanner(Faction f)
 		{
+			if (!OldWorld(f)) return null;
 			string h = HouseOf(f);
 			if (h != null)
 			{

@@ -4,8 +4,45 @@
 	<!-- bug latent MO : cliquer une baliste EN CONSTRUCTION crashe chaque frame, le def de frame
 	     généré n'a pas de turretGunDef et PlaceWorker_TurretTop.DrawGhost le déréférence sans garde.
 	     on retire juste le fantôme décoratif, l'anneau de portée reste. signalé upstream -->
+	<!-- MO est optionnel : sans lui rien à retirer, pas d'erreur -->
 	<Operation Class="PatchOperationRemove">
+		<success>Always</success>
 		<xpath>Defs/ThingDef[defName="DankPyon_Turret_Ballista" or defName="DankPyon_Turret_RepeaterBallista"]/placeWorkers/li[text()="PlaceWorker_TurretTop"]</xpath>
+	</Operation>
+
+	<!-- avec MO : tonneau de poudre pour le pétard, boulets pour la charogne. sans MO les textures vanilla restent -->
+	<Operation Class="PatchOperationFindMod">
+		<mods>
+			<li>Medieval Overhaul</li>
+		</mods>
+		<match Class="PatchOperationSequence">
+			<operations>
+				<li Class="PatchOperationReplace">
+					<xpath>Defs/ThingDef[defName="RimSiege_Petard"]/graphicData</xpath>
+					<value>
+						<graphicData>
+							<texPath>Things/Building/Storage/BarrelClosed</texPath>
+							<graphicClass>Graphic_Single</graphicClass>
+							<shaderType>Cutout</shaderType>
+							<color>(0.55, 0.42, 0.28)</color>
+							<drawSize>(0.9, 0.9)</drawSize>
+						</graphicData>
+					</value>
+				</li>
+				<li Class="PatchOperationReplace">
+					<xpath>Defs/ThingDef[defName="RimSiege_CarrionShell"]/graphicData/texPath</xpath>
+					<value>
+						<texPath>Things/Item/Resource/StoneBoulder</texPath>
+					</value>
+				</li>
+				<li Class="PatchOperationReplace">
+					<xpath>Defs/ThingDef[defName="RimSiege_Artillery_Carrion"]/graphicData/texPath</xpath>
+					<value>
+						<texPath>Things/Projectile/BoulderBullet</texPath>
+					</value>
+				</li>
+			</operations>
+		</match>
 	</Operation>
 
 </Patch>

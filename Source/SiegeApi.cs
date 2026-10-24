@@ -28,6 +28,8 @@ namespace RimSiege
 		// of your troops too, no second column, no late tribute, no ransom or vendetta, the captain keeps
 		// his own gear and skills. like a vanilla siege, engine materials, ammo, camp gear and meals drop in
 		// by pod and builders get construction 6 + construction-only work.
+		// ram, tower and artillery only for tribal or medieval factions with 5+ humanlike adults, trebuchets
+		// and ballistas only with Medieval Overhaul. a gun era army gets the camp, the captain and a foot assault.
 		// survivors leave by walking off the map (or back over the tower).
 		// false = nothing done, pawns untouched: not hostile, bad pawn list, or no wall worth a siege.
 		// run your normal assault then
