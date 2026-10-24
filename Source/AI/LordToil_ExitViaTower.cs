@@ -29,7 +29,7 @@ namespace RimSiege.AI
 			{
 				var job = lord.LordJob as LordJob_MedievalSiege;
 				if (job?.engine != null)
-					return job.engine.Spawned && job.engine.def == RimSiegeDefOf.RimSiege_SiegeTower ? job.engine : null;
+					return job.engine.Spawned && job.engine is Building_SiegeTower ? job.engine : null; // ladder too
 				return Map.listerThings.ThingsOfDef(RimSiegeDefOf.RimSiege_SiegeTower)
 					.FirstOrDefault(t => t.Faction == lord.faction && t.Spawned) as Building_SiegeEngine;
 			}

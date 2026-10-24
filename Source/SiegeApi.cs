@@ -26,11 +26,13 @@ namespace RimSiege
 		// no sieges on vacuum maps.
 		// nothing extra gets made: no siege crews (guns are manned out of your troops), sappers come out
 		// of your troops too, no second column, no late tribute, no ransom or vendetta, the captain keeps
-		// his own gear and skills. like a vanilla siege, engine materials, ammo, camp gear and meals drop in
+		// their own gear and skills. like a vanilla siege, engine materials, ammo, camp gear and meals drop in
 		// by pod and builders get construction 6 + construction-only work.
-		// ram, tower and artillery only for tribal or medieval factions with 5+ humanlike adults, trebuchets
-		// and ballistas only with Medieval Overhaul. a gun era army gets the camp, the captain and a foot assault.
-		// survivors leave by walking off the map (or back over the tower).
+		// engines need 5+ humanlike adults. medieval factions get a ram or tower, plus trebuchets and ballistas
+		// with Medieval Overhaul. tribes carry theirs: a log ram (6+ adults, four on the grips) or a ladder,
+		// never artillery. a gun era army gets the camp, the captain and a foot assault.
+		// sappers need gunpowder: medieval and gun era armies only, never a tribe.
+		// survivors leave by walking off the map (or back over the tower or ladder).
 		// false = nothing done, pawns untouched: not hostile, bad pawn list, or no wall worth a siege.
 		// run your normal assault then
 		public static bool TryLaunchSiege(Map map, Faction faction, List<Pawn> troops, bool sendLetter)

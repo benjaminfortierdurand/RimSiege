@@ -1,3 +1,4 @@
+using System.Linq;
 using LudeonTK;
 using RimWorld;
 using Verse;
@@ -66,6 +67,37 @@ namespace RimSiege.Debug
 			foreach (Pawn p in army) if (!p.Destroyed) p.Destroy();
 			Messages.Message("RimSiege: SiegeApi said no (no wall or door to hit, or this faction already has a siege here).",
 				MessageTypeDefOf.RejectInput, historical: false);
+		}
+
+		// tribal kit: log ram or ladder, no artillery, no sappers. forced engine so both get a test
+		[DebugAction("RimSiege", "Siege now: tribe with log ram (4k points)",
+			actionType = DebugActionType.Action,
+			allowedGameStates = AllowedGameStates.PlayingOnMap)]
+		private static void TribeLogRam() => TribeSiege(RimSiegeDefOf.RimSiege_LogRam);
+
+		[DebugAction("RimSiege", "Siege now: tribe with ladder (4k points)",
+			actionType = DebugActionType.Action,
+			allowedGameStates = AllowedGameStates.PlayingOnMap)]
+		private static void TribeLadder() => TribeSiege(RimSiegeDefOf.RimSiege_SiegeLadder);
+
+		private static void TribeSiege(ThingDef engine)
+		{
+			Map map = Find.CurrentMap;
+			if (map == null) return;
+			Faction faction = Find.FactionManager.AllFactions
+				.Where(f => !f.IsPlayer && !f.defeated && !f.def.hidden && SiegeLauncher.Tribal(f)
+					&& f.HostileTo(Faction.OfPlayer) && SiegeLauncher.CrewKindFor(f) != null)
+				.RandomElementWithFallback();
+			if (faction == null)
+			{
+				Messages.Message("RimSiege: no hostile tribe found.", MessageTypeDefOf.RejectInput, historical: false);
+				return;
+			}
+			SiegeLauncher.debugNextEngine = engine;
+			if (!SiegeLauncher.ExecuteSiege(map, faction, ApiTestPoints))
+				Messages.Message("RimSiege: could not launch the siege (no wall or door to hit?).",
+					MessageTypeDefOf.RejectInput, historical: false);
+			SiegeLauncher.debugNextEngine = null;
 		}
 
 		// both skip the ultimatum. for that one use the vanilla incident tool

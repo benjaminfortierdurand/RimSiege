@@ -9,6 +9,8 @@ namespace RimSiege
 	{
 		public static ThingDef RimSiege_BatteringRam;
 		public static ThingDef RimSiege_SiegeTower;
+		public static ThingDef RimSiege_LogRam;
+		public static ThingDef RimSiege_SiegeLadder;
 		public static ThingDef RimSiege_TrebuchetBoulder;
 		public static ThingDef RimSiege_Petard;
 		public static ThingDef RimSiege_CondemnedFlyer;

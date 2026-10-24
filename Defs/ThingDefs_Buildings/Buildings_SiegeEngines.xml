@@ -79,4 +79,76 @@
 		</building>
 	</ThingDef>
 
+	<!-- kit tribal : un tronc sur poignées de corde, porté par quatre (deux de chaque côté), sans toit ni roues -->
+	<ThingDef ParentName="BuildingBase">
+		<defName>RimSiege_LogRam</defName>
+		<label>log ram</label>
+		<description>A heavy log lashed with rope grips. Four warriors carry it at a run, two on each side, and swing it into a door or wall until something gives. No roof over their heads.</description>
+		<thingClass>RimSiege.Things.Building_LogRam</thingClass>
+		<drawerType>RealtimeOnly</drawerType>
+		<tickerType>Normal</tickerType>
+		<altitudeLayer>Pawn</altitudeLayer>
+		<selectable>true</selectable>
+		<useHitPoints>true</useHitPoints>
+		<fillPercent>0.2</fillPercent>
+		<passability>Standable</passability>
+		<castEdgeShadows>false</castEdgeShadows>
+		<rotatable>true</rotatable>
+		<statBases>
+			<MaxHitPoints>450</MaxHitPoints>
+			<Flammability>1.0</Flammability>
+			<WorkToBuild>1200</WorkToBuild>
+		</statBases>
+		<designationCategory>Security</designationCategory>
+		<minTechLevelToBuild>Archotech</minTechLevelToBuild>
+		<costList>
+			<WoodLog>90</WoodLog>
+		</costList>
+		<!-- sprites 4 directions (art : BenFD), poignées à 2 cases d'écart avec drawSize 5 -->
+		<graphicData>
+			<texPath>Things/Building/LogRam/LogRam</texPath>
+			<graphicClass>Graphic_Multi</graphicClass>
+			<drawSize>(5,5)</drawSize>
+		</graphicData>
+		<building>
+			<isEdifice>false</isEdifice>
+		</building>
+	</ThingDef>
+
+	<!-- kit tribal : posée contre le rempart, les guerriers montent un par un. une seule image vue de dessus qui tourne -->
+	<ThingDef ParentName="BuildingBase">
+		<defName>RimSiege_SiegeLadder</defName>
+		<label>siege ladder</label>
+		<description>A long rough ladder. Two warriors run it up to the rampart and lean it on the wall, then the war band climbs over one at a time. The wall stays standing.</description>
+		<thingClass>RimSiege.Things.Building_SiegeLadder</thingClass>
+		<drawerType>RealtimeOnly</drawerType>
+		<tickerType>Normal</tickerType>
+		<altitudeLayer>Pawn</altitudeLayer>
+		<selectable>true</selectable>
+		<useHitPoints>true</useHitPoints>
+		<fillPercent>0.15</fillPercent>
+		<passability>Standable</passability>
+		<castEdgeShadows>false</castEdgeShadows>
+		<rotatable>true</rotatable>
+		<statBases>
+			<MaxHitPoints>220</MaxHitPoints>
+			<Flammability>1.0</Flammability>
+			<WorkToBuild>900</WorkToBuild>
+		</statBases>
+		<designationCategory>Security</designationCategory>
+		<minTechLevelToBuild>Archotech</minTechLevelToBuild>
+		<costList>
+			<WoodLog>60</WoodLog>
+		</costList>
+		<!-- art : Deon (Deep And Deeper - Ladder retexture), avec permission. 267x866 px, 267 px par case -->
+		<graphicData>
+			<texPath>Things/Building/SiegeLadder/SiegeLadder</texPath>
+			<graphicClass>Graphic_Single</graphicClass>
+			<drawSize>(1,3.24)</drawSize>
+		</graphicData>
+		<building>
+			<isEdifice>false</isEdifice>
+		</building>
+	</ThingDef>
+
 </Defs>

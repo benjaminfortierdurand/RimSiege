@@ -8,13 +8,18 @@
   <RimSiege_TextTower>A force of {0} is setting up camp outside your walls and raising a SIEGE TOWER. Once built, it will be pushed against your rampart to pour attackers over the top. Wreck their worksite before it's ready.</RimSiege_TextTower>
   <RimSiege_LabelRam>Medieval siege</RimSiege_LabelRam>
   <RimSiege_TextRam>A force of {0} is setting up camp outside your walls. They are building a BATTERING RAM to smash your gate. Sally out and sabotage the worksite - kill the builders, burn their blueprints and supplies - or get ready to hold the breach.</RimSiege_TextRam>
+  <RimSiege_LabelLogRam>Tribal siege: log ram</RimSiege_LabelLogRam>
+  <RimSiege_TextLogRam>A war band of {0} is setting up camp outside your walls. They are lashing together a LOG RAM: four of them will carry it at a run up to your gate and pound it until it gives. Hit the camp before they finish, or get ready to hold the breach.</RimSiege_TextLogRam>
+  <RimSiege_LabelLadder>Tribal siege: ladder</RimSiege_LabelLadder>
+  <RimSiege_TextLadder>A war band of {0} is setting up camp outside your walls and binding a SIEGE LADDER. Two of them will run it up to your rampart, then the whole band goes over the wall one at a time. Wreck their worksite before it's ready.</RimSiege_TextLadder>
   <RimSiege_TrebOne>A trebuchet will support the assault from a distance.</RimSiege_TrebOne>
   <RimSiege_TrebMany>A battery of {0} trebuchets will pound your walls from a distance.</RimSiege_TrebMany>
   <RimSiege_BallistaHint>Ballistas will guard their camp - a sally will ride into bolt fire.</RimSiege_BallistaHint>
   <RimSiege_BombardBegins>The siege engines are complete. The bombardment begins.</RimSiege_BombardBegins>
   <RimSiege_SappersHint>Sappers will try to blow a second breach elsewhere in your wall.</RimSiege_SappersHint>
-  <RimSiege_CaptainHint>Their captain, {0}, leads the host - look for the gilded helm and his two bodyguards. Bring him down early and the siege will collapse.</RimSiege_CaptainHint>
-  <RimSiege_CaptainHintPlain>Their captain, {0}, leads the host. Bring him down early and the siege will collapse.</RimSiege_CaptainHintPlain>
+  <RimSiege_CaptainHint>Their captain, {0}, leads the host - look for the gilded helm and the two bodyguards. Take the captain down early and the siege will collapse.</RimSiege_CaptainHint>
+  <RimSiege_CaptainHintPlain>Their captain, {0}, leads the host. Take the captain down early and the siege will collapse.</RimSiege_CaptainHintPlain>
+  <RimSiege_CaptainHintTribal>Their captain, {0}, leads the host - look for the feathered headdress and the two bodyguards. Take the captain down early and the siege will collapse.</RimSiege_CaptainHintTribal>
   <RimSiege_CaptainFell>{0} has fallen - the besiegers lose heart and break camp!</RimSiege_CaptainFell>
 
   <!-- ultimatum -->
@@ -34,10 +39,10 @@
 
   <!-- captain ransom -->
   <RimSiege_RansomLabel>Ransom offer: {0}</RimSiege_RansomLabel>
-  <RimSiege_RansomText>{0} wants their captain back. {1} sits in your jail, and his house offers {2} silver for his safe return.\n\nAccept, and a truce party will come to collect him under a flag of parley: hand him over (your wardens will see to it), and the silver is yours.\nRefuse, and he stays your prisoner.\n\nOr take his head - and live with what follows.</RimSiege_RansomText>
+  <RimSiege_RansomText>{0} wants their captain back. {1} sits in your jail, and the house offers {2} silver for a safe return.\n\nAccept, and a truce party will come to collect the prisoner under a flag of parley: hand the captain over (your wardens will see to it), and the silver is yours.\nRefuse, and the captain stays your prisoner.\n\nOr take the captain's head - and live with what follows.</RimSiege_RansomText>
   <RimSiege_RansomAccept>Accept the ransom ({0} silver)</RimSiege_RansomAccept>
-  <RimSiege_RansomRefuse>Keep him</RimSiege_RansomRefuse>
-  <RimSiege_RansomExecute>Execute him</RimSiege_RansomExecute>
+  <RimSiege_RansomRefuse>Keep the captain</RimSiege_RansomRefuse>
+  <RimSiege_RansomExecute>Execute the captain</RimSiege_RansomExecute>
   <RimSiege_EnvoysComing>A truce party from {0} is on its way to collect {1}.</RimSiege_EnvoysComing>
   <RimSiege_RansomPaid>The ransom is paid: {0} silver. {1} is going home.</RimSiege_RansomPaid>
   <RimSiege_RansomFailed>The envoys have left without their captain. The offer is dead.</RimSiege_RansomFailed>
@@ -49,7 +54,7 @@
   <RimSiege_CaptainFreed>You freed {0} and asked for nothing. {1} will remember the gesture, for a time.</RimSiege_CaptainFreed>
   <RimSiege_PickExecutioner>Who swings the blade?</RimSiege_PickExecutioner>
   <RimSiege_ExecutionerOption>{0} (melee {1})</RimSiege_ExecutionerOption>
-  <RimSiege_FlingOption>Catapult him over the walls ({0} does the honors)</RimSiege_FlingOption>
+  <RimSiege_FlingOption>Catapult the captain over the walls ({0} does the honors)</RimSiege_FlingOption>
   <RimSiege_Flung>{0} is sent sailing over the walls.</RimSiege_Flung>
   <RimSiege_ExecutionOrdered>{0} marches to execute {1}. The drums begin.</RimSiege_ExecutionOrdered>
   <RimSiege_CaptainExecuted>{0} has been executed. {1} will not forget.</RimSiege_CaptainExecuted>
@@ -80,10 +85,10 @@
   <RimSiege_SetWarband>Siege warband size: x{0} threat points</RimSiege_SetWarband>
   <RimSiege_SetPushers>Pushers per engine: {0}</RimSiege_SetPushers>
   <RimSiege_SetCaptainRout>Rout when the captain falls</RimSiege_SetCaptainRout>
-  <RimSiege_SetCaptainRoutTip>Killing the captain (gilded helm) before the breach makes the whole siege flee.</RimSiege_SetCaptainRoutTip>
+  <RimSiege_SetCaptainRoutTip>Killing the captain (gilded helm with Medieval Overhaul) before the breach makes the whole siege flee.</RimSiege_SetCaptainRoutTip>
   <RimSiege_SetDanegeld>Factions remember (danegeld)</RimSiege_SetDanegeld>
   <RimSiege_SetDanegeldTip>Pay a tribute and that faction will come back for more, at a higher price. Rout a siege and word spreads: a long respite before the next one.</RimSiege_SetDanegeldTip>
   <RimSiege_SetRansom>Captains can be ransomed (and avenged)</RimSiege_SetRansom>
-  <RimSiege_SetRansomTip>Capture a siege captain alive and his house will offer silver to get him back. Execute him, betray the truce party or let him die in your jail, and they swear a vendetta: the next siege comes sooner, angrier, and without an ultimatum. Free him for nothing and they will leave your walls alone, for a time.</RimSiege_SetRansomTip>
+  <RimSiege_SetRansomTip>Capture a siege captain alive and their house will offer silver to get them back. Execute the captain, betray the truce party or let the captain die in your jail, and they swear a vendetta: the next siege comes sooner, angrier, and without an ultimatum. Free the captain for nothing and they will leave your walls alone, for a time.</RimSiege_SetRansomTip>
 
 </LanguageData>

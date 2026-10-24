@@ -29,6 +29,10 @@ namespace RimSiege.AI
 		public IntVec3 engineSpot = IntVec3.Invalid; // where its blueprint went down
 
 		public float Points => points;
+		public ThingDef EngineDef => engineDef;
+
+		// tower or ladder: they go over the top, not through, and leave the same way
+		private bool Climbs => engineDef != null && typeof(Building_SiegeTower).IsAssignableFrom(engineDef.thingClass);
 
 		public override bool GuiltyOnDowned => true;
 
@@ -60,7 +64,7 @@ namespace RimSiege.AI
 			LordToil assault = assaultGraph.StartingToil;
 
 			// tower sieges retreat back over the tower, everyone else digs out if trapped
-			LordToil exit = (engineDef == RimSiegeDefOf.RimSiege_SiegeTower)
+			LordToil exit = Climbs
 				? (LordToil)new LordToil_ExitViaTower()
 				: new LordToil_ExitMap(LocomotionUrgency.Jog, canDig: true, interruptCurrentJob: true);
 			graph.AddToil(exit);
@@ -72,7 +76,9 @@ namespace RimSiege.AI
 			LordToil push = null;
 			if (engineDef != null)
 			{
-				push = (engineDef == RimSiegeDefOf.RimSiege_SiegeTower) ? (LordToil)new LordToil_SiegeTower() : new LordToil_PushRam();
+				push = engineDef == RimSiegeDefOf.RimSiege_SiegeLadder ? new LordToil_SiegeLadder()
+				: Climbs ? new LordToil_SiegeTower()
+				: (LordToil)new LordToil_PushRam();
 				((LordToil_PushEngine)push).captain = captain;
 				graph.AddToil(push);
 

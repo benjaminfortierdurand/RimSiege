@@ -81,6 +81,14 @@ namespace RimSiege
 		// wooden engines, slings, banners: a pre-gunpowder thing. pirates with rifles get no ram
 		public static bool OldWorld(Faction f) => f?.def != null && f.def.techLevel <= TechLevel.Medieval;
 
+		// tribes carry a log or a ladder: no wagons, no slings, no bolt throwers
+		public static bool Tribal(Faction f) =>
+			f?.def != null && f.def.techLevel > TechLevel.Undefined && f.def.techLevel <= TechLevel.Neolithic;
+
+		// a petard is gunpowder: a tribe has none, so no sappers. undefined tech keeps them like before
+		public static bool HasGunpowder(Faction f) =>
+			f?.def != null && (f.def.techLevel >= TechLevel.Medieval || f.def.techLevel == TechLevel.Undefined);
+
 		private static readonly string[] GildedHelms =
 			{ "DankPyon_Headgear_ArmetGilded", "DankPyon_Headgear_SalletGryphon", "DankPyon_Headgear_HeraldicGreatHelm1c" };
 
@@ -122,7 +130,7 @@ namespace RimSiege
 			if (group.NullOrEmpty()) return false;
 
 			bool tower = false;
-			ThingDef engineDef = OldWorld(faction) ? RollEngine(points, s, out tower) : null;
+			ThingDef engineDef = OldWorld(faction) ? RollEngine(points, s, faction, out tower) : null;
 
 			// engine rolled first, the tower prefers walls
 			if (!TryFindSiegeTarget(map, preferWalls: tower, out IntVec3 breach))
@@ -133,7 +141,7 @@ namespace RimSiege
 
 			int trebuchetCount = 0;
 			int ballistaCount = 0;
-			if (engineDef != null) RollArtillery(points, s, out trebuchetCount, out ballistaCount);
+			if (engineDef != null && !Tribal(faction)) RollArtillery(points, s, out trebuchetCount, out ballistaCount);
 			bool tarAmmo = trebuchetCount > 0 && points >= s.tarBoulderPointsFloor;
 			bool carrionAmmo = s.carrionEnabled && trebuchetCount > 0 && points >= s.tarBoulderPointsFloor + 2000f;
 
@@ -153,7 +161,7 @@ namespace RimSiege
 			if (!LaunchGroup(map, breach, engineDef, trebuchetCount, ballistaCount, tarAmmo, carrionAmmo, points, group, faction, out IntVec3 muster, out IntVec3 entry, out Pawn captain))
 				return false;
 
-			int sappers = RollSappers(points, s);
+			int sappers = HasGunpowder(faction) ? RollSappers(points, s) : 0;
 			if (sappers > 0)
 			{
 				PawnKindDef crewKind = CrewKindFor(faction);
@@ -178,14 +186,20 @@ namespace RimSiege
 
 			bool tower = false;
 			ThingDef engineDef = null;
-			if (hands >= SuppliedEngineHands && OldWorld(faction)) engineDef = RollEngine(points, s, out tower);
+			if (hands >= SuppliedEngineHands && OldWorld(faction)) engineDef = RollEngine(points, s, faction, out tower);
+			// the log takes four on the grips, a short host brings a ladder instead
+			if (engineDef == RimSiegeDefOf.RimSiege_LogRam && hands < SuppliedEngineHands + 1)
+			{
+				engineDef = RimSiegeDefOf.RimSiege_SiegeLadder;
+				tower = true;
+			}
 			if (!TryFindSiegeTarget(map, preferWalls: tower, out IntVec3 breach)) return false;
 
 			// guns get manned out of the host, so only what it can spare
 			int spare = hands - SuppliedEngineHands;
 			int trebuchetCount = 0;
 			int ballistaCount = 0;
-			if (engineDef != null)
+			if (engineDef != null && !Tribal(faction))
 			{
 				RollArtillery(points, s, out trebuchetCount, out ballistaCount);
 				trebuchetCount = Mathf.Clamp(trebuchetCount, 0, spare);
@@ -199,7 +213,7 @@ namespace RimSiege
 			var group = new List<Pawn>(troops);
 			var squad = new List<Pawn>();
 			IntVec3 sapWall = IntVec3.Invalid;
-			int sappers = Mathf.Min(RollSappers(points, s), spare - 3);
+			int sappers = HasGunpowder(faction) ? Mathf.Min(RollSappers(points, s), spare - 3) : 0;
 			if (sappers > 0 && TryFindSiegeTargetAwayFrom(map, breach, 15f, out sapWall))
 			{
 				squad = group.Where(CanCrew).OrderBy(p => p.kindDef.combatPower).Take(sappers).ToList();
@@ -216,11 +230,23 @@ namespace RimSiege
 			return true;
 		}
 
-		private static ThingDef RollEngine(float points, RimSiegeSettings s, out bool tower)
+		// debug menu forces the next engine roll
+		internal static ThingDef debugNextEngine;
+
+		// tower = something to climb (tower or ladder), it goes for walls instead of the gate
+		private static ThingDef RollEngine(float points, RimSiegeSettings s, Faction faction, out bool tower)
 		{
 			tower = false;
+			if (debugNextEngine != null)
+			{
+				ThingDef forced = debugNextEngine;
+				debugNextEngine = null;
+				tower = typeof(Things.Building_SiegeTower).IsAssignableFrom(forced.thingClass);
+				return forced;
+			}
 			if (!Rand.Chance(Mathf.Clamp01((points - s.enginePointsFloor) / 1300f))) return null;
 			tower = Rand.Bool;
+			if (Tribal(faction)) return tower ? RimSiegeDefOf.RimSiege_SiegeLadder : RimSiegeDefOf.RimSiege_LogRam;
 			return tower ? RimSiegeDefOf.RimSiege_SiegeTower : RimSiegeDefOf.RimSiege_BatteringRam;
 		}
 
@@ -286,6 +312,16 @@ namespace RimSiege
 				label = "RimSiege_LabelFootAssault".Translate();
 				text = "RimSiege_TextFootAssault".Translate(faction.Name);
 			}
+			else if (engineDef == RimSiegeDefOf.RimSiege_LogRam)
+			{
+				label = "RimSiege_LabelLogRam".Translate();
+				text = "RimSiege_TextLogRam".Translate(faction.Name);
+			}
+			else if (engineDef == RimSiegeDefOf.RimSiege_SiegeLadder)
+			{
+				label = "RimSiege_LabelLadder".Translate();
+				text = "RimSiege_TextLadder".Translate(faction.Name);
+			}
 			else if (tower)
 			{
 				label = "RimSiege_LabelTower".Translate();
@@ -303,10 +339,13 @@ namespace RimSiege
 			if (sappers > 0) text += " " + "RimSiege_SappersHint".Translate();
 			if (RimSiegeMod.S.captainRout && captain != null)
 			{
-				// only promise the gilded helm when he actually wears one. tribe chiefs and gun era captains dont get it
-				bool gilded = captain.apparel?.WornApparel?.Any(a => GildedHelms.Contains(a.def.defName)) ?? false;
-				text += " " + (gilded ? "RimSiege_CaptainHint" : "RimSiege_CaptainHintPlain")
-					.Translate(captain.Name?.ToStringFull ?? captain.LabelShort);
+				// only point at the headgear actually worn: gilded helm (MO houses), feathered headdress (tribes,
+				// or a house without MO), nothing for gun era captains
+				var worn = captain.apparel?.WornApparel;
+				bool gilded = worn?.Any(a => GildedHelms.Contains(a.def.defName)) ?? false;
+				bool feathered = worn?.Any(a => a.def.defName == "Apparel_TribalHeaddress") ?? false;
+				string hint = gilded ? "RimSiege_CaptainHint" : feathered ? "RimSiege_CaptainHintTribal" : "RimSiege_CaptainHintPlain";
+				text += " " + hint.Translate(captain.Name?.ToStringFull ?? captain.LabelShort);
 			}
 			if (!avenging.NullOrEmpty())
 				text += "\n\n" + "RimSiege_VendettaHint".Translate(avenging);
