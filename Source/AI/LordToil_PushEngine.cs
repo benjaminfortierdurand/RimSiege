@@ -54,6 +54,7 @@ namespace RimSiege.AI
 
 		private const int EngineStallTimeout = 5000;
 		private int lastEngineProgressTick = -1;
+		private int dockedStarvedSince = -1;
 		private const int ReachCheckInterval = 120;
 		private const int UnreachableTimeout = 2500;
 		private int lastReachCheckTick = -99999;
@@ -79,8 +80,18 @@ namespace RimSiege.AI
 
 		protected virtual int MaxPushers => RimSiegeMod.S?.maxPushers ?? 4;
 
-		protected Building_SiegeEngine Engine =>
-			Map.listerThings.ThingsOfDef(EngineDef).FirstOrDefault(t => t.Faction == lord.faction) as Building_SiegeEngine;
+		protected Building_SiegeEngine Engine
+		{
+			get
+			{
+				var job = lord.LordJob as LordJob_MedievalSiege;
+				if (job?.engine != null) return job.engine.Spawned ? job.engine : null;
+				// 1.3.0 save already rolling, nothing on record yet
+				var e = Map.listerThings.ThingsOfDef(EngineDef).FirstOrDefault(t => t.Faction == lord.faction) as Building_SiegeEngine;
+				if (e != null && job != null) job.engine = e;
+				return e;
+			}
+		}
 
 		public override void Init()
 		{
@@ -105,6 +116,18 @@ namespace RimSiege.AI
 			// no bodyguards once the captain went in with the assault, or the reduty pass steals
 			// pushers to chase him and the engine starves
 			bool captainUp = captain != null && captain.Spawned && !captain.Dead && !ShouldKeepCurrentDuty(captain);
+			// the engine crew comes first: bodyguards only out of hands left over, else after a few
+			// losses the ram sat docked with two pushers forever
+			int maxGuards = 2;
+			if (engine != null && EngineNeedsCrewNow(engine))
+			{
+				int hands = 0;
+				foreach (Pawn p in lord.ownedPawns)
+					if (!gunners.Contains(p) && !ShouldKeepCurrentDuty(p) && p != captain && !p.Dead && !p.Downed
+						&& SiegeLauncher.CanCrew(p))
+						hands++;
+				maxGuards = Math.Max(0, Math.Min(2, hands - engine.crewNeeded));
+			}
 			foreach (Pawn p in lord.ownedPawns)
 			{
 				if (gunners.Contains(p)) continue;
@@ -112,7 +135,7 @@ namespace RimSiege.AI
 				bool crew = SiegeLauncher.CanCrew(p); // war beasts escort, they dont work
 
 				// escort duty with radius 0 spams errors, dont remove it
-				if (crew && captainUp && p != captain && guards < 2)
+				if (crew && captainUp && p != captain && guards < maxGuards)
 				{
 					p.mindState.duty = new PawnDuty(RimSiegeDefOf.Escort, captain) { radius = 5f };
 					guards++;
@@ -191,6 +214,14 @@ namespace RimSiege.AI
 			}
 			else
 			{
+				// docked but short of hands (crew dead, gunners took the rest): it never swings again.
+				// same deal as a stalled roll, ditch it and raid on foot
+				if (EngineNeedsCrewNow(engine) && CountPushers(engine) < engine.crewNeeded)
+				{
+					if (dockedStarvedSince < 0) dockedStarvedSince = now;
+					else if (now - dockedStarvedSince >= EngineStallTimeout) { lord.ReceiveMemo("RamLost"); return; }
+				}
+				else dockedStarvedSince = -1;
 				DockedTick(engine, now);
 			}
 		}

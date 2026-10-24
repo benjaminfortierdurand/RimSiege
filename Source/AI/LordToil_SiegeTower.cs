@@ -80,9 +80,8 @@ namespace RimSiege.AI
 
 			if (now - lastDeployTick < DeployInterval) return;
 
-			IntVec3 inside = FindInsideCell(engine);
-			if (!inside.IsValid) { lord.ReceiveMemo("BreachOpen"); return; }
-
+			// climber first: the drop cell search loops colonists and reachability, it ran every tick
+			// while nobody was at the ramp
 			Pawn climber = boarding.FirstOrDefault(p =>
 				(p.Position - engine.Position).LengthHorizontalSquared <= BoardRangeSq);
 			if (climber == null)
@@ -90,6 +89,9 @@ namespace RimSiege.AI
 				if (now - lastDeployProgress >= StallTimeout) lord.ReceiveMemo("BreachOpen");
 				return;
 			}
+
+			IntVec3 inside = FindInsideCell(engine, now);
+			if (!inside.IsValid) { lord.ReceiveMemo("BreachOpen"); return; }
 			lastDeployTick = now;
 
 			// landing might be on a bush, squash it
@@ -149,7 +151,18 @@ namespace RimSiege.AI
 			return false;
 		}
 
-		private IntVec3 FindInsideCell(Building_SiegeEngine engine) => InsideDropCell(Map, engine);
+		private IntVec3 cachedInside = IntVec3.Invalid;
+		private int cachedInsideTick = -99999;
+
+		private IntVec3 FindInsideCell(Building_SiegeEngine engine, int now)
+		{
+			if (now - cachedInsideTick >= 250 || !cachedInside.IsValid || !cachedInside.Walkable(Map))
+			{
+				cachedInside = InsideDropCell(Map, engine);
+				cachedInsideTick = now;
+			}
+			return cachedInside;
+		}
 
 		// drop cell past the wall. not just the first standable one: double walls leave a sealed gap
 		// and gatehouses a corridor between two doors, landing there strands the climbers. so the cell

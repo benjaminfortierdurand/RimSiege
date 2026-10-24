@@ -20,14 +20,32 @@ namespace RimSiege.AI
 		public LordToil_ExitViaTower()
 			: base(LocomotionUrgency.Jog, canDig: true, interruptCurrentJob: true) { }
 
-		private Building_SiegeEngine Tower =>
-			Map.listerThings.ThingsOfDef(RimSiegeDefOf.RimSiege_SiegeTower)
-				.FirstOrDefault(t => t.Faction == lord.faction && t.Spawned) as Building_SiegeEngine;
+		// the drop point is picked once: recomputing it moved it away from the guys already waiting there
+		private IntVec3 drop = IntVec3.Invalid;
+
+		private Building_SiegeEngine Tower
+		{
+			get
+			{
+				var job = lord.LordJob as LordJob_MedievalSiege;
+				if (job?.engine != null)
+					return job.engine.Spawned && job.engine.def == RimSiegeDefOf.RimSiege_SiegeTower ? job.engine : null;
+				return Map.listerThings.ThingsOfDef(RimSiegeDefOf.RimSiege_SiegeTower)
+					.FirstOrDefault(t => t.Faction == lord.faction && t.Spawned) as Building_SiegeEngine;
+			}
+		}
+
+		private IntVec3 DropPoint(Building_SiegeEngine tower)
+		{
+			if (!drop.IsValid || !drop.Walkable(Map))
+				drop = LordToil_SiegeTower.InsideDropCell(Map, tower);
+			return drop;
+		}
 
 		public override void UpdateAllDuties()
 		{
 			Building_SiegeEngine tower = Tower;
-			IntVec3 drop = tower != null ? LordToil_SiegeTower.InsideDropCell(Map, tower) : IntVec3.Invalid;
+			IntVec3 drop = tower != null ? DropPoint(tower) : IntVec3.Invalid;
 			if (!drop.IsValid) { base.UpdateAllDuties(); return; }
 
 			TraverseParms tp = TraverseParms.For(TraverseMode.NoPassClosedDoors, Danger.Deadly);
@@ -58,8 +76,9 @@ namespace RimSiege.AI
 				return;
 			}
 
-			IntVec3 drop = LordToil_SiegeTower.InsideDropCell(Map, tower);
-			if (!drop.IsValid || now - lastFerryTick < FerryInterval) return;
+			if (now - lastFerryTick < FerryInterval) return;
+			IntVec3 drop = DropPoint(tower);
+			if (!drop.IsValid) return;
 
 			TraverseParms tp = TraverseParms.For(TraverseMode.NoPassClosedDoors, Danger.Deadly);
 			foreach (Pawn p in lord.ownedPawns)

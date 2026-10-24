@@ -33,6 +33,7 @@ namespace RimSiege.AI
 		private int lastWorkChangeTick = -1;
 		private int bombardStartTick = -1;   // transient: a reload mid-bombardment restarts the clock
 		private bool reachableAtBombardStart;
+		private IntVec3 bombardSealed = IntVec3.Invalid;
 		private readonly List<Pawn> gunners = new List<Pawn>(); // artillery crews, manned as soon as built
 		public Pawn captain;
 
@@ -209,6 +210,7 @@ namespace RimSiege.AI
 			if (!spot.IsValid) return;
 
 			Blueprint_Build bp = GenConstruct.PlaceBlueprintForBuild(def, spot, Map, Rot4.North, lord.faction, stuff);
+			if (def == engineDef && Job != null) Job.engineSpot = spot;
 			foreach (ThingDefCountClass cost in bp.TotalMaterialCost())
 				resources[cost.thingDef] = (resources.TryGetValue(cost.thingDef, out int v) ? v : 0) + cost.count;
 		}
@@ -390,8 +392,7 @@ namespace RimSiege.AI
 				return;
 			}
 
-			Building_SiegeEngine engine = Map.listerThings.ThingsOfDef(engineDef)
-				.FirstOrDefault(t => t.Faction == lord.faction) as Building_SiegeEngine;
+			Building_SiegeEngine engine = OwnEngine();
 
 			// a full late game train is 6 worksites, one pair of hands each: give it time
 			int maxBuild = MaxBuildTicks + 3000 * (trebuchetCount + ballistaCount);
@@ -411,14 +412,16 @@ namespace RimSiege.AI
 					if (bombardStartTick < 0)
 					{
 						bombardStartTick = Find.TickManager.TicksGame;
-						reachableAtBombardStart = SiegeLauncher.HostileCanReachColonyFrom(Map, center);
+						bombardSealed = SiegeLauncher.SealedCellBehind(Map, breach);
+						reachableAtBombardStart = !bombardSealed.IsValid || CampReaches(bombardSealed);
 						Messages.Message("RimSiege_BombardBegins".Translate(), new TargetInfo(center, Map),
 							MessageTypeDefOf.ThreatSmall);
 					}
 					TryReinforce(bombardTicks);
 
-					// the guns opened their own hole: skip the engine, charge the rubble
-					if (!reachableAtBombardStart && SiegeLauncher.HostileCanReachColonyFrom(Map, center))
+					// the guns opened their own hole: skip the engine, charge the rubble. checked against the
+					// sealed side of the breach, a colonist walking out to raid the camp isnt a hole
+					if (!reachableAtBombardStart && CampReaches(bombardSealed))
 					{
 						RimSiegeDefOf.RimSiege_WarHorn?.PlayOneShot(new TargetInfo(center, Map));
 						lord.ReceiveMemo("BuildFailed");
@@ -432,8 +435,32 @@ namespace RimSiege.AI
 				return;
 			}
 
-			if (lord.ticksInToil > StartBuildingDelay + 600 && engine == null && !AnyEngineWorkLeft())
+			// no engine and either nothing left to build or out of time (wood stolen, blueprint boxed in):
+			// charge with what they have instead of camping forever
+			if (lord.ticksInToil > StartBuildingDelay + 600 && engine == null && (timeUp || workDone))
 				lord.ReceiveMemo("BuildFailed");
+		}
+
+		private bool CampReaches(IntVec3 c) =>
+			c.IsValid && Map.reachability.CanReach(center, c, PathEndMode.OnCell, SiegeLauncher.NoDoors);
+
+		// the engine built from this siege's own blueprint, never a leftover from an older siege
+		private Building_SiegeEngine OwnEngine()
+		{
+			LordJob_MedievalSiege job = Job;
+			if (job == null) return null;
+			if (job.engine != null) return job.engine.Spawned ? job.engine : null;
+			Building_SiegeEngine found;
+			if (job.engineSpot.IsValid)
+				found = job.engineSpot.GetFirstThing(Map, engineDef) as Building_SiegeEngine;
+			else // 1.3.0 save caught mid build, no spot on record: the one standing in the camp
+				found = Map.listerThings.ThingsOfDef(engineDef)
+					.Where(t => t.Faction == lord.faction && (t.Position - center).LengthHorizontalSquared <= 400)
+					.OrderBy(t => (t.Position - center).LengthHorizontalSquared)
+					.FirstOrDefault() as Building_SiegeEngine;
+			if (found == null || found.Faction != lord.faction) return null;
+			job.engine = found;
+			return found;
 		}
 
 		// siege moved on or died: cancel leftover construction like vanilla does, materials drop
@@ -456,7 +483,7 @@ namespace RimSiege.AI
 		private void TryLateOffer(int window)
 		{
 			LordJob_MedievalSiege job = Job;
-			if (job == null || job.lateOfferSent) return;
+			if (job == null || job.lateOfferSent || job.supplied) return;
 			job.lateOfferSent = true;
 			GameComponent_SiegeDemands comp = GameComponent_SiegeDemands.Get();
 			if (comp == null || !(RimSiegeMod.S?.ultimatumEnabled ?? true) || comp.HasGrudge(lord.faction)) return;
@@ -470,7 +497,7 @@ namespace RimSiege.AI
 		{
 			LordJob_MedievalSiege job = Job;
 			RimSiegeSettings s = RimSiegeMod.S;
-			if (job == null || job.reinforced || s == null || !s.reinforcements) return;
+			if (job == null || job.reinforced || job.supplied || s == null || !s.reinforcements) return;
 			if (job.Points < s.reinforcePointsFloor) return;
 			if (Find.TickManager.TicksGame - bombardStartTick < bombardTicks / 2) return;
 			job.reinforced = true;

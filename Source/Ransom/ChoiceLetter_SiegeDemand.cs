@@ -39,7 +39,9 @@ namespace RimSiege
 					};
 				}
 
-				yield return Option_Postpone; // auto-disabled on the last tick
+				// postpone greys out for good once the timeout passed, and the dialog has no X:
+				// a settled demand reopened from history would lock the game. give it a close
+				yield return d == null ? Option_Close : Option_Postpone;
 			}
 		}
 

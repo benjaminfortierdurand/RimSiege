@@ -27,6 +27,47 @@ namespace RimSiege.Debug
 			Launch(map, 10000f);
 		}
 
+		// SiegeApi path the way another mod would call it: an army made outside RimSiege, handed over as is.
+		// 4k so the whole train shows up (engine, trebuchet, sappers), a fresh colony's threat points
+		// make a one man army that tests nothing
+		private const float ApiTestPoints = 4000f;
+
+		[DebugAction("RimSiege", "Siege now via SiegeApi (4k points)",
+			actionType = DebugActionType.Action,
+			allowedGameStates = AllowedGameStates.PlayingOnMap)]
+		private static void ApiSiege() => ApiSiege(alreadyOnMap: false);
+
+		// how Hegemony hands it over: army spawned at its own entry cell first, no lord yet
+		[DebugAction("RimSiege", "Siege now via SiegeApi (4k points, army already on the map)",
+			actionType = DebugActionType.Action,
+			allowedGameStates = AllowedGameStates.PlayingOnMap)]
+		private static void ApiSiegeSpawned() => ApiSiege(alreadyOnMap: true);
+
+		private static void ApiSiege(bool alreadyOnMap)
+		{
+			Map map = Find.CurrentMap;
+			if (map == null) return;
+			float points = ApiTestPoints;
+			Faction faction = SiegeLauncher.FindSiegeFaction(points, out _);
+			if (faction == null)
+			{
+				Messages.Message("RimSiege: no hostile humanlike faction found.",
+					MessageTypeDefOf.RejectInput, historical: false);
+				return;
+			}
+			var army = SiegeLauncher.GenerateWarband(map, faction, points);
+			if (alreadyOnMap)
+			{
+				if (!RCellFinder.TryFindRandomPawnEntryCell(out IntVec3 edge, map, CellFinder.EdgeRoadChance_Hostile))
+					edge = CellFinder.RandomEdgeCell(map);
+				foreach (Pawn p in army) GenSpawn.Spawn(p, CellFinder.RandomClosewalkCellNear(edge, map, 8), map);
+			}
+			if (SiegeApi.TryLaunchSiege(map, faction, army, sendLetter: true)) return;
+			foreach (Pawn p in army) if (!p.Destroyed) p.Destroy();
+			Messages.Message("RimSiege: SiegeApi said no (no wall or door to hit, or this faction already has a siege here).",
+				MessageTypeDefOf.RejectInput, historical: false);
+		}
+
 		// both skip the ultimatum. for that one use the vanilla incident tool
 		private static void Launch(Map map, float points)
 		{

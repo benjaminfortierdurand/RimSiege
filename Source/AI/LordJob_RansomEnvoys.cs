@@ -66,12 +66,11 @@ namespace RimSiege.AI
 			leave.AddTrigger(new Trigger_Memo(MemoLeave));
 			graph.AddTransition(leave);
 
-			// blood under the white flag, deal's off. exits dont count as losses here
+			// blood under the white flag, deal's off. only when the colony did it: a raid, a wild animal or
+			// heatstroke used to start the vendetta too
 			var harmed = new Transition(travel, exit);
 			harmed.AddSources(wait, fetch);
-			harmed.AddTrigger(new Trigger_PawnLost(PawnLostCondition.Incapped));
-			harmed.AddTrigger(new Trigger_PawnLost(PawnLostCondition.Killed));
-			harmed.AddTrigger(new Trigger_PawnLost(PawnLostCondition.MadePrisoner));
+			harmed.AddTrigger(new Trigger_HarmedByPlayer());
 			harmed.AddPostAction(new TransitionAction_Custom((System.Action)delegate
 			{
 				GameComponent_SiegeDemands.Get()?.Notify_EnvoysHarmed(caseId);

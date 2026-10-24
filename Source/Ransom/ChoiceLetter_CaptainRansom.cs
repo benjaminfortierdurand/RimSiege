@@ -16,8 +16,9 @@ namespace RimSiege
 			{
 				GameComponent_SiegeDemands comp = GameComponent_SiegeDemands.Get();
 				CaptainCase c = comp?.GetCase(caseId);
+				bool open = c != null && c.captain != null && !c.captain.Dead;
 
-				if (c != null && c.captain != null && !c.captain.Dead)
+				if (open)
 				{
 					yield return new DiaOption("RimSiege_RansomAccept".Translate(c.silver))
 					{
@@ -36,7 +37,8 @@ namespace RimSiege
 					};
 				}
 
-				yield return Option_Postpone;
+				// same history softlock as the ultimatum letter
+				yield return open ? Option_Postpone : Option_Close;
 			}
 		}
 

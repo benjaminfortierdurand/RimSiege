@@ -14,6 +14,7 @@
   <RimSiege_BombardBegins>The siege engines are complete. The bombardment begins.</RimSiege_BombardBegins>
   <RimSiege_SappersHint>Sappers will try to blow a second breach elsewhere in your wall.</RimSiege_SappersHint>
   <RimSiege_CaptainHint>Their captain, {0}, leads the host - look for the gilded helm and his two bodyguards. Bring him down early and the siege will collapse.</RimSiege_CaptainHint>
+  <RimSiege_CaptainHintPlain>Their captain, {0}, leads the host. Bring him down early and the siege will collapse.</RimSiege_CaptainHintPlain>
   <RimSiege_CaptainFell>{0} has fallen - the besiegers lose heart and break camp!</RimSiege_CaptainFell>
 
   <!-- ultimatum -->
