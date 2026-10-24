@@ -1,5 +1,6 @@
 ﻿using System;
 using RimWorld;
+using UnityEngine;
 using Verse;
 using Verse.AI;
 using Verse.Sound;
@@ -20,7 +21,10 @@ namespace RimSiege.AI
 			data = new LordToilData_PushRam();
 		}
 
-		protected override ThingDef EngineDef => RimSiegeDefOf.RimSiege_BatteringRam;
+		protected override ThingDef DefaultEngineDef => RimSiegeDefOf.RimSiege_BatteringRam;
+
+		// four guys trotting with a log beat a wagon rolling on its wheels
+		protected override int AdvanceInterval => Engine is Building_LogRam ? 20 : base.AdvanceInterval;
 
 		protected override void DockedTick(Building_SiegeEngine engine, int now)
 		{
@@ -32,12 +36,30 @@ namespace RimSiege.AI
 				return;
 			}
 
-			// no crew no bashing
-			if (now - lastRamTick >= RamInterval && CountPushers(engine) >= engine.crewNeeded)
+			// no crew no bashing. the swing winds up SwingLead ticks ahead so the blow lands on the hit
+			if (CountPushers(engine) < engine.crewNeeded) return;
+			var ram = (Building_BatteringRam)engine;
+			// fresh dock, or crew back after a gap: wind up first instead of hitting on the spot
+			if (now - lastRamTick > RamInterval) lastRamTick = now - RamInterval + Building_BatteringRam.SwingLead;
+			if (now - lastRamTick >= RamInterval - Building_BatteringRam.SwingLead && !ram.SwingStartedAfter(lastRamTick))
+				ram.BeginSwing(now);
+			if (now - lastRamTick >= RamInterval)
 			{
-				RamHit((Building_BatteringRam)engine);
+				RamHit(ram);
 				lastRamTick = now;
 			}
+		}
+
+		// the blow lands: the crew lunge with it, dust comes off the wall, the screen jumps a touch
+		private void Impact(Building_BatteringRam engine, Thing target)
+		{
+			foreach (Pawn p in lord.ownedPawns)
+				if (p.Spawned && Pushing(engine, p))
+					p.Drawer.Notify_MeleeAttackOn(target);
+			Vector3 face = engine.breachTarget.ToVector3Shifted() - engine.Rotation.FacingCell.ToVector3() * 0.5f;
+			for (int i = 0; i < 4; i++)
+				FleckMaker.ThrowDustPuff(face + new Vector3(Rand.Range(-0.6f, 0.6f), 0f, Rand.Range(-0.6f, 0.6f)), Map, Rand.Range(0.9f, 1.5f));
+			if (Map == Find.CurrentMap) Find.CameraDriver.shaker.DoShake(engine.ShakeOnHit);
 		}
 
 		private void RamHit(Building_BatteringRam engine)
@@ -54,6 +76,7 @@ namespace RimSiege.AI
 			{
 				RimSiegeDefOf.RimSiege_RamImpact?.PlayOneShot(new TargetInfo(engine.Position, Map));
 				target.TakeDamage(new DamageInfo(DamageDefOf.Blunt, engine.ramDamage, armorPenetration: 1f, instigator: engine));
+				Impact(engine, target);
 				return;
 			}
 

@@ -13,12 +13,12 @@ namespace RimSiege.AI
 {
 	public class LordToil_SiegeTower : LordToil_PushEngine
 	{
-		private const int DeployInterval = 90;  // one climb every ~1.5s
+		protected virtual int DeployInterval => 90;  // one climb every ~1.5s
 		private const int PickupRangeSq = 144;
 		private const int WaitRangeSq = 1600;   // someone this close is still expected, hold the door
 		private const int StallTimeout = 2500;
-		private const int MaxBoarding = 3;
-		private const int BoardRangeSq = 13;    // gotta be at the tower to climb, no long range tp
+		protected virtual int MaxBoarding => 3;
+		protected virtual int BoardRangeSq => 13;    // gotta be at the tower to climb, no long range tp
 		private int lastDeployTick = -99999;
 		private int lastDeployProgress = -1;
 
@@ -31,7 +31,7 @@ namespace RimSiege.AI
 			data = new LordToilData_SiegeTower();
 		}
 
-		protected override ThingDef EngineDef => RimSiegeDefOf.RimSiege_SiegeTower;
+		protected override ThingDef DefaultEngineDef => RimSiegeDefOf.RimSiege_SiegeTower;
 
 		protected override int AdvanceInterval => 75; // heavy thing
 

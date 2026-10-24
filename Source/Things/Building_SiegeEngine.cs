@@ -24,12 +24,15 @@ namespace RimSiege.Things
 		// 4-way sprites snap to Rotation. a single top-down sprite (retextures) turns freely while rolling
 		private bool TopDownArt => !(Graphic is Graphic_Multi);
 		protected virtual float RotateDegreesPerTick => 3f;
+		// false keeps the sprite square to the wall like the crew around it, it only swings when Rotation flips
+		protected virtual bool TurnsWithPath => true;
 		private float drawAngle;
 		private float targetAngle;
 
 		public IntVec3 BackCell => Position - Rotation.FacingCell;
 
-		public IEnumerable<IntVec3> HandleCells
+		// pushers stand behind it. carried engines (log ram, ladder) put their crew on the flanks
+		public virtual IEnumerable<IntVec3> HandleCells
 		{
 			get
 			{
@@ -44,6 +47,73 @@ namespace RimSiege.Things
 				yield return back2 - perp;
 			}
 		}
+
+		// every crewman keeps one handle. nearest-free sent two or three to the same cell, they walked
+		// glued together and carried the log stacked on one side. not saved, handed out again on load
+		private readonly List<Pawn> crewSlots = new List<Pawn>();
+
+		// handle in a wall or a tree (log running along the rampart): that crewman takes one of these instead,
+		// open side or butt end. empty = old nearest free fallback
+		public virtual IEnumerable<IntVec3> SpareCells { get { yield break; } }
+
+		// where this crewman stands: own handle, else a spare. Invalid = nowhere set, caller falls back
+		public IntVec3 SpotOf(Pawn p)
+		{
+			int i = crewSlots.IndexOf(p);
+			if (i < 0)
+			{
+				i = crewSlots.FindIndex(q => q == null || !Crewing(q));
+				if (i < 0) { crewSlots.Add(p); i = crewSlots.Count - 1; }
+				else crewSlots[i] = p;
+			}
+			return Spot(i);
+		}
+
+		private IntVec3 Spot(int slot)
+		{
+			var handles = new List<IntVec3>(HandleCells);
+			IntVec3 own = slot < handles.Count ? handles[slot] : IntVec3.Invalid; // more crew than handles
+			if (UsableHandle(own)) return own;
+
+			// spares go out in slot order, the n-th blocked crewman gets the n-th free spare, so two never
+			// share one. a spare someone holds as their own handle is skipped
+			int rank = 0;
+			var taken = new List<IntVec3>();
+			for (int j = 0; j < crewSlots.Count; j++)
+			{
+				if (crewSlots[j] == null || !Crewing(crewSlots[j])) continue;
+				IntVec3 h = j < handles.Count ? handles[j] : IntVec3.Invalid;
+				if (UsableHandle(h)) taken.Add(h);
+				else if (j < slot) rank++;
+			}
+			foreach (IntVec3 c in SpareCells)
+			{
+				if (!UsableHandle(c) || taken.Contains(c)) continue;
+				if (rank-- == 0) return c;
+			}
+			return IntVec3.Invalid;
+		}
+
+		private bool Crewing(Pawn q) =>
+			q.Spawned && !q.Dead && q.CurJob?.def == RimSiegeDefOf.RimSiege_PushSiegeEngine && q.CurJob.targetA.Thing == this;
+
+		public bool UsableHandle(IntVec3 c) => c.IsValid && c.InBounds(Map) && c.Standable(Map);
+
+		// carried engines only move with the crew under them, each one standing on their own spot.
+		// nowhere set (boxed in): they hold on from wherever they could get to
+		public bool OnHandle(Pawn p)
+		{
+			int i = crewSlots.IndexOf(p);
+			IntVec3 c = i < 0 ? IntVec3.Invalid : Spot(i);
+			if (c.IsValid) return p.Position == c;
+			return (p.Position - Position).LengthHorizontalSquared <= 6;
+		}
+
+		// where a crewman in place looks: pushers lean on the engine, carriers look where they march
+		public virtual IntVec3 CrewLookAt(Pawn p) => Position;
+
+		// wheels throw dust and rumble. a log or a ladder in someone's arms does neither
+		public virtual bool OnWheels => true;
 
 		public void AimAt(IntVec3 target)
 		{
@@ -86,12 +156,12 @@ namespace RimSiege.Things
 
 			if (TopDownArt)
 			{
-				if (docked) targetAngle = Rotation.AsAngle;
+				if (docked || !TurnsWithPath) targetAngle = Rotation.AsAngle;
 				if (drawAngle != targetAngle)
 					drawAngle = Mathf.MoveTowardsAngle(drawAngle, targetAngle, RotateDegreesPerTick);
 			}
 
-			if (!docked && drawOffset.sqrMagnitude > 0.0004f && this.IsHashIntervalTick(8))
+			if (OnWheels && !docked && drawOffset.sqrMagnitude > 0.0004f && this.IsHashIntervalTick(8))
 				ThrowRollingDust();
 		}
 

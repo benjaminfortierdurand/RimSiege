@@ -70,7 +70,9 @@ namespace RimSiege.AI
 			data = new LordToilData_PushEngine();
 		}
 
-		protected abstract ThingDef EngineDef { get; }
+		// the siege's own engine def. the default only covers 1.3.0 saves that never recorded one
+		protected abstract ThingDef DefaultEngineDef { get; }
+		protected ThingDef EngineDef => (lord?.LordJob as LordJob_MedievalSiege)?.EngineDef ?? DefaultEngineDef;
 		protected abstract void DockedTick(Building_SiegeEngine engine, int now);
 
 		protected virtual bool ShouldKeepCurrentDuty(Pawn p) => charging.Contains(p);
@@ -128,6 +130,10 @@ namespace RimSiege.AI
 						hands++;
 				maxGuards = Math.Max(0, Math.Min(2, hands - engine.crewNeeded));
 			}
+			// the log ram needs its four even if the settings cap pushers lower. carried engines take
+			// exactly their crew, one more would stand on the log
+			int crewCap = engine == null ? 0
+				: engine.OnWheels ? Math.Max(MaxPushers, engine.crewNeeded) : engine.crewNeeded;
 			foreach (Pawn p in lord.ownedPawns)
 			{
 				if (gunners.Contains(p)) continue;
@@ -149,7 +155,7 @@ namespace RimSiege.AI
 				}
 
 				// captain never pushes, losing him routs everything
-				if (crew && p != captain && pushers < MaxPushers)
+				if (crew && p != captain && pushers < crewCap)
 				{
 					p.mindState.duty = new PawnDuty(RimSiegeDefOf.RimSiege_PushRam, engine);
 					pushers++;
@@ -271,7 +277,7 @@ namespace RimSiege.AI
 			engine.StepTo(next, AdvanceInterval);
 
 			int t = Find.TickManager.TicksGame;
-			if (t - lastRollSoundTick >= 70)
+			if (engine.OnWheels && t - lastRollSoundTick >= 70)
 			{
 				RimSiegeDefOf.RimSiege_RamRolling?.PlayOneShot(new TargetInfo(engine.Position, Map));
 				lastRollSoundTick = t;
@@ -458,14 +464,17 @@ namespace RimSiege.AI
 
 		protected int CountPushers(Building_SiegeEngine engine)
 		{
-			// loose radius, the engine is 1 logical cell but the sprite is fat
+			// wheels: loose radius, the engine is 1 logical cell but the sprite is fat.
+			// carried: everyone on their handle, else the log runs off ahead of the guys holding it
 			int n = 0;
 			foreach (Pawn p in lord.ownedPawns)
-				if (p.CurJobDef == RimSiegeDefOf.RimSiege_PushSiegeEngine
-					&& (p.Position - engine.Position).LengthHorizontalSquared <= 6)
-					n++;
+				if (Pushing(engine, p)) n++;
 			return n;
 		}
+
+		protected static bool Pushing(Building_SiegeEngine engine, Pawn p) =>
+			p.CurJobDef == RimSiegeDefOf.RimSiege_PushSiegeEngine
+			&& (engine.OnWheels ? (p.Position - engine.Position).LengthHorizontalSquared <= 6 : engine.OnHandle(p));
 
 		private void CrushPlantsAt(IntVec3 c)
 		{

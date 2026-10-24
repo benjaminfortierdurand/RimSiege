@@ -16,6 +16,7 @@ Vanilla sieges are mortars in a field. In RimSiege the enemy shows up with a pla
 [b]What they bring[/b]
 - A battering ram for your gate. Crewed: kill the pushers and it stops. Double gates wont save you, it keeps going.
 - Or a siege tower that goes OVER your walls. The wall stays intact, the whole army climbs it one by one.
+- Tribes come lighter: a log ram carried by four warriors that swings into your gate, or a ladder they lean on your rampart. No trebuchets, no sappers.
 - Trebuchet batteries and ballistas (with Medieval Overhaul), manned and reloaded from an ammo pile at the camp.
 - Sappers planting petards on a second wall while the ram hits the front. Pincer assaults.
 - A captain guarded by two bodyguards, in a gilded helm if you run Medieval Overhaul. Kill him before the breach and the whole siege routs - they even retreat back over their tower.
@@ -23,7 +24,7 @@ Vanilla sieges are mortars in a field. In RimSiege the enemy shows up with a pla
 
 Everything scales with threat points: small war parties just camp and charge on foot, late game sieges bring the full siege train. Settings page to tune all the thresholds.
 
-Tribes and medieval houses bring the engines. Gun era factions (pirates, outlanders) still demand tribute and set up camp, but they assault on foot for now - no wooden rams for guys with rifles.
+Medieval houses bring the wheeled engines, tribes carry theirs. Gun era factions (pirates, outlanders) still demand tribute and set up camp, but they assault on foot for now - no wooden rams for guys with rifles.
 
 [b]Counterplay[/b]: pay the tribute, raid the camp before the engines are built, kill the crews, burn the wooden engines, steal the trebuchet boulders, snipe the captain - or take him alive and sell him back to his own house.
 
@@ -31,7 +32,7 @@ Tribes and medieval houses bring the engines. Gun era factions (pirates, outland
 
 Modders: RimSiege.SiegeApi lets your mod run a siege with its own army.
 
-Siege tower and battering ram art by Tom.
+Siege tower and battering ram art by Tom. Siege ladder based on Deon's Deep And Deeper - Ladder retexture, used with permission.
 
 BenFD</description>
 

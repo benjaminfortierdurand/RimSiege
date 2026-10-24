@@ -27,22 +27,26 @@ namespace RimSiege.Jobs
 				var engine = Engine;
 				if (engine == null || !engine.Spawned) return;
 
-				// nearest free handle
-				IntVec3 spot = engine.HandleCells
-					.Where(c => c.InBounds(pawn.Map) && c.Standable(pawn.Map)
-								&& (pawn.Map.thingGrid.ThingAt<Pawn>(c) == null || c == pawn.Position))
-					.OrderBy(c => pawn.Position.DistanceToSquared(c))
-					.DefaultIfEmpty(engine.BackCell)
-					.First();
+				// own handle or a spare. nothing set (boxed in) -> nearest free handle
+				IntVec3 spot = engine.SpotOf(pawn);
+				bool own = spot.IsValid;
+				if (!own)
+					spot = engine.HandleCells
+						.Where(c => engine.UsableHandle(c)
+									&& (pawn.Map.thingGrid.ThingAt<Pawn>(c) == null || c == pawn.Position))
+						.OrderBy(c => pawn.Position.DistanceToSquared(c))
+						.DefaultIfEmpty(engine.BackCell)
+						.First();
 
 				if (pawn.Position != spot) // not in place yet -> follow the engine
 				{
-					if (!pawn.pather.Moving)
+					// engine stepped while walking: head for the new handle now, not after the old one
+					if (!pawn.pather.Moving || (own && pawn.pather.Destination.Cell != spot))
 						pawn.pather.StartPath(spot, PathEndMode.OnCell);
 					return;
 				}
 
-				pawn.rotationTracker.FaceCell(engine.Position); // in place, push
+				pawn.rotationTracker.FaceCell(engine.CrewLookAt(pawn)); // in place, push (or carry)
 				if (pawn.IsHashIntervalTick(60))
 					FleckMaker.ThrowDustPuff(pawn.DrawPos, pawn.Map, 0.7f);
 			};
