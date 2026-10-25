@@ -282,6 +282,8 @@ namespace RimSiege
 				engineDef = RimSiegeDefOf.RimSiege_SiegeLadder;
 				tower = true;
 			}
+			// the laser ram takes four pushers too and has no smaller engine: a short host goes on foot
+			if (engineDef == RimSiegeDefOf.RimSiege_LaserRam && hands < SuppliedEngineHands + 1) engineDef = null;
 			if (!TryFindSiegeTarget(map, preferWalls: tower, out IntVec3 breach)) return false;
 
 			// guns get manned out of the host, so only what it can spare

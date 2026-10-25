@@ -21,7 +21,8 @@ namespace RimSiege
 		// full RimSiege siege run with your own pawns: war camp, ram or tower, trebuchets, push, breach.
 		// troops: fighters of this faction, alive, not downed, in no lord, at least one humanlike, no kids
 		// (they would end up pushing the ram). animals and mechs are fine, they fight but never crew.
-		// free unspawned ones walk in from the map edge. ones already on this map, standing or in
+		// free unspawned ones walk in from the map edge, a spacer army's land by imperial shuttle behind the
+		// camp when Royalty is on (the shuttles fly off empty). ones already on this map, standing or in
 		// incoming pods, stay put and the camp goes up near them. one RimSiege host per faction per map,
 		// no sieges on vacuum maps.
 		// nothing extra gets made: no siege crews (guns are manned out of your troops), sappers come out
@@ -31,7 +32,9 @@ namespace RimSiege
 		// engines need 5+ humanlike adults. medieval factions get a ram or tower, plus trebuchets and ballistas
 		// with Medieval Overhaul. tribes carry theirs: a log ram (6+ adults, four on the grips) or a ladder,
 		// never artillery. a gun era army gets a steel breaching ram (2 carriers) and mortars, with smoke on the gate.
-		// sappers need gunpowder: medieval and gun era armies only, never a tribe.
+		// a spacer army (the Empire, modded spacer factions, not pirates) gets laser batteries and a laser ram
+		// (6+ adults, four push it, else it attacks on foot), power cells drop in by pod like any ammo.
+		// sappers need gunpowder: medieval and later armies only, never a tribe.
 		// survivors leave by walking off the map (or back over the tower or ladder).
 		// false = nothing done, pawns untouched: not hostile, bad pawn list, or no wall worth a siege.
 		// run your normal assault then
