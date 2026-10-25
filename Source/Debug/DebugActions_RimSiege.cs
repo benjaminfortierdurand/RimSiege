@@ -44,16 +44,24 @@ namespace RimSiege.Debug
 			allowedGameStates = AllowedGameStates.PlayingOnMap)]
 		private static void ApiSiegeSpawned() => ApiSiege(alreadyOnMap: true);
 
-		private static void ApiSiege(bool alreadyOnMap)
+		// spacer kit through the API: laser battery and ram, troops handed over unspawned so they land by shuttle
+		[DebugAction("RimSiege", "Siege now via SiegeApi: spacer army (4k points)",
+			actionType = DebugActionType.Action,
+			allowedGameStates = AllowedGameStates.PlayingOnMap)]
+		private static void ApiSiegeSpacer() => ApiSiege(alreadyOnMap: false, spacer: true);
+
+		private static void ApiSiege(bool alreadyOnMap, bool spacer = false)
 		{
 			Map map = Find.CurrentMap;
 			if (map == null) return;
 			float points = ApiTestPoints;
-			Faction faction = SiegeLauncher.FindSiegeFaction(points, out _);
+			Faction faction = spacer ? KitFaction(SiegeLauncher.Lasers, "spacer army", makeHostile: true)
+				: SiegeLauncher.FindSiegeFaction(points, out _);
 			if (faction == null)
 			{
-				Messages.Message("RimSiege: no hostile humanlike faction found.",
-					MessageTypeDefOf.RejectInput, historical: false);
+				if (!spacer)
+					Messages.Message("RimSiege: no hostile humanlike faction found.",
+						MessageTypeDefOf.RejectInput, historical: false);
 				return;
 			}
 			var army = SiegeLauncher.GenerateWarband(map, faction, points);
@@ -112,6 +120,18 @@ namespace RimSiege.Debug
 		{
 			Map map = Find.CurrentMap;
 			if (map == null) return;
+			Faction faction = KitFaction(kit, what, makeHostile);
+			if (faction == null) return;
+			SiegeLauncher.debugNextEngine = engine;
+			if (!SiegeLauncher.ExecuteSiege(map, faction, ApiTestPoints))
+				Messages.Message("RimSiege: could not launch the siege (no wall or door to hit?).",
+					MessageTypeDefOf.RejectInput, historical: false);
+			SiegeLauncher.debugNextEngine = null;
+		}
+
+		// a hostile faction of that kit, or one made hostile for the test. null = none, message sent
+		private static Faction KitFaction(System.Func<Faction, bool> kit, string what, bool makeHostile)
+		{
 			var candidates = Find.FactionManager.AllFactions
 				.Where(f => !f.IsPlayer && !f.defeated && !f.def.hidden && kit(f) && SiegeLauncher.CrewKindFor(f) != null)
 				.ToList();
@@ -124,13 +144,9 @@ namespace RimSiege.Debug
 			if (faction == null || !faction.HostileTo(Faction.OfPlayer))
 			{
 				Messages.Message("RimSiege: no hostile " + what + " found.", MessageTypeDefOf.RejectInput, historical: false);
-				return;
+				return null;
 			}
-			SiegeLauncher.debugNextEngine = engine;
-			if (!SiegeLauncher.ExecuteSiege(map, faction, ApiTestPoints))
-				Messages.Message("RimSiege: could not launch the siege (no wall or door to hit?).",
-					MessageTypeDefOf.RejectInput, historical: false);
-			SiegeLauncher.debugNextEngine = null;
+			return faction;
 		}
 
 		// both skip the ultimatum. for that one use the vanilla incident tool
