@@ -28,17 +28,7 @@ namespace RimSiege.AI
 
 		protected override void DockedTick(Building_SiegeEngine engine, int now)
 		{
-			// stale dock after a retarget, roll closer first. AlignFront settles where it stands when the gate's
-			// front cell is taken (sandbags in the gateway): that flipped docked on and off forever, so a few
-			// tries in a row and they drop it and go in on foot
-			if ((engine.Position - engine.breachTarget).LengthHorizontalSquared > DockDistanceSq)
-			{
-				engine.docked = false;
-				InvalidatePath();
-				if (++staleDocks >= 3) lord.ReceiveMemo("RamLost");
-				return;
-			}
-			staleDocks = 0;
+			if (StaleDock(engine)) return;
 
 			// no crew no bashing. the swing winds up SwingLead ticks ahead so the blow lands on the hit
 			if (CountPushers(engine) < engine.crewNeeded) return;
@@ -67,24 +57,49 @@ namespace RimSiege.AI
 			if (Map == Find.CurrentMap) Find.CameraDriver.shaker.DoShake(engine.ShakeOnHit);
 		}
 
+		// stale dock after a retarget, roll closer first. AlignFront settles where it stands when the gate's
+		// front cell is taken (sandbags in the gateway): that flipped docked on and off forever, so a few
+		// tries in a row and they drop it and go in on foot
+		protected bool StaleDock(Building_SiegeEngine engine)
+		{
+			if ((engine.Position - engine.breachTarget).LengthHorizontalSquared > DockDistanceSq)
+			{
+				engine.docked = false;
+				InvalidatePath();
+				if (++staleDocks >= 3) lord.ReceiveMemo("RamLost");
+				return true;
+			}
+			staleDocks = 0;
+			return false;
+		}
+
+		// lock the exact thing on the first hit and pound it till its gone. handles doors (walkable but
+		// locked), walls, and rubble-leaving mods. null once it is gone
+		protected Thing LockTarget(Building_BatteringRam engine)
+		{
+			if (engine.breachThing == null)
+				engine.breachThing = engine.breachTarget.GetEdifice(Map);
+			Thing t = engine.breachThing;
+			return t != null && !t.Destroyed && t.Spawned ? t : null;
+		}
+
 		private void RamHit(Building_BatteringRam engine)
 		{
 			engine.FaceTarget();
-
-			// lock the exact thing on the first hit and pound it till its gone. handles doors
-			// (walkable but locked), walls, and rubble-leaving mods
-			if (engine.breachThing == null)
-				engine.breachThing = engine.breachTarget.GetEdifice(Map);
-
-			Thing target = engine.breachThing;
-			if (target != null && !target.Destroyed && target.Spawned)
+			Thing target = LockTarget(engine);
+			if (target != null)
 			{
 				RimSiegeDefOf.RimSiege_RamImpact?.PlayOneShot(new TargetInfo(engine.Position, Map));
 				target.TakeDamage(new DamageInfo(DamageDefOf.Blunt, engine.ramDamage, armorPenetration: 1f, instigator: engine));
 				Impact(engine, target);
 				return;
 			}
+			TargetDown(engine);
+		}
 
+		// the target fell: in, on to the next gate, or a fresh target
+		protected void TargetDown(Building_BatteringRam engine)
+		{
 			// did the hole open the sealed part. no sealed part on record means the target never was a
 			// barrier (guns got there first, or the colony has no enclosure), the way in is open already
 			IntVec3 hole = engine.breachTarget;
@@ -104,7 +119,8 @@ namespace RimSiege.AI
 			// down the line, roll forward and bash that too instead of calling it a breach
 			if (!open && RData.chainedBreaches < MaxChainedBreaches)
 			{
-				IntVec3 step = hole - engine.Position;
+				IntVec3 d = hole - engine.Position;
+				IntVec3 step = new IntVec3(Math.Sign(d.x), 0, Math.Sign(d.z));
 				if (Math.Abs(step.x) + Math.Abs(step.z) == 1)
 				{
 					for (int i = 1; i <= 6; i++)
@@ -137,13 +153,6 @@ namespace RimSiege.AI
 			InvalidatePath(); // else it insta-redocks on the consumed path
 		}
 
-		// solid wall or a door closed to us. rubble n other passable leftovers dont count
-		private bool BlocksBreach(IntVec3 c)
-		{
-			Building ed = c.GetEdifice(Map);
-			if (ed == null) return false;
-			if (ed.def.passability == Traversability.Impassable) return true;
-			return ed is Building_Door door && !door.FreePassage;
-		}
+		private bool BlocksBreach(IntVec3 c) => SiegeLauncher.BlocksBreach(Map, c);
 	}
 }

@@ -52,11 +52,10 @@ namespace RimSiege
 			if (entryAt.HasValue && musterAt.HasValue) { entry = entryAt.Value; muster = musterAt.Value; }
 			else FindCampSite(map, group, breach, out entry, out muster);
 
-			foreach (Pawn crew in group)
-			{
-				if (crew.Spawned || crew.MapHeld != null) continue; // in a pod: lands and joins on its own
+			// spacer armies come down in shuttles behind the camp, whoever gets no seat walks in
+			List<Pawn> walkers = LandByShuttle(map, faction, group.Where(p => p.MapHeld == null).ToList(), muster, breach, CampRadius(camp));
+			foreach (Pawn crew in walkers)
 				GenSpawn.Spawn(crew, CellFinder.RandomClosewalkCellNear(entry, map, 8), map);
-			}
 
 			// beefiest kind in the group, not some peasant. war beasts have huge combatPower
 			// and no hands, so they never lead the host
@@ -75,6 +74,79 @@ namespace RimSiege
 			return true;
 		}
 
+		private const float CampClearRadius = 13f;
+
+		// how far a camp reaches from its spot, a drawn one out to its corners
+		public static float CampRadius(CampLayoutDef camp) =>
+			camp == null ? CampClearRadius
+			: Mathf.Max(CampClearRadius, Mathf.Sqrt(camp.Width * camp.Width + camp.Height * camp.Height) / 2f + 1f);
+
+		// the ship is Royalty's, no Royalty and they walk
+		public static bool LandsByShuttle(Faction f) =>
+			Lasers(f) && TransportShipDefOf.Ship_Shuttle != null && ThingDefOf.Shuttle != null;
+
+		private const int ShuttleSeats = 8, MaxShuttles = 6;
+
+		// shuttles land in a line behind the camp, unload one by one and fly off. returns the pawns that got
+		// no seat (not a spacer army, or no room to land)
+		public static List<Pawn> LandByShuttle(Map map, Faction faction, List<Pawn> pawns, IntVec3 camp, IntVec3 breach, float campRadius)
+		{
+			var left = new List<Pawn>(pawns);
+			if (!LandsByShuttle(faction) || left.Count == 0 || !camp.IsValid) return left;
+			int ships = Mathf.Min(MaxShuttles, Mathf.CeilToInt(left.Count / (float)ShuttleSeats));
+			int seats = Mathf.CeilToInt(left.Count / (float)ships);
+			IntVec3 back = CampLayoutDef.Toward(camp, breach) * -1;
+			IntVec3 side = new IntVec3(back.z, 0, -back.x);
+			int reach = Mathf.RoundToInt(campRadius + 10f);
+			var taken = new List<CellRect>();
+			for (int i = 0; i < ships && left.Count > 0; i++)
+			{
+				// a camp backed onto the map edge lands them on its flanks
+				int lane = (i + 1) / 2 * (i % 2 == 0 ? 1 : -1);
+				if (!TryFindShuttleSpot(map, camp + back * reach + side * (lane * 8), camp, campRadius, taken, out IntVec3 spot)
+					&& !TryFindShuttleSpot(map, camp + side * reach, camp, campRadius, taken, out spot)
+					&& !TryFindShuttleSpot(map, camp - side * reach, camp, campRadius, taken, out spot))
+					continue;
+				List<Pawn> load = left.GetRange(0, Mathf.Min(seats, left.Count));
+				left.RemoveRange(0, load.Count);
+				Thing shuttle = ThingMaker.MakeThing(ThingDefOf.Shuttle);
+				shuttle.SetFaction(faction);
+				TransportShip ship = TransportShipMaker.MakeTransportShip(TransportShipDefOf.Ship_Shuttle, load, shuttle);
+				ship.ArriveAt(spot, map.Parent);
+				ship.AddJobs(ShipJobDefOf.Unload, ShipJobDefOf.FlyAway);
+				taken.Add(ShuttleRect(spot).ExpandedBy(2));
+			}
+			return left;
+		}
+
+		private static CellRect ShuttleRect(IntVec3 root) => GenAdj.OccupiedRect(root, Rot4.North, ThingDefOf.Shuttle.size);
+
+		// open ground off the camp's drawing, nothing under it to crush, and a way on foot to the camp
+		private static bool TryFindShuttleSpot(Map map, IntVec3 aim, IntVec3 camp, float campRadius, List<CellRect> taken, out IntVec3 spot)
+		{
+			foreach (IntVec3 c in GenRadial.RadialCellsAround(aim, 12f, useCenter: true))
+			{
+				CellRect room = ShuttleRect(c).ExpandedBy(1);
+				if (!room.InBounds(map) || taken.Any(r => r.Overlaps(room))) continue;
+				if (room.Cells.Any(x => !ShuttleCellOk(map, x, camp, campRadius))) continue;
+				IntVec3 door = ThingUtility.InteractionCellWhenAt(ThingDefOf.Shuttle, c, Rot4.North, map);
+				if (!map.reachability.CanReach(door, camp, PathEndMode.Touch, CampTraverse)) continue;
+				spot = c;
+				return true;
+			}
+			spot = IntVec3.Invalid;
+			return false;
+		}
+
+		private static bool ShuttleCellOk(Map map, IntVec3 c, IntVec3 camp, float campRadius)
+		{
+			if (c.InHorDistOf(camp, campRadius + 1f)) return false;
+			if (!DropCellFinder.IsGoodDropSpot(c, map, allowFogged: false, canRoofPunch: false, allowIndoors: false)) return false;
+			foreach (Thing t in c.GetThingList(map))
+				if (t is Pawn || t.def.category == ThingCategory.Item || t.def.IsBlueprint || t.def.IsFrame) return false;
+			return true;
+		}
+
 		// wooden engines, slings, banners: a pre-gunpowder thing. pirates with rifles get no ram
 		public static bool OldWorld(Faction f) => f?.def != null && f.def.techLevel <= TechLevel.Medieval;
 
@@ -85,7 +157,15 @@ namespace RimSiege
 		// gun era and up (pirates, outlanders, the empire): a steel breaching ram, mortars, smoke, sandbags
 		public static bool Modern(Faction f) => f?.def != null && f.def.techLevel >= TechLevel.Industrial;
 
-		public static CampKit KitOf(Faction f) => Tribal(f) ? CampKit.Tribal : Modern(f) ? CampKit.Modern : CampKit.Medieval;
+		// spacer armies (the Empire, modded spacer factions) field a laser battery instead of the mortars.
+		// pirates (vanilla, cannibal, waster, yttakin, modded ones named so) and Odyssey's salvagers are spacer
+		// tech too but they are raiders, they keep the mortars
+		public static bool Lasers(Faction f) =>
+			f?.def != null && f.def.techLevel >= TechLevel.Spacer
+			&& !f.def.defName.Contains("Pirate") && f.def.defName != "Salvagers";
+
+		public static CampKit KitOf(Faction f) =>
+			Tribal(f) ? CampKit.Tribal : Lasers(f) ? CampKit.Spacer : Modern(f) ? CampKit.Modern : CampKit.Medieval;
 
 		// a petard is gunpowder: a tribe has none, so no sappers. undefined tech keeps them like before
 		public static bool HasGunpowder(Faction f) =>
@@ -128,11 +208,11 @@ namespace RimSiege
 
 			RimSiegeSettings s = RimSiegeMod.S;
 
-			List<Pawn> group = GenerateWarband(map, faction, points * s.warbandFactor);
-			if (group.NullOrEmpty()) return false;
-
 			bool tower = false;
 			ThingDef engineDef = OldWorld(faction) || Modern(faction) ? RollEngine(points, s, faction, out tower) : null;
+
+			List<Pawn> group = GenerateWarband(map, faction, points * s.warbandFactor);
+			if (group.NullOrEmpty()) return false;
 
 			// engine rolled first, the tower prefers walls
 			if (!TryFindSiegeTarget(map, preferWalls: tower, out IntVec3 breach))
@@ -259,12 +339,65 @@ namespace RimSiege
 			if (!Rand.Chance(Mathf.Clamp01((points - s.enginePointsFloor) / 1300f))) return null;
 			tower = Rand.Bool;
 			if (Tribal(faction)) return tower ? RimSiegeDefOf.RimSiege_SiegeLadder : RimSiegeDefOf.RimSiege_LogRam;
+			// spacer armies push a laser ram up in front of the gate and melt it
+			if (Lasers(faction)) { tower = false; return RimSiegeDefOf.RimSiege_LaserRam; }
 			// gun era goes for the gate, walls are the sappers' and the mortars' job
 			if (Modern(faction)) { tower = false; return RimSiegeDefOf.RimSiege_SteelRam; }
 			return tower ? RimSiegeDefOf.RimSiege_SiegeTower : RimSiegeDefOf.RimSiege_BatteringRam;
 		}
 
 		private static readonly TraverseParms CampTraverse = TraverseParms.For(TraverseMode.NoPassClosedDoors, Danger.Deadly);
+
+		// how far an engine's drawing and crew reach behind its own cell, and to each side: a camp leaves it that
+		// room. the log, the ladder and the wagon are drawn back from their cell, the tower centred on it
+		public static int EngineBodyLength(ThingDef def) =>
+			def == null ? 0
+			: def == RimSiegeDefOf.RimSiege_LaserRam ? 6
+			: def == RimSiegeDefOf.RimSiege_BatteringRam ? 4
+			: def == RimSiegeDefOf.RimSiege_LogRam || def == RimSiegeDefOf.RimSiege_SiegeLadder || def == RimSiegeDefOf.RimSiege_SiegeTower ? 3
+			: def == RimSiegeDefOf.RimSiege_SteelRam ? 2
+			: 0;
+
+		public static int EngineBodyHalfWidth(ThingDef def) =>
+			def == RimSiegeDefOf.RimSiege_LaserRam || def == RimSiegeDefOf.RimSiege_SiegeTower ? 2 : 1;
+
+		// solid wall, or a door closed to us. rubble and other passable leftovers dont count
+		public static bool BlocksBreach(Map map, IntVec3 c)
+		{
+			Building ed = c.GetEdifice(map);
+			if (ed == null) return false;
+			if (ed.def.passability == Traversability.Impassable) return true;
+			return ed is Building_Door door && !door.FreePassage;
+		}
+
+		// cheapest hands man the battery, the ballistas and the camp guns while the rest fight
+		public static void ManTheGuns(Lord lord, List<Pawn> gunners, Pawn captain)
+		{
+			Map map = lord.Map;
+			var guns = SpawnedArtillery(map, lord.faction).Concat(SpawnedBallistas(map, lord.faction))
+				.Concat(SpawnedCampGuns(map, lord.faction)).ToList();
+			gunners.RemoveAll(g => g == null || g.Dead || g.Downed || !g.Spawned || !lord.ownedPawns.Contains(g));
+			if (guns.Count == 0) { gunners.Clear(); return; }
+
+			while (gunners.Count < guns.Count)
+			{
+				Pawn g = lord.ownedPawns
+					.Where(p => p != captain && !p.Dead && !p.Downed && p.Spawned && !gunners.Contains(p) && CanCrew(p))
+					.OrderBy(p => p.kindDef.combatPower)
+					.FirstOrDefault();
+				if (g == null) break;
+				g.mindState.duty = new PawnDuty(RimSiegeDefOf.RimSiege_ManTrebuchet, guns[gunners.Count % guns.Count]);
+				gunners.Add(g);
+			}
+		}
+
+		// manned guns shoot on their own, feed them from the camp piles. pile gone = gun goes quiet
+		public static void ReloadCamp(Map map, Faction faction)
+		{
+			RefuelBallistasNear(map, faction);
+			LoadArtilleryFromPiles(map, faction);
+			RefuelCampWorks(map, faction);
+		}
 
 		// vanilla order: entry cell first, camp spot from it. only extra: camp must reach the breach.
 		// a supplied army can already stand on the map or ride pods down onto it: camp off where it is
@@ -328,7 +461,8 @@ namespace RimSiege
 		// spots in the middle of the drawing, and no ballistas at all when it draws none (its scorpios guard it)
 		private static void CapToCamp(CampLayoutDef camp, Faction faction, ref int trebuchetCount, ref int ballistaCount)
 		{
-			trebuchetCount = Mathf.Min(trebuchetCount, camp.MarksFor(ArtilleryDefFor(faction)));
+			ThingDef arty = ArtilleryDefFor(faction);
+			trebuchetCount = Mathf.Min(trebuchetCount, camp.Pieces.Count(p => !p.onTop && BatteryMark(p.def, arty)));
 			ballistaCount = Mathf.Min(ballistaCount, camp.MarksFor(DefDatabase<ThingDef>.GetNamedSilentFail("DankPyon_Turret_Ballista")));
 		}
 
@@ -374,15 +508,17 @@ namespace RimSiege
 			if (group.NullOrEmpty()) return 0;
 
 			IntVec3 entry = EntryCellFor(map, camp);
-			foreach (Pawn p in group)
-			{
+			var job = lord.LordJob as LordJob_MedievalSiege;
+			List<Pawn> walkers = job != null ? LandByShuttle(map, lord.faction, group, camp, job.Breach, CampRadius(job.camp)) : group;
+			foreach (Pawn p in walkers)
 				GenSpawn.Spawn(p, CellFinder.RandomClosewalkCellNear(entry, map, 8), map);
+			foreach (Pawn p in group)
 				lord.AddPawn(p);
-			}
+			bool flown = walkers.Count < group.Count;
 			Find.LetterStack.ReceiveLetter(
 				"RimSiege_ReinforceLabel".Translate(),
-				"RimSiege_ReinforceText".Translate(group.Count, lord.faction.Name),
-				LetterDefOf.ThreatSmall, new TargetInfo(entry, map), lord.faction);
+				(flown ? "RimSiege_ReinforceShuttleText" : "RimSiege_ReinforceText").Translate(group.Count, lord.faction.Name),
+				LetterDefOf.ThreatSmall, new TargetInfo(flown ? camp : entry, map), lord.faction);
 			return group.Count;
 		}
 
@@ -409,6 +545,11 @@ namespace RimSiege
 				label = "RimSiege_LabelSteelRam".Translate();
 				text = "RimSiege_TextSteelRam".Translate(faction.Name);
 			}
+			else if (engineDef == RimSiegeDefOf.RimSiege_LaserRam)
+			{
+				label = "RimSiege_LabelLaserRam".Translate();
+				text = "RimSiege_TextLaserRam".Translate(faction.Name);
+			}
 			else if (engineDef == RimSiegeDefOf.RimSiege_SiegeLadder)
 			{
 				label = "RimSiege_LabelLadder".Translate();
@@ -425,9 +566,11 @@ namespace RimSiege
 				text = "RimSiege_TextRam".Translate(faction.Name);
 			}
 
-			bool mortars = Modern(faction);
-			if (trebuchetCount == 1) text += " " + (mortars ? "RimSiege_MortarOne" : "RimSiege_TrebOne").Translate();
-			else if (trebuchetCount > 1) text += " " + (mortars ? "RimSiege_MortarMany" : "RimSiege_TrebMany").Translate(trebuchetCount);
+			bool lasers = Lasers(faction);
+			bool mortars = Modern(faction) && !lasers;
+			string gun = lasers ? "RimSiege_Laser" : mortars ? "RimSiege_Mortar" : "RimSiege_Treb";
+			if (trebuchetCount == 1) text += " " + (gun + "One").Translate();
+			else if (trebuchetCount > 1) text += " " + (gun + "Many").Translate(trebuchetCount);
 			if (mortars && trebuchetCount > 0 && engineDef != null) text += " " + "RimSiege_SmokeHint".Translate();
 			if (ballistaCount > 0) text += " " + "RimSiege_BallistaHint".Translate();
 			if (sappers > 0) text += " " + "RimSiege_SappersHint".Translate();
@@ -737,9 +880,14 @@ namespace RimSiege
 				.Cast<Building>().ToList();
 		}
 
-		// the battery's gun: MO trebuchet for houses, vanilla mortar for the gun era
+		// the battery's gun: MO trebuchet for houses, vanilla mortar for the gun era, lasers for spacer armies
 		public static ThingDef ArtilleryDefFor(Faction f) =>
-			Modern(f) ? ThingDefOf.Turret_Mortar : DefDatabase<ThingDef>.GetNamedSilentFail("DankPyon_Turret_Trebuchet");
+			Lasers(f) ? RimSiegeDefOf.RimSiege_LaserBattery
+			: Modern(f) ? ThingDefOf.Turret_Mortar : DefDatabase<ThingDef>.GetNamedSilentFail("DankPyon_Turret_Trebuchet");
+
+		// a drawing's artillery mark for this gun. gun era camps mark mortars, a spacer host sets its lasers there
+		public static bool BatteryMark(ThingDef mark, ThingDef gun) =>
+			mark != null && (mark == gun || (mark == ThingDefOf.Turret_Mortar && gun == RimSiegeDefOf.RimSiege_LaserBattery));
 
 		public static List<Building> SpawnedArtillery(Map map, Faction faction)
 		{
@@ -754,7 +902,8 @@ namespace RimSiege
 		// fire-first meant the tar stock outlasted the siege and carrion never flew
 		public static void LoadArtilleryFromPiles(Map map, Faction faction)
 		{
-			if (Modern(faction)) { LoadMortarsFromPiles(map, faction); return; }
+			// lasers fill their cell magazine like any manned camp gun
+			if (Modern(faction)) { LoadMortarsFromPiles(map, faction); RefuelCampWorks(map, faction); return; }
 			ThingDef stone = DefDatabase<ThingDef>.GetNamedSilentFail("DankPyon_StoneBoulder");
 			ThingDef tarred = DefDatabase<ThingDef>.GetNamedSilentFail("DankPyon_StoneBoulderTarred");
 			bool carrionOk = RimSiegeMod.S.carrionEnabled && RimSiegeDefOf.RimSiege_CarrionShell != null;
@@ -822,7 +971,7 @@ namespace RimSiege
 		private static void SwapBarrel(Map map, Building_TurretGun mortar)
 		{
 			CompRefuelable barrel = mortar.refuelableComp;
-			if (barrel == null || barrel.HasFuel || Find.Storyteller.difficulty.classicMortars) return;
+			if (barrel == null || !barrel.Props.fuelIsMortarBarrel || barrel.HasFuel || Find.Storyteller.difficulty.classicMortars) return;
 			Thing spare = NearestPile(map, mortar.Position, ThingDefOf.ReinforcedBarrel);
 			if (spare == null) return;
 			spare.SplitOff(1).Destroy();
@@ -863,7 +1012,7 @@ namespace RimSiege
 			if (smoke?.projectileWhenLoaded == null || !target.IsValid) return false;
 			foreach (Building b in SpawnedArtillery(map, faction).InRandomOrder())
 			{
-				if (!(b is Building_TurretGun mortar)) continue;
+				if (!(b is Building_TurretGun mortar) || b.def != ThingDefOf.Turret_Mortar) continue; // lasers cant lob smoke
 				CompMannable man = mortar.TryGetComp<CompMannable>();
 				if (man == null || !man.MannedNow) continue;
 				if (mortar.refuelableComp != null && !mortar.refuelableComp.HasFuel) continue;

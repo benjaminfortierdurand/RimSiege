@@ -1,0 +1,383 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+	<!-- batterie laser des factions spacer (Empire, spacers moddés) : elle remplace les mortiers. charge, rafale de
+	     3 éclairs par-dessus les murs, tourne aux recharges amenées par capsule. base vanilla de la tourelle lourde,
+	     canon : fusil laser de Bonible (VEW Laser Retexture) retravaillé, accord de Bonible à obtenir avant publication -->
+	<ThingDef ParentName="BuildingBase">
+		<defName>RimSiege_LaserBattery</defName>
+		<label>laser battery</label>
+		<description>A spacer siege gun. It charges up, then lobs a burst of three bolts over the walls into the colony. It runs on power cells brought down by drop pod: no cells, no fire. EMP stuns it, and it blows up when destroyed.</description>
+		<thingClass>RimSiege.Things.Building_LaserBattery</thingClass>
+		<drawerType>MapMeshAndRealTime</drawerType>
+		<drawHighlight>true</drawHighlight>
+		<drawHighlightOnlyForHostile>true</drawHighlightOnlyForHostile>
+		<graphicData>
+			<texPath>Things/Building/Security/TurretHeavy_Base</texPath>
+			<graphicClass>Graphic_Single</graphicClass>
+			<drawSize>(1.5, 1.5)</drawSize>
+			<drawOffset>(0,0,-0.1)</drawOffset>
+			<damageData>
+				<rect>(0.2,0.2,0.6,0.6)</rect>
+			</damageData>
+			<shadowData>
+				<volume>(1.5,0.35,1.4)</volume>
+				<offset>(0,0,-0.05)</offset>
+			</shadowData>
+		</graphicData>
+		<uiIconPath>Things/Building/LaserBattery/LaserCannon_Top</uiIconPath>
+		<altitudeLayer>Building</altitudeLayer>
+		<stealable>false</stealable>
+		<size>(2,2)</size>
+		<hasInteractionCell>true</hasInteractionCell>
+		<interactionCellOffset>(0,0,-1)</interactionCellOffset>
+		<passability>PassThroughOnly</passability>
+		<pathCost>50</pathCost>
+		<fillPercent>0.5</fillPercent>
+		<tickerType>Normal</tickerType>
+		<terrainAffordanceNeeded>Heavy</terrainAffordanceNeeded>
+		<!-- catégorie gardée pour que plans et chantiers existent, l'architecte du joueur ne la montre pas (HideEngineDesignators) -->
+		<designationCategory>Security</designationCategory>
+		<minTechLevelToBuild>Archotech</minTechLevelToBuild>
+		<statBases>
+			<MaxHitPoints>350</MaxHitPoints>
+			<Flammability>0</Flammability>
+			<WorkToBuild>2600</WorkToBuild>
+			<Mass>60</Mass>
+			<Beauty>-20</Beauty>
+		</statBases>
+		<costList>
+			<Steel>150</Steel>
+			<Plasteel>30</Plasteel>
+			<ComponentSpacer>1</ComponentSpacer>
+		</costList>
+		<comps>
+			<li Class="CompProperties_Forbiddable"/>
+			<li Class="CompProperties_Mannable">
+				<manWorkType>Violent</manWorkType>
+			</li>
+			<!-- le chargeur : une recharge par éclair, rempli depuis la pile du camp -->
+			<li Class="CompProperties_Refuelable">
+				<fuelLabel>Power cells</fuelLabel>
+				<fuelGizmoLabel>Power cells</fuelGizmoLabel>
+				<outOfFuelMessage>Needs power cells</outOfFuelMessage>
+				<fuelFilter>
+					<thingDefs>
+						<li>RimSiege_LaserCell</li>
+					</thingDefs>
+				</fuelFilter>
+				<fuelCapacity>9</fuelCapacity>
+				<initialFuelPercent>0</initialFuelPercent>
+				<consumeFuelOnlyWhenUsed>true</consumeFuelOnlyWhenUsed>
+				<showFuelGizmo>true</showFuelGizmo>
+				<minimumFueledThreshold>1</minimumFueledThreshold>
+				<fuelIconPath>Things/Item/RimSiege_LaserCell</fuelIconPath>
+			</li>
+			<li Class="CompProperties_Stunnable">
+				<affectedDamageDefs>
+					<li>Stun</li>
+					<li>EMP</li>
+				</affectedDamageDefs>
+			</li>
+			<li Class="CompProperties_Explosive">
+				<wickTicks>240</wickTicks>
+				<explosiveRadius>3.9</explosiveRadius>
+				<explosiveDamageType>RimSiege_LaserBlast</explosiveDamageType>
+			</li>
+		</comps>
+		<building>
+			<turretGunDef>RimSiege_LaserCannon</turretGunDef>
+			<turretTopDrawSize>2.7</turretTopDrawSize>
+			<turretTopOffset>(0, 0.05)</turretTopOffset>
+			<!-- visée (son de servo) puis 1,1 s de charge -->
+			<turretBurstWarmupTime>1.7</turretBurstWarmupTime>
+			<turretBurstCooldownTime>20</turretBurstCooldownTime>
+			<ai_combatDangerous>true</ai_combatDangerous>
+			<buildingTags>
+				<li>Artillery</li>
+			</buildingTags>
+		</building>
+		<placeWorkers>
+			<li>PlaceWorker_NotUnderRoof</li>
+			<li>PlaceWorker_TurretTop</li>
+		</placeWorkers>
+	</ThingDef>
+
+	<ThingDef ParentName="BaseWeaponTurret">
+		<defName>RimSiege_LaserCannon</defName>
+		<label>laser cannon</label>
+		<description>The bolt projector of a laser battery.</description>
+		<graphicData>
+			<texPath>Things/Building/LaserBattery/LaserCannon_Top</texPath>
+			<graphicClass>Graphic_Single</graphicClass>
+		</graphicData>
+		<weaponTags Inherit="False">
+			<li>Artillery</li>
+		</weaponTags>
+		<recoilPower>2</recoilPower>
+		<verbs>
+			<li>
+				<verbClass>Verb_Shoot</verbClass>
+				<defaultProjectile>RimSiege_LaserBolt</defaultProjectile>
+				<forceNormalTimeSpeed>false</forceNormalTimeSpeed>
+				<warmupTime>0</warmupTime>
+				<!-- bien plus précis qu'un mortier (9) -->
+				<forcedMissRadius>5</forcedMissRadius>
+				<isMortar>true</isMortar>
+				<requireLineOfSight>false</requireLineOfSight>
+				<minRange>19.9</minRange>
+				<range>500</range>
+				<burstShotCount>3</burstShotCount>
+				<ticksBetweenBurstShots>12</ticksBetweenBurstShots>
+				<soundCast>RimSiege_LaserBattery_Fire</soundCast>
+				<!-- l'éclair de bouche est dessiné au bout du canon par Building_LaserBattery -->
+				<muzzleFlashScale>0</muzzleFlashScale>
+				<consumeFuelPerShot>1</consumeFuelPerShot>
+				<targetParams>
+					<canTargetLocations>true</canTargetLocations>
+				</targetParams>
+			</li>
+		</verbs>
+	</ThingDef>
+
+	<!-- l'éclair : pas d'ombre, c'est de la lumière. traînée et impact dessinés par Projectile_LaserBolt -->
+	<ThingDef ParentName="BaseBullet">
+		<defName>RimSiege_LaserBolt</defName>
+		<label>laser bolt</label>
+		<thingClass>RimSiege.Things.Projectile_LaserBolt</thingClass>
+		<graphicData>
+			<texPath>Things/Projectile/RimSiege_LaserBolt</texPath>
+			<graphicClass>Graphic_Single</graphicClass>
+			<shaderType>MoteGlow</shaderType>
+			<drawSize>(0.7, 2.6)</drawSize>
+		</graphicData>
+		<projectile>
+			<damageDef>RimSiege_LaserBlast</damageDef>
+			<damageAmountBase>30</damageAmountBase>
+			<armorPenetrationBase>0.5</armorPenetrationBase>
+			<speed>75</speed>
+			<explosionRadius>2.4</explosionRadius>
+			<flyOverhead>true</flyOverhead>
+			<!-- il monte en sortant du canon puis redescend sur la cible (Projectile_LaserBolt dessine la courbe) -->
+			<arcHeightFactor>3</arcHeightFactor>
+			<shadowSize>0</shadowSize>
+			<soundHitThickRoof>Artillery_HitThickRoof</soundHitThickRoof>
+			<preExplosionSpawnSingleThingDef>Filth_BlastMark</preExplosionSpawnSingleThingDef>
+		</projectile>
+	</ThingDef>
+
+	<!-- munition : une recharge par éclair. la pile du camp peut être volée, ou abattue : elle saute en bleu -->
+	<ThingDef ParentName="ResourceBase">
+		<defName>RimSiege_LaserCell</defName>
+		<label>laser power cell</label>
+		<description>A charged cell for a laser battery, one cell per bolt. Spacer armies drop them by pod next to their guns. Bursts in a blue flash when damaged.</description>
+		<graphicData>
+			<texPath>Things/Item/RimSiege_LaserCell</texPath>
+			<graphicClass>Graphic_Single</graphicClass>
+		</graphicData>
+		<soundInteract>Metal_Drop</soundInteract>
+		<soundDrop>Standard_Drop</soundDrop>
+		<tickerType>Normal</tickerType>
+		<stackLimit>25</stackLimit>
+		<techLevel>Spacer</techLevel>
+		<tradeability>Sellable</tradeability>
+		<statBases>
+			<MaxHitPoints>60</MaxHitPoints>
+			<MarketValue>40</MarketValue>
+			<Mass>1</Mass>
+			<Flammability>0</Flammability>
+			<DeteriorationRate>0.5</DeteriorationRate>
+		</statBases>
+		<thingCategories>
+			<li>Manufactured</li>
+		</thingCategories>
+		<comps>
+			<li Class="CompProperties_Explosive">
+				<explosiveRadius>1.9</explosiveRadius>
+				<explosiveDamageType>RimSiege_LaserBlast</explosiveDamageType>
+				<explosiveExpandPerStackcount>0.15</explosiveExpandPerStackcount>
+				<startWickHitPointsPercent>0.7</startWickHitPointsPercent>
+				<wickTicks>30~60</wickTicks>
+				<preExplosionSpawnSingleThingDef>Filth_BlastMark</preExplosionSpawnSingleThingDef>
+			</li>
+		</comps>
+	</ThingDef>
+
+	<!-- dégâts de l'éclair : souffle comme une bombe mais brûlures, explosion blanche au coeur et bleue au bord -->
+	<DamageDef ParentName="Bomb">
+		<defName>RimSiege_LaserBlast</defName>
+		<label>laser blast</label>
+		<deathMessage>{0} has been burnt away by a laser blast.</deathMessage>
+		<hediff>Burn</hediff>
+		<explosionColorCenter>(1, 1, 1)</explosionColorCenter>
+		<explosionColorEdge>(0.3, 0.6, 1)</explosionColorEdge>
+	</DamageDef>
+
+	<!-- bélier laser des armées spacer : la tête du Drakken Laser Drill de 空曜 (Steam 2941974740), reprise avec
+	     l'accord de l'auteur et créditée dans About.xml (_concept/laser/make_laserram_tex.py). poussé par 4, il se
+	     poste à 12 cases de la porte et la fait fondre au rayon, qui brûle tout sur son passage. lumières et rayon aux couleurs de la faction -->
+	<ThingDef ParentName="BuildingBase">
+		<defName>RimSiege_LaserRam</defName>
+		<label>laser ram</label>
+		<description>A huge drill cannon on a sled. Four crew push it into place well back from a gate, then hold a beam on the gate until it melts, burning through whatever stands in the way. The beam needs its crew: kill them and it dies.</description>
+		<thingClass>RimSiege.Things.Building_LaserRam</thingClass>
+		<drawerType>RealtimeOnly</drawerType>
+		<tickerType>Normal</tickerType>
+		<altitudeLayer>Pawn</altitudeLayer>
+		<selectable>true</selectable>
+		<useHitPoints>true</useHitPoints>
+		<fillPercent>0.2</fillPercent>
+		<passability>Standable</passability>
+		<castEdgeShadows>false</castEdgeShadows>
+		<rotatable>true</rotatable>
+		<statBases>
+			<MaxHitPoints>900</MaxHitPoints>
+			<Flammability>0</Flammability>
+			<WorkToBuild>3000</WorkToBuild>
+		</statBases>
+		<designationCategory>Security</designationCategory>
+		<minTechLevelToBuild>Archotech</minTechLevelToBuild>
+		<costList>
+			<Steel>250</Steel>
+			<Plasteel>60</Plasteel>
+			<ComponentSpacer>2</ComponentSpacer>
+		</costList>
+		<graphicData>
+			<texPath>Things/Building/LaserRam/LaserRam_Closed</texPath>
+			<graphicClass>Graphic_Single</graphicClass>
+			<drawSize>(5.72,5.72)</drawSize>
+		</graphicData>
+		<building>
+			<isEdifice>false</isEdifice>
+		</building>
+		<!-- lumière du jeu à la bouche, allumée seulement pendant le tir (Building_LaserRam : IThingGlower), couleur de la faction -->
+		<comps>
+			<li Class="CompProperties_Glower">
+				<glowRadius>12</glowRadius>
+				<overlightRadius>4</overlightRadius>
+				<glowColor>(255,230,200,0)</glowColor>
+			</li>
+		</comps>
+	</ThingDef>
+
+	<!-- lumière posée là où le rayon frappe, entretenue par le bélier, s'éteint seule (LaserLight) -->
+	<ThingDef>
+		<defName>RimSiege_LaserLight</defName>
+		<label>laser glare</label>
+		<thingClass>RimSiege.Things.LaserLight</thingClass>
+		<category>Ethereal</category>
+		<drawerType>None</drawerType>
+		<tickerType>Normal</tickerType>
+		<altitudeLayer>MetaOverlays</altitudeLayer>
+		<useHitPoints>false</useHitPoints>
+		<selectable>false</selectable>
+		<comps>
+			<li Class="CompProperties_Glower">
+				<glowRadius>9</glowRadius>
+				<overlightRadius>3</overlightRadius>
+				<glowColor>(255,230,200,0)</glowColor>
+			</li>
+		</comps>
+	</ThingDef>
+
+	<!-- flecks de la batterie : tous blancs, teintés au lancement -->
+	<FleckDef ParentName="FleckBase">
+		<defName>RimSiege_LaserFlash</defName>
+		<altitudeLayer>MoteOverhead</altitudeLayer>
+		<solidTime>0.04</solidTime>
+		<fadeOutTime>0.22</fadeOutTime>
+		<graphicData>
+			<texPath>Things/Mote/RimSiege/LaserFlash</texPath>
+			<shaderType>MoteGlow</shaderType>
+		</graphicData>
+	</FleckDef>
+
+	<FleckDef ParentName="FleckBase">
+		<defName>RimSiege_LaserRing</defName>
+		<altitudeLayer>MoteOverhead</altitudeLayer>
+		<solidTime>0.05</solidTime>
+		<fadeOutTime>0.32</fadeOutTime>
+		<growthRate>19</growthRate>
+		<graphicData>
+			<texPath>Things/Mote/RimSiege/LaserRing</texPath>
+			<shaderType>MoteGlow</shaderType>
+		</graphicData>
+	</FleckDef>
+
+	<FleckDef ParentName="FleckBase">
+		<defName>RimSiege_LaserGlow</defName>
+		<altitudeLayer>MoteOverhead</altitudeLayer>
+		<fadeInTime>0.05</fadeInTime>
+		<solidTime>0.3</solidTime>
+		<fadeOutTime>1.2</fadeOutTime>
+		<graphicData>
+			<texPath>Things/Mote/RimSiege/LaserGlow</texPath>
+			<shaderType>MoteGlow</shaderType>
+		</graphicData>
+	</FleckDef>
+
+	<FleckDef ParentName="FleckBase_Thrown">
+		<defName>RimSiege_LaserSpark</defName>
+		<altitudeLayer>MoteOverhead</altitudeLayer>
+		<solidTime>0.2</solidTime>
+		<fadeOutTime>0.4</fadeOutTime>
+		<graphicData>
+			<texPath>Things/Mote/RimSiege/LaserSpark</texPath>
+			<shaderType>MoteGlow</shaderType>
+		</graphicData>
+	</FleckDef>
+
+	<!-- reflet horizontal du tir, très bref -->
+	<FleckDef ParentName="FleckBase">
+		<defName>RimSiege_LaserFlare</defName>
+		<altitudeLayer>MoteOverhead</altitudeLayer>
+		<solidTime>0.03</solidTime>
+		<fadeOutTime>0.12</fadeOutTime>
+		<graphicData>
+			<texPath>Things/Mote/RimSiege/LaserGlow</texPath>
+			<shaderType>MoteGlow</shaderType>
+		</graphicData>
+	</FleckDef>
+
+	<!-- vapeur froide des évents après la rafale : mélange normal, pas de lueur -->
+	<FleckDef ParentName="FleckBase_Thrown">
+		<defName>RimSiege_LaserSteam</defName>
+		<altitudeLayer>MoteOverhead</altitudeLayer>
+		<fadeInTime>0.08</fadeInTime>
+		<solidTime>0.1</solidTime>
+		<fadeOutTime>1.4</fadeOutTime>
+		<growthRate>2.3</growthRate>
+		<graphicData>
+			<texPath>Things/Mote/RimSiege/LaserGlow</texPath>
+			<shaderType>Mote</shaderType>
+		</graphicData>
+	</FleckDef>
+
+	<!-- fumée froide qui monte de l'impact -->
+	<FleckDef ParentName="FleckBase_Thrown">
+		<defName>RimSiege_LaserSmoke</defName>
+		<altitudeLayer>MoteOverhead</altitudeLayer>
+		<fadeInTime>0.15</fadeInTime>
+		<solidTime>0.4</solidTime>
+		<fadeOutTime>2.2</fadeOutTime>
+		<growthRate>0.9</growthRate>
+		<graphicData>
+			<texPath>Things/Mote/RimSiege/LaserGlow</texPath>
+			<shaderType>Mote</shaderType>
+		</graphicData>
+	</FleckDef>
+
+	<!-- traînée de l'éclair et particules aspirées pendant la charge -->
+	<FleckDef ParentName="FleckBase_Thrown">
+		<defName>RimSiege_LaserMote</defName>
+		<altitudeLayer>MoteOverhead</altitudeLayer>
+		<solidTime>0.05</solidTime>
+		<fadeOutTime>0.35</fadeOutTime>
+		<growthRate>-1.2</growthRate>
+		<graphicData>
+			<texPath>Things/Mote/RimSiege/LaserGlow</texPath>
+			<shaderType>MoteGlow</shaderType>
+		</graphicData>
+	</FleckDef>
+
+</Defs>

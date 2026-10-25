@@ -91,4 +91,139 @@
 		</subSounds>
 	</SoundDef>
 
+	<!-- tir de la batterie laser, 4 coupes de "Devastating Laser Blasts" de SamsterBirdies (Freesound 731984, CC0) -->
+	<SoundDef>
+		<defName>RimSiege_LaserBattery_Fire</defName>
+		<context>MapOnly</context>
+		<maxSimultaneous>4</maxSimultaneous>
+		<subSounds>
+			<li>
+				<grains>
+					<li Class="AudioGrain_Clip">
+						<clipPath>RimSiege/RimSiege_LaserBattery_Fire_a</clipPath>
+					</li>
+					<li Class="AudioGrain_Clip">
+						<clipPath>RimSiege/RimSiege_LaserBattery_Fire_b</clipPath>
+					</li>
+					<li Class="AudioGrain_Clip">
+						<clipPath>RimSiege/RimSiege_LaserBattery_Fire_c</clipPath>
+					</li>
+					<li Class="AudioGrain_Clip">
+						<clipPath>RimSiege/RimSiege_LaserBattery_Fire_d</clipPath>
+					</li>
+				</grains>
+				<volumeRange><min>50</min><max>58</max></volumeRange>
+				<pitchRange><min>0.95</min><max>1.05</max></pitchRange>
+			</li>
+		</subSounds>
+	</SoundDef>
+
+	<!-- charge avant la rafale, synthétisé par nous (_concept/laser/laser_audio.py) -->
+	<SoundDef>
+		<defName>RimSiege_LaserBattery_Charge</defName>
+		<context>MapOnly</context>
+		<maxSimultaneous>2</maxSimultaneous>
+		<subSounds>
+			<li>
+				<grains>
+					<li Class="AudioGrain_Clip">
+						<clipPath>RimSiege/RimSiege_LaserBattery_Charge</clipPath>
+					</li>
+				</grains>
+				<volumeRange><min>44</min><max>50</max></volumeRange>
+				<pitchRange><min>0.97</min><max>1.03</max></pitchRange>
+			</li>
+		</subSounds>
+	</SoundDef>
+
+	<!-- servo de visée, synthétisé par nous -->
+	<SoundDef>
+		<defName>RimSiege_LaserBattery_Aim</defName>
+		<context>MapOnly</context>
+		<maxSimultaneous>2</maxSimultaneous>
+		<subSounds>
+			<li>
+				<grains>
+					<li Class="AudioGrain_Clip">
+						<clipPath>RimSiege/RimSiege_LaserBattery_Aim</clipPath>
+					</li>
+				</grains>
+				<volumeRange><min>36</min><max>42</max></volumeRange>
+				<pitchRange><min>0.95</min><max>1.05</max></pitchRange>
+			</li>
+		</subSounds>
+	</SoundDef>
+
+	<!-- sifflement des évents après la rafale, synthétisé par nous (_concept/laser/make_vent.py) -->
+	<SoundDef>
+		<defName>RimSiege_LaserBattery_Vent</defName>
+		<context>MapOnly</context>
+		<maxSimultaneous>2</maxSimultaneous>
+		<subSounds>
+			<li>
+				<grains>
+					<li Class="AudioGrain_Clip">
+						<clipPath>RimSiege/RimSiege_LaserBattery_Vent</clipPath>
+					</li>
+				</grains>
+				<volumeRange><min>30</min><max>36</max></volumeRange>
+				<pitchRange><min>0.95</min><max>1.05</max></pitchRange>
+			</li>
+		</subSounds>
+	</SoundDef>
+
+	<!-- sirène du bélier laser en place : "Scifi Alarm x3" de Cell31_Sound_Productions (freesound 388824, CC BY 4.0, crédité) -->
+	<SoundDef>
+		<defName>RimSiege_LaserRam_Alarm</defName>
+		<context>MapOnly</context>
+		<maxSimultaneous>2</maxSimultaneous>
+		<subSounds>
+			<li>
+				<grains>
+					<li Class="AudioGrain_Clip">
+						<clipPath>RimSiege/RimSiege_LaserRam_Alarm</clipPath>
+					</li>
+				</grains>
+				<volumeRange><min>44</min><max>48</max></volumeRange>
+				<pitchRange><min>1</min><max>1</max></pitchRange>
+			</li>
+		</subSounds>
+	</SoundDef>
+
+	<!-- charge et départ du rayon : "Big Laser Beam" de Rickplayer (freesound 575804, CC0), départ à 2,75 s -->
+	<SoundDef>
+		<defName>RimSiege_LaserRam_Charge</defName>
+		<context>MapOnly</context>
+		<maxSimultaneous>2</maxSimultaneous>
+		<subSounds>
+			<li>
+				<grains>
+					<li Class="AudioGrain_Clip">
+						<clipPath>RimSiege/RimSiege_LaserRam_Charge</clipPath>
+					</li>
+				</grains>
+				<volumeRange><min>50</min><max>54</max></volumeRange>
+				<pitchRange><min>1</min><max>1</max></pitchRange>
+			</li>
+		</subSounds>
+	</SoundDef>
+
+	<!-- rayon tenu, boucle de 4 s : "Large Energy Beam" de LPHypeR (freesound 585916, CC BY 3.0, crédité) -->
+	<SoundDef>
+		<defName>RimSiege_LaserRam_Beam</defName>
+		<context>MapOnly</context>
+		<maxSimultaneous>2</maxSimultaneous>
+		<subSounds>
+			<li>
+				<grains>
+					<li Class="AudioGrain_Clip">
+						<clipPath>RimSiege/RimSiege_LaserRam_Beam</clipPath>
+					</li>
+				</grains>
+				<volumeRange><min>44</min><max>48</max></volumeRange>
+				<pitchRange><min>1</min><max>1</max></pitchRange>
+			</li>
+		</subSounds>
+	</SoundDef>
+
 </Defs>

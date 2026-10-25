@@ -13,11 +13,15 @@
   <RimSiege_LabelLadder>Tribal siege: ladder</RimSiege_LabelLadder>
   <RimSiege_TextLadder>A war band of {0} is setting up camp outside your walls and binding a SIEGE LADDER. Two of them will run it up to your rampart, then the whole band goes over the wall one at a time. Wreck their worksite before it's ready.</RimSiege_TextLadder>
   <RimSiege_LabelSteelRam>Siege: breaching ram</RimSiege_LabelSteelRam>
+  <RimSiege_LabelLaserRam>Siege: laser ram</RimSiege_LabelLaserRam>
+  <RimSiege_TextLaserRam>A force of {0} is setting up camp outside your walls. They are building a LASER RAM: a huge drill cannon that four of them will push up to your gate. It sounds an alarm, charges for a few seconds, then holds a beam on the gate until it breaks, burning anything and anyone in the line. Kill the crew and it stops. Hit the camp before they're ready, or get ready to hold the breach.</RimSiege_TextLaserRam>
   <RimSiege_TextSteelRam>A force of {0} is setting up camp outside your walls. They brought a steel BREACHING RAM: two of them will carry it to your gate and batter it open. Hit the camp before they're ready, or get ready to hold the breach.</RimSiege_TextSteelRam>
   <RimSiege_TrebOne>A trebuchet will support the assault from a distance.</RimSiege_TrebOne>
   <RimSiege_TrebMany>A battery of {0} trebuchets will pound your walls from a distance.</RimSiege_TrebMany>
   <RimSiege_MortarOne>A mortar will shell your base from their camp.</RimSiege_MortarOne>
   <RimSiege_MortarMany>A battery of {0} mortars will shell your base from their camp.</RimSiege_MortarMany>
+  <RimSiege_LaserOne>A laser battery will pound your base from their camp. It runs on power cells dropped next to it: take them and it goes quiet.</RimSiege_LaserOne>
+  <RimSiege_LaserMany>{0} laser batteries will pound your base from their camp. They run on power cells dropped next to them: take them and they go quiet.</RimSiege_LaserMany>
   <RimSiege_SmokeHint>When the ram goes in, expect smoke shells on your gate.</RimSiege_SmokeHint>
   <RimSiege_BallistaHint>Ballistas will guard their camp - a sally will ride into bolt fire.</RimSiege_BallistaHint>
   <RimSiege_BombardBegins>The siege engines are complete. The bombardment begins.</RimSiege_BombardBegins>
@@ -40,6 +44,7 @@
   <RimSiege_LateTooLate>Too late - they are already inside your walls.</RimSiege_LateTooLate>
   <RimSiege_ReinforceLabel>Reinforcements</RimSiege_ReinforceLabel>
   <RimSiege_ReinforceText>{0} more fighters have marched in to join {1}'s siege camp.</RimSiege_ReinforceText>
+  <RimSiege_ReinforceShuttleText>{0} more fighters have landed by shuttle to join {1}'s siege camp.</RimSiege_ReinforceShuttleText>
   <RimSiege_UltimatumPaidBefore>\n\nWord of your gold has spread. The price has gone up.</RimSiege_UltimatumPaidBefore>
 
   <!-- captain ransom -->

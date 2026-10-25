@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+	<!-- petit camp spacer de BenFD : barricades en plastacier, 1 emplacement de mortier au centre (il devient une batterie laser), 2 mini-tourelles et 2 lampes sur pied branchées sans câble sur un générateur à chemfuel, construits sur place. objets vanilla, marche sans MO -->
+	<RimSiege.CampLayoutDef>
+		<defName>RimSiege_CampSpacer_Small</defName>
+		<label>spacer siege camp</label>
+		<kit>Spacer</kit>
+		<minPoints>0</minPoints>
+		<maxPoints>2500</maxPoints>
+		<layout>
+			<li>.,.,Barricade_Plasteel,Barricade_Plasteel,Barricade_Plasteel,.,.,.,.,Barricade_Plasteel,Barricade_Plasteel,Barricade_Plasteel,.,.</li>
+			<li>.,.,Barricade_Plasteel,.,Barricade_Plasteel,.,.,.,.,Barricade_Plasteel,.,Barricade_Plasteel,.,.</li>
+			<li>.,.,.,.,.,.,.,.,.,.,.,.,.,.</li>
+			<li>Barricade_Plasteel,Barricade_Plasteel,Barricade_Plasteel,.,.,Barricade_Plasteel,.,.,Barricade_Plasteel,.,.,Barricade_Plasteel,Barricade_Plasteel,Barricade_Plasteel</li>
+			<li>Barricade_Plasteel,Turret_MiniTurret_Steel_Fuel100,Barricade_Plasteel,StandingLamp,.,Barricade_Plasteel,Turret_Mortar_Steel_North_Fuel100,.,Barricade_Plasteel,.,StandingLamp,Barricade_Plasteel,Turret_MiniTurret_Steel_Fuel100,Barricade_Plasteel</li>
+			<li>Barricade_Plasteel,Barricade_Plasteel,Barricade_Plasteel,.,.,Barricade_Plasteel,.,.,Barricade_Plasteel,.,.,Barricade_Plasteel,Barricade_Plasteel,Barricade_Plasteel</li>
+			<li>.,.,.,.,.,Barricade_Plasteel,Barricade_Plasteel,Barricade_Plasteel,Barricade_Plasteel,.,.,.,.,.</li>
+			<li>.,.,.,Barricade_Plasteel,.,.,ChemfuelPoweredGenerator_Fuel99,.,.,.,Barricade_Plasteel,.,.,.</li>
+			<li>.,.,.,Barricade_Plasteel,Barricade_Plasteel,Barricade_Plasteel,.,.,Barricade_Plasteel,Barricade_Plasteel,Barricade_Plasteel,.,.,.</li>
+			<li>.,.,.,.,.,Barricade_Plasteel,Barricade_Plasteel,Barricade_Plasteel,Barricade_Plasteel,.,.,.,.,.</li>
+		</layout>
+	</RimSiege.CampLayoutDef>
+
+	<!-- camp spacer moyen de BenFD : barricades en plastacier, 2 emplacements de mortier au centre (ils deviennent des batteries laser), 4 mini-tourelles et 2 lampes sur pied branchées sans câble sur un générateur à chemfuel, construits sur place. objets vanilla, marche sans MO -->
+	<RimSiege.CampLayoutDef>
+		<defName>RimSiege_CampSpacer_Medium</defName>
+		<label>spacer siege camp</label>
+		<kit>Spacer</kit>
+		<minPoints>2500</minPoints>
+		<maxPoints>5000</maxPoints>
+		<layout>
+			<li>.,.,.,.,Barricade_Plasteel,Barricade_Plasteel,Barricade_Plasteel,Barricade_Plasteel,Barricade_Plasteel,.,.,.,.</li>
+			<li>Barricade_Plasteel,Barricade_Plasteel,Barricade_Plasteel,.,Barricade_Plasteel,.,ChemfuelPoweredGenerator_Fuel99,.,Barricade_Plasteel,.,Barricade_Plasteel,Barricade_Plasteel,Barricade_Plasteel</li>
+			<li>Barricade_Plasteel,Turret_MiniTurret_Steel_Fuel100,.,.,.,.,.,.,.,.,.,Turret_MiniTurret_Steel_Fuel100,Barricade_Plasteel</li>
+			<li>Barricade_Plasteel,.,.,.,.,.,.,.,.,.,.,.,Barricade_Plasteel</li>
+			<li>.,.,.,Barricade_Plasteel,.,.,.,.,.,Barricade_Plasteel,.,.,.</li>
+			<li>.,.,StandingLamp,Barricade_Plasteel,Turret_Mortar_Steel_North_Fuel100,.,Barricade_Plasteel,Turret_Mortar_Steel_North_Fuel100,.,Barricade_Plasteel,StandingLamp,.,.</li>
+			<li>.,.,.,Barricade_Plasteel,.,.,Barricade_Plasteel,.,.,Barricade_Plasteel,.,.,.</li>
+			<li>Barricade_Plasteel,.,.,Barricade_Plasteel,Barricade_Plasteel,Barricade_Plasteel,Barricade_Plasteel,Barricade_Plasteel,Barricade_Plasteel,Barricade_Plasteel,.,.,Barricade_Plasteel</li>
+			<li>Barricade_Plasteel,Turret_MiniTurret_Steel_Fuel100,.,.,.,.,.,.,.,.,.,Turret_MiniTurret_Steel_Fuel100,Barricade_Plasteel</li>
+			<li>Barricade_Plasteel,Barricade_Plasteel,Barricade_Plasteel,.,.,.,.,.,.,.,Barricade_Plasteel,Barricade_Plasteel,Barricade_Plasteel</li>
+			<li>.,.,.,.,Barricade_Plasteel,.,.,.,Barricade_Plasteel,.,.,.,.</li>
+			<li>.,.,.,.,Barricade_Plasteel,Barricade_Plasteel,Barricade_Plasteel,Barricade_Plasteel,Barricade_Plasteel,.,.,.,.</li>
+		</layout>
+	</RimSiege.CampLayoutDef>
+
+	<!-- grand camp spacer de BenFD : enceinte de barricades en plastacier, 4 emplacements de mortier au centre (ils deviennent des batteries laser), 4 autocanons et 4 lampes sur pied sur un réseau de câbles cachés, 2 générateurs à chemfuel et une batterie, construits sur place. IED fumigènes autour. objets vanilla, marche sans MO -->
+	<RimSiege.CampLayoutDef>
+		<defName>RimSiege_CampSpacer_Large</defName>
+		<label>spacer siege camp</label>
+		<kit>Spacer</kit>
+		<minPoints>5000</minPoints>
+		<layout>
+			<li>.,.,.,.,TrapIED_Smoke,.,.,.,.,.,.,.,.,.,TrapIED_Smoke,.,.,.,.</li>
+			<li>.,Barricade_Plasteel,Barricade_Plasteel,Barricade_Plasteel,Barricade_Plasteel,.,.,Barricade_Plasteel,Barricade_Plasteel,Barricade_Plasteel,Barricade_Plasteel,Barricade_Plasteel,.,.,Barricade_Plasteel,Barricade_Plasteel,Barricade_Plasteel,Barricade_Plasteel,.</li>
+			<li>.,Barricade_Plasteel,HiddenConduit,HiddenConduit,Barricade_Plasteel,HiddenConduit,HiddenConduit,HiddenConduit,HiddenConduit,HiddenConduit,HiddenConduit,HiddenConduit,HiddenConduit,HiddenConduit,Barricade_Plasteel,HiddenConduit,HiddenConduit,Barricade_Plasteel,.</li>
+			<li>.,Barricade_Plasteel,HiddenConduit,.,Barricade_Plasteel,.,.,.,.,.,.,.,.,.,Barricade_Plasteel,.,HiddenConduit,Barricade_Plasteel,.</li>
+			<li>.,Barricade_Plasteel,Barricade_Plasteel,.,.,.,.,.,.,.,.,.,.,.,.,.,Barricade_Plasteel,Barricade_Plasteel,.</li>
+			<li>.,.,HiddenConduit,.,.,Barricade_Plasteel,Barricade_Plasteel,Barricade_Plasteel,Barricade_Plasteel,.,Barricade_Plasteel,Barricade_Plasteel,Barricade_Plasteel,Barricade_Plasteel,.,.,HiddenConduit,.,.</li>
+			<li>TrapIED_Smoke,.,HiddenConduit,.,.,Barricade_Plasteel,.,.,Barricade_Plasteel,.,Barricade_Plasteel,.,.,Barricade_Plasteel,.,.,HiddenConduit,.,TrapIED_Smoke</li>
+			<li>.,Barricade_Plasteel,HiddenConduit,.,.,Barricade_Plasteel,.,Turret_Mortar_Steel_South_Fuel100,Barricade_Plasteel,.,Barricade_Plasteel,.,Turret_Mortar_Steel_South_Fuel100,Barricade_Plasteel,.,.,HiddenConduit,Barricade_Plasteel,.</li>
+			<li>.,Barricade_Plasteel,HiddenConduit,.,.,StandingLamp,.,.,.,.,.,.,.,StandingLamp,.,.,HiddenConduit,Barricade_Plasteel,.</li>
+			<li>.,Barricade_Plasteel,HiddenConduit,.,.,.,.,.,.,.,.,.,.,.,.,.,HiddenConduit,Barricade_Plasteel,.</li>
+			<li>.,Barricade_Plasteel,HiddenConduit,.,.,StandingLamp,.,.,.,.,.,.,.,StandingLamp,.,.,HiddenConduit,Barricade_Plasteel,.</li>
+			<li>.,Barricade_Plasteel,HiddenConduit,.,.,Barricade_Plasteel,Turret_Mortar_Steel_North_Fuel100,.,Barricade_Plasteel,.,Barricade_Plasteel,Turret_Mortar_Steel_North_Fuel100,.,Barricade_Plasteel,.,.,HiddenConduit,Barricade_Plasteel,.</li>
+			<li>TrapIED_Smoke,.,HiddenConduit,.,.,Barricade_Plasteel,.,.,Barricade_Plasteel,.,Barricade_Plasteel,.,.,Barricade_Plasteel,.,.,HiddenConduit,.,TrapIED_Smoke</li>
+			<li>.,.,HiddenConduit,.,.,Barricade_Plasteel,Barricade_Plasteel,Barricade_Plasteel,Barricade_Plasteel,.,Barricade_Plasteel,Barricade_Plasteel,Barricade_Plasteel,Barricade_Plasteel,.,.,HiddenConduit,.,.</li>
+			<li>.,Barricade_Plasteel,Barricade_Plasteel,.,.,.,.,.,.,.,.,.,.,.,.,.,Barricade_Plasteel,Barricade_Plasteel,.</li>
+			<li>.,Barricade_Plasteel,HiddenConduit,.,Barricade_Plasteel,.,.,ChemfuelPoweredGenerator_Fuel99,.,Battery_North_Power100,ChemfuelPoweredGenerator_Fuel99,.,.,.,Barricade_Plasteel,Turret_Autocannon_Fuel100,HiddenConduit,Barricade_Plasteel,.</li>
+			<li>.,Barricade_Plasteel,.,HiddenConduit,Barricade_Plasteel,HiddenConduit,HiddenConduit,.,.,.,.,.,HiddenConduit,HiddenConduit,Barricade_Plasteel,HiddenConduit,HiddenConduit,Barricade_Plasteel,.</li>
+			<li>.,Barricade_Plasteel,Barricade_Plasteel,Barricade_Plasteel,Barricade_Plasteel,.,.,Barricade_Plasteel,Barricade_Plasteel,Barricade_Plasteel,Barricade_Plasteel,Barricade_Plasteel,.,.,Barricade_Plasteel,Barricade_Plasteel,Barricade_Plasteel,Barricade_Plasteel,.</li>
+			<li>.,.,.,.,.,.,TrapIED_Smoke,.,.,.,.,.,TrapIED_Smoke,.,.,.,.,.,.</li>
+		</layout>
+		<onTop>
+			<li>
+				<li>.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.</li>
+				<li>.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.</li>
+				<li>.,.,Turret_Autocannon_Fuel100,.,HiddenConduit,.,.,Barricade_Plasteel,.,.,.,Barricade_Plasteel,.,.,HiddenConduit,Turret_Autocannon_Fuel100,.,.,.</li>
+				<li>.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.</li>
+				<li>.,.,HiddenConduit,.,.,.,.,.,.,.,.,.,.,.,.,.,HiddenConduit,.,.</li>
+				<li>.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.</li>
+				<li>.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.</li>
+				<li>.,.,Barricade_Plasteel,.,.,.,.,.,.,.,.,.,.,.,.,.,Barricade_Plasteel,.,.</li>
+				<li>.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.</li>
+				<li>.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.</li>
+				<li>.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.</li>
+				<li>.,.,Barricade_Plasteel,.,.,.,.,.,.,.,.,.,.,.,.,.,Barricade_Plasteel,.,.</li>
+				<li>.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.</li>
+				<li>.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.</li>
+				<li>.,.,HiddenConduit,.,.,.,.,.,.,.,.,.,.,.,.,.,HiddenConduit,.,.</li>
+				<li>.,.,Turret_Autocannon_Fuel100,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.</li>
+				<li>.,.,HiddenConduit,.,HiddenConduit,.,.,.,.,.,.,.,.,.,HiddenConduit,.,.,.,.</li>
+				<li>.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.</li>
+				<li>.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.</li>
+			</li>
+		</onTop>
+	</RimSiege.CampLayoutDef>
+
+</Defs>

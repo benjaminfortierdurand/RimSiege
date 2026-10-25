@@ -1,39 +1,53 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ModMetaData>
-	<name>RimSiege</name>
+	<name>RimSiege 2.0 - Sieges for every era</name>
 	<author>BenFD</author>
 	<packageId>forti.rimsiege</packageId>
 	<supportedVersions>
 		<li>1.6</li>
 		<li>1.7</li>
 	</supportedVersions>
-	<modVersion>1.5.0</modVersion>
+	<modVersion>2.0.0</modVersion>
 	<modIconPath>UI/RimSiegeIcon</modIconPath>
-	<description>Medieval sieges that actually siege.
+	<description>Real sieges, from tribal war bands to the Empire's laser rams.
 
-Vanilla sieges are mortars in a field. In RimSiege the enemy shows up with a plan: they demand a tribute first, and if you refuse they set up a war camp (banner, campfire, tents, stakes) and build their siege engines on site.
+Vanilla sieges are mortars in a field. In RimSiege the enemy shows up with a plan: they demand a tribute first, and if you refuse they set up a war camp outside your walls and build their siege engines on site. Every tech level brings its own kit, and everything scales with threat points: a small war party camps and charges on foot, a late game siege brings the whole train.
 
-[b]What they bring[/b]
-- A battering ram for your gate. Crewed: kill the pushers and it stops. Double gates wont save you, it keeps going.
-- Or a siege tower that goes OVER your walls. The wall stays intact, the whole army climbs it one by one.
-- Tribes come lighter: a log ram carried by four warriors that swings into your gate, or a ladder they lean on your rampart. No trebuchets, no sappers.
-- Gun era factions (pirates, outlanders, the Empire) bring a steel breaching ram carried by two, mortars dug in behind sandbags, and smoke shells on your gate when the ram goes in.
-- Trebuchet batteries and ballistas (with Medieval Overhaul), manned and reloaded from an ammo pile at the camp.
-- Sappers planting petards on a second wall while the ram hits the front. Pincer assaults.
-- A captain guarded by two bodyguards, in a gilded helm if you run Medieval Overhaul. Kill him before the breach and the whole siege routs - they even retreat back over their tower.
-- Capture the captain alive and his house sends a truce party to ransom him back, silver in hand. Execute him or let him rot and they swear a vendetta: the next siege comes sooner, angrier, and without an ultimatum.
+[b]Tribes[/b]
+- A log ram carried by four warriors that swings into your gate, or a ladder they lean on your rampart.
+- Camps of wooden barricades, campfires and spike traps. No artillery, no gunpowder.
 
-Everything scales with threat points: small war parties just camp and charge on foot, late game sieges bring the full siege train. Settings page to tune all the thresholds.
+[b]Medieval houses[/b]
+- A wheeled battering ram for your gate, or a siege tower that goes over your walls: the wall stays intact, the whole army climbs it one by one.
+- Trebuchets and ballistas (with Medieval Overhaul), manned and reloaded from an ammo pile at the camp. Tarred boulders, and rotten carcasses when they get nasty.
+- Palisade camps with trenches, wall torches and their house banners.
 
-Every tech level gets its own kit: tribes carry logs and ladders, medieval houses roll wheeled rams and towers, the gun era breaches with steel and mortars.
+[b]Gun era (pirates, outlanders)[/b]
+- A steel breaching ram carried by two, with smoke shells on your gate when it goes in.
+- Mortars dug in behind sandbags, mini-turrets and generators built on site.
 
-[b]Counterplay[/b]: pay the tribute, raid the camp before the engines are built, kill the crews, burn the wooden engines, steal the trebuchet boulders, snipe the captain - or take him alive and sell him back to his own house.
+[b]Spacer armies (the Empire, modded spacer factions)[/b]
+- Laser batteries that charge up and lob bolts over your walls, fed by power cells dropped next to them.
+- A huge laser ram pushed into place well back from your gate. When its alarm sounds you have seconds: then it holds a beam on the gate until it melts, burning through trees, rock and anyone in the way.
 
-[b]Medieval Overhaul optional but recommended[/b]: its noble houses, trebuchets, ballistas, banners and gilded helms plug right in (all by DankPyon). Camping Tent optional (adds tents to the camp).
+[b]Every siege[/b]
+- Their guns pound your walls before the engine moves, and a second column can march in halfway through.
+- Double gates and airlocks won't save you: the ram keeps going, and climbers who land in an airlock bash the inner door.
+- Sappers plant petards on a second wall while the ram hits the front.
+- Once the engines are up, they offer one last chance to buy them off.
+- A captain guarded by two bodyguards. Kill them before the breach and the whole siege routs. Take them alive and their faction sends a truce party to ransom them back; execute them and it swears a vendetta: the next siege comes sooner, angrier, and without an ultimatum.
 
-Modders: RimSiege.SiegeApi lets your mod run a siege with its own army.
+[b]Counterplay[/b]: pay the tribute, raid the camp before the engines are built, kill the crews, burn the wooden engines, steal the boulders or the power cells, EMP the laser batteries, snipe the captain.
 
-Siege tower and battering ram art by Tom. Siege ladder based on Deon's Deep And Deeper - Ladder retexture, used with permission.
+[b]Other mods[/b]
+- Medieval Overhaul is optional: its noble houses, trebuchets, ballistas, banners and gilded helms plug right in (all by DankPyon). Camping Tent is optional too (tents in the camp).
+- Modded factions get the kit of their tech level.
+- Modders: RimSiege.SiegeApi lets your mod run a siege with its own army.
+- Settings page to tune all the thresholds.
+
+Siege tower and battering ram art by Tom. Siege ladder based on Deon's Deep And Deeper - Ladder retexture, used with permission. Laser battery cannon based on Bonible's VEW Laser Retexture, used with permission. Laser ram art from the Drakken Laser Drill by 空曜, used with permission.
+
+Sounds from freesound.org, cut by us: "Large Energy Beam" by LPHypeR (CC BY 3.0), "Scifi Alarm x3" by Cell31_Sound_Productions (CC BY 4.0), "Big Laser Beam" by Rickplayer (CC0), "Devastating Laser Blasts" by SamsterBirdies (CC0).
 
 BenFD</description>
 

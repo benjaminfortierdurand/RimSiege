@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using Verse;
 
 namespace RimSiege.Things
@@ -14,8 +15,8 @@ namespace RimSiege.Things
 		public const int SwingLead = WindUp + Lunge;
 		private int swingStart = -99999; // not saved, a load mid swing just skips that one
 
-		// how far it pulls back, in cells. the wheeled ram only jolts, the log ram swings from the arms
-		protected virtual float SwingBack => 0.1f;
+		// how far it pulls back, in cells. the wagon gets rolled back and slammed in, the log ram swings from the arms
+		protected virtual float SwingBack => 0.3f;
 		public virtual float ShakeOnHit => 0.1f;
 		public virtual int StrikeInterval => 180; // ticks between blows
 
@@ -37,7 +38,27 @@ namespace RimSiege.Things
 			}
 		}
 
-		protected override Vector3 ExtraDrawOffset => SwingOffset;
+		// the wagon art reaches ~2 cells ahead of its cell, centred it covered the whole gate. drawn this far
+		// back the ram head meets the gate's face when docked, and the crew pushes from the back end
+		private const float DrawBack = 1.35f;
+
+		public override IEnumerable<IntVec3> HandleCells
+		{
+			get
+			{
+				IntVec3 perp = Rotation.Rotated(RotationDirection.Clockwise).FacingCell;
+				IntVec3 back2 = Position - Rotation.FacingCell * 2;
+				IntVec3 back3 = back2 - Rotation.FacingCell;
+				yield return back3;
+				yield return back3 + perp;
+				yield return back3 - perp;
+				yield return back2 + perp;
+				yield return back2 - perp;
+				yield return back3 - Rotation.FacingCell;
+			}
+		}
+
+		protected override Vector3 ExtraDrawOffset => -Rotation.FacingCell.ToVector3() * DrawBack + SwingOffset;
 
 		public override void ExposeData()
 		{

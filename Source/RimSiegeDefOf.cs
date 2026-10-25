@@ -16,6 +16,19 @@ namespace RimSiege
 		public static ThingDef RimSiege_Petard;
 		public static ThingDef RimSiege_CondemnedFlyer;
 		public static ThingDef RimSiege_CarrionShell;
+		public static ThingDef RimSiege_LaserBattery;
+		public static ThingDef RimSiege_LaserCell;
+		public static ThingDef RimSiege_LaserLight;
+		public static ThingDef RimSiege_LaserRam;
+
+		public static FleckDef RimSiege_LaserFlash;
+		public static FleckDef RimSiege_LaserRing;
+		public static FleckDef RimSiege_LaserGlow;
+		public static FleckDef RimSiege_LaserSpark;
+		public static FleckDef RimSiege_LaserMote;
+		public static FleckDef RimSiege_LaserFlare;
+		public static FleckDef RimSiege_LaserSteam;
+		public static FleckDef RimSiege_LaserSmoke;
 
 		public static JobDef RimSiege_PushSiegeEngine;
 		public static JobDef RimSiege_SapJob;
@@ -47,6 +60,15 @@ namespace RimSiege
 		public static SoundDef RimSiege_CrewPush;
 		public static SoundDef RimSiege_WarHorn;
 		public static SoundDef RimSiege_WarDrums;
+		public static SoundDef RimSiege_LaserBattery_Charge;
+		public static SoundDef RimSiege_LaserBattery_Fire;
+		public static SoundDef RimSiege_LaserBattery_Aim;
+		public static SoundDef RimSiege_LaserBattery_Vent;
+		public static SoundDef RimSiege_LaserRam_Beam;
+		public static SoundDef RimSiege_LaserRam_Alarm;
+		public static SoundDef RimSiege_LaserRam_Charge;
+
+		public static DamageDef RimSiege_LaserBlast;
 
 		static RimSiegeDefOf()
 		{
