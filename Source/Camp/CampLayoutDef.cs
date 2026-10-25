@@ -5,7 +5,7 @@ using Verse;
 
 namespace RimSiege
 {
-	public enum CampKit { Tribal, Medieval, Modern }
+	public enum CampKit { Tribal, Medieval, Modern, Spacer }
 
 	// a siege camp drawn in game with KCSG's export tool (Vanilla Expanded Framework) and pasted here as rows
 	// of symbols. we read it ourselves, KCSG never runs: on an enemy mortar it quietly pushes a free crewman
@@ -229,11 +229,13 @@ namespace RimSiege
 			}
 		}
 
+		// spacer armies borrow the gun era drawings for the sizes nobody drew for them
 		public static List<CampLayoutDef> AllFor(CampKit kit, float points)
 		{
 			var options = new List<CampLayoutDef>();
 			foreach (CampLayoutDef d in DefDatabase<CampLayoutDef>.AllDefsListForReading)
 				if (d.kit == kit && points >= d.minPoints && points <= d.maxPoints && d.Usable) options.Add(d);
+			if (options.Count == 0 && kit == CampKit.Spacer) return AllFor(CampKit.Modern, points);
 			return options;
 		}
 	}

@@ -75,8 +75,7 @@ namespace RimSiege.AI
 			// picked at launch so the battery matches the drawing and the drawing fits the ground. null = classic camp
 			CampLayoutDef drawn = Job?.camp;
 			// a drawn camp reaches its corners: trample out to there or trees cost it its corner pieces
-			ClearCampArea(drawn == null ? CampClearRadius
-				: Mathf.Max(CampClearRadius, Mathf.Sqrt(drawn.Width * drawn.Width + drawn.Height * drawn.Height) / 2f + 1f));
+			ClearCampArea(SiegeLauncher.CampRadius(drawn));
 
 			var resources = new Dictionary<ThingDef, int>();
 			if (drawn != null) PlaceDrawnCamp(drawn, resources);
@@ -129,16 +128,22 @@ namespace RimSiege.AI
 		}
 
 		// gun era battery: mortars dug in behind sandbags, shells, smoke for the cover salvos, a spare
-		// barrel each (the built one comes with a fresh barrel, 20 shots)
+		// barrel each (the built one comes with a fresh barrel, 20 shots). spacer armies dig in lasers the
+		// same way and bring power cells instead, ten bursts a gun
 		private void PlaceMortars(Dictionary<ThingDef, int> resources)
 		{
-			ThingDef mortar = ThingDefOf.Turret_Mortar;
+			ThingDef mortar = SiegeLauncher.ArtilleryDefFor(lord.faction);
 			ThingDef stuff = mortar.MadeFromStuff ? GenStuff.DefaultStuffFor(mortar) : null;
 			for (int i = 0; i < trebuchetCount; i++)
 			{
 				if (TakeSpot(mortar, stuff, resources)) continue; // the drawing has its own sandbags
 				IntVec3 spot = PlaceEngine(mortar, stuff, resources);
 				if (spot.IsValid) DigIn(mortar, spot);
+			}
+			if (mortar == RimSiegeDefOf.RimSiege_LaserBattery)
+			{
+				AddResource(resources, RimSiegeDefOf.RimSiege_LaserCell, 30 * trebuchetCount);
+				return;
 			}
 
 			ThingDef fire = DefDatabase<ThingDef>.GetNamedSilentFail("Shell_Incendiary");
@@ -224,7 +229,9 @@ namespace RimSiege.AI
 					foreach (IntVec3 c in rect) CampLayoutDef.Clear(c, Map);
 				}
 
-				if (p.def == arty || (ballista != null && p.def == ballista))
+				if (SiegeLauncher.BatteryMark(p.def, arty))
+					artySpots.Add(new Spot { cell = cell, rot = rot, def = arty });
+				else if (ballista != null && p.def == ballista)
 					artySpots.Add(new Spot { cell = cell, rot = rot, def = p.def });
 				else if (p.onTop)
 				{
@@ -339,7 +346,6 @@ namespace RimSiege.AI
 		// cardinal step from the camp toward the breach
 		private IntVec3 Forward => CampLayoutDef.Toward(center, breach);
 
-		private const float CampClearRadius = 13f;
 
 		// trample a circle: looks like a camp, and tree cells arent standable so dense forests
 		// used to leave no room for the blueprints
@@ -435,7 +441,9 @@ namespace RimSiege.AI
 			if (!spot.IsValid) spot = FindBuildSpot(def);
 			if (!spot.IsValid) return IntVec3.Invalid;
 
-			Blueprint_Build bp = GenConstruct.PlaceBlueprintForBuild(def, spot, Map, Rot4.North, lord.faction, stuff);
+			// the engine is built facing the colony: a long one (the laser ram) lies back into its clear strip
+			Rot4 rot = def == engineDef ? Rot4.FromIntVec3(Forward) : Rot4.North;
+			Blueprint_Build bp = GenConstruct.PlaceBlueprintForBuild(def, spot, Map, rot, lord.faction, stuff);
 			if (def == engineDef && Job != null) Job.engineSpot = spot;
 			foreach (ThingDefCountClass cost in bp.TotalMaterialCost())
 				resources[cost.thingDef] = (resources.TryGetValue(cost.thingDef, out int v) ? v : 0) + cost.count;
@@ -496,10 +504,12 @@ namespace RimSiege.AI
 		// drawn camp: the engine is built just past its front edge, toward the breach, not in the middle of it
 		private IntVec3 FindFrontSpot(ThingDef def)
 		{
-			IntVec3 front = center + Forward * Mathf.Min(campReach + 3, MaxReach);
+			// a long engine starts its own length further out so its body clears the drawing
+			int body = SiegeLauncher.EngineBodyLength(def);
+			IntVec3 front = center + Forward * Mathf.Min(campReach + 3 + body, MaxReach + body / 2);
 			foreach (IntVec3 c in GenRadial.RadialCellsAround(front, 4f, useCenter: true))
 			{
-				if (!c.InBounds(Map) || c.Roofed(Map) || !FootprintClear(c, def)) continue;
+				if (!c.InBounds(Map) || c.Roofed(Map) || !FootprintClear(c, def) || !BodyClear(c, def)) continue;
 				if (!Map.reachability.CanReach(c, center, PathEndMode.OnCell, TraverseMode.NoPassClosedDoors, Danger.Deadly)) continue;
 				return c;
 			}
@@ -520,11 +530,22 @@ namespace RimSiege.AI
 					if (!c.InHorDistOf(center, Radius - 1f)) continue; // square ring corners lay outside the builders' reach
 					if (c.Roofed(Map)) continue;
 					if (!Map.reachability.CanReach(c, center, PathEndMode.OnCell, TraverseMode.NoPassClosedDoors, Danger.Deadly)) continue;
-					if (!FootprintClear(c, def)) continue;
+					if (!FootprintClear(c, def) || !BodyClear(c, def)) continue;
 					return c;
 				}
 			}
 			return IntVec3.Invalid;
+		}
+
+		// the strip the engine's body and crew cover behind its cell, built facing the colony
+		private bool BodyClear(IntVec3 root, ThingDef def)
+		{
+			int back = SiegeLauncher.EngineBodyLength(def), half = SiegeLauncher.EngineBodyHalfWidth(def);
+			IntVec3 perp = new IntVec3(Forward.z, 0, -Forward.x);
+			for (int k = 1; k <= back; k++)
+				for (int j = -half; j <= half; j++)
+					if (!FootprintClear(root - Forward * k + perp * j, def)) return false;
+			return true;
 		}
 
 		private bool FootprintClear(IntVec3 root, ThingDef def, Rot4 rot = default)

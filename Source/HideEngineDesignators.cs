@@ -17,7 +17,8 @@ namespace RimSiege
 			var engines = new HashSet<BuildableDef>
 			{
 				RimSiegeDefOf.RimSiege_BatteringRam, RimSiegeDefOf.RimSiege_SiegeTower, RimSiegeDefOf.RimSiege_LogRam,
-				RimSiegeDefOf.RimSiege_SiegeLadder, RimSiegeDefOf.RimSiege_SteelRam,
+				RimSiegeDefOf.RimSiege_SiegeLadder, RimSiegeDefOf.RimSiege_SteelRam, RimSiegeDefOf.RimSiege_LaserBattery,
+				RimSiegeDefOf.RimSiege_LaserRam,
 			};
 			foreach (DesignationCategoryDef cat in DefDatabase<DesignationCategoryDef>.AllDefsListForReading)
 				cat.AllResolvedDesignators.RemoveAll(d => d is Designator_Build b && engines.Contains(b.PlacingDef));

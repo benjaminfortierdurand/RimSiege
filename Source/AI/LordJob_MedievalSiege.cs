@@ -30,6 +30,7 @@ namespace RimSiege.AI
 		public IntVec3 engineSpot = IntVec3.Invalid; // where its blueprint went down
 
 		public float Points => points;
+		public IntVec3 Breach => breach;
 		public ThingDef EngineDef => engineDef;
 
 		// tower or ladder: they go over the top, not through, and leave the same way
@@ -78,6 +79,7 @@ namespace RimSiege.AI
 			if (engineDef != null)
 			{
 				push = engineDef == RimSiegeDefOf.RimSiege_SiegeLadder ? new LordToil_SiegeLadder()
+				: engineDef == RimSiegeDefOf.RimSiege_LaserRam ? new LordToil_LaserRam()
 				: Climbs ? new LordToil_SiegeTower()
 				: (LordToil)new LordToil_PushRam();
 				((LordToil_PushEngine)push).captain = captain;

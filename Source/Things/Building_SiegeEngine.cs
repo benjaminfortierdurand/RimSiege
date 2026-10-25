@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using RimWorld;
 using UnityEngine;
 using Verse;
@@ -18,7 +19,7 @@ namespace RimSiege.Things
 		public int crewNeeded = 3;
 
 		// draw offset eaten at constant speed so the roll looks continuous
-		private Vector3 drawOffset;
+		protected Vector3 drawOffset;
 		private float glideStep;
 
 		// 4-way sprites snap to Rotation. a single top-down sprite (retextures) turns freely while rolling
@@ -26,7 +27,7 @@ namespace RimSiege.Things
 		protected virtual float RotateDegreesPerTick => 3f;
 		// false keeps the sprite square to the wall like the crew around it, it only swings when Rotation flips
 		protected virtual bool TurnsWithPath => true;
-		private float drawAngle;
+		protected float drawAngle;
 		private float targetAngle;
 
 		public IntVec3 BackCell => Position - Rotation.FacingCell;
@@ -133,7 +134,8 @@ namespace RimSiege.Things
 			int i = crewSlots.IndexOf(p);
 			IntVec3 c = i < 0 ? IntVec3.Invalid : Spot(i);
 			if (c.IsValid) return p.Position == c;
-			return (p.Position - Position).LengthHorizontalSquared <= 6;
+			// lost its slot (job hiccup, someone took it): any handle or close by still counts
+			return HandleCells.Contains(p.Position) || (p.Position - Position).LengthHorizontalSquared <= 6;
 		}
 
 		// where a crewman in place looks: pushers lean on the engine, carriers look where they march
@@ -176,10 +178,22 @@ namespace RimSiege.Things
 			targetAngle = Rotation.AsAngle;
 		}
 
+		// a long dock's parking spot (the laser ram): it keeps facing the gate from there the whole way in.
+		// not saved, the push toil plans it again
+		public IntVec3 dockSpot = IntVec3.Invalid;
+
+		public void PlanDock(IntVec3 spot)
+		{
+			dockSpot = spot;
+			if (!spot.IsValid || !breachTarget.IsValid) return;
+			Rotation = RotToward(spot, breachTarget);
+			targetAngle = Rotation.AsAngle;
+		}
+
 		public void StepTo(IntVec3 cell, int glideTicks = 30)
 		{
 			// Rot4 stays pointed at the wall for game logic (pusher slots), only the drawing turns freely
-			if (breachTarget.IsValid) Rotation = RotToward(Position, breachTarget);
+			if (breachTarget.IsValid) Rotation = RotToward(dockSpot.IsValid ? dockSpot : Position, breachTarget);
 			Vector3 fromDraw = Position.ToVector3Shifted() + drawOffset;
 			Position = cell;
 			drawOffset = fromDraw - Position.ToVector3Shifted();

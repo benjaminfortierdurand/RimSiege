@@ -89,6 +89,8 @@ namespace RimSiege.AI
 		{
 			base.Init();
 			IntVec3 pos = Engine?.Position ?? (lord.ownedPawns.Count > 0 ? lord.ownedPawns[0].Position : Map.Center);
+			// a long dock turns to its parking spot's facing now, so the crew line up behind it once
+			if (Engine != null && DockRange > 2) Engine.PlanDock(DockSpot(Engine));
 			RimSiegeDefOf.RimSiege_WarHorn?.PlayOneShot(new TargetInfo(pos, Map));
 			RimSiegeDefOf.RimSiege_WarDrums?.PlayOneShot(new TargetInfo(pos, Map));
 		}
@@ -194,7 +196,7 @@ namespace RimSiege.AI
 				IntVec3 dv = engine.breachTarget - engine.Position;
 				int distSq = dv.LengthHorizontalSquared;
 				// dock only square in front of the wall, never diagonally or alongside it
-				if (distSq <= DockDistanceSq && (dv.x == 0 || dv.z == 0))
+				if (distSq <= DockDistanceSq && (dv.x == 0 || dv.z == 0) && (DockRange <= 2 || LineClear(engine.Position, engine.breachTarget)))
 				{ engine.FaceTarget(); engine.docked = true; return; }
 
 				if (lastEngineProgressTick < 0) lastEngineProgressTick = now;
@@ -202,7 +204,7 @@ namespace RimSiege.AI
 				{
 					lastAdvanceTick = now;
 					lastEngineProgressTick = now;
-					if (distSq <= DockDistanceSq + 2) AlignFront(engine); else Advance(engine);
+					if (DockRange <= 2 && distSq <= DockDistanceSq + 2) AlignFront(engine); else Advance(engine);
 				}
 				// they can walk to it, they just never show up to shove (crew dead, or another
 				// AI keeping them in the fight). drop the engine and raid on foot
@@ -252,8 +254,9 @@ namespace RimSiege.AI
 			if (pathIndex >= path.Count) { engine.docked = true; return; }
 
 			IntVec3 next = path[pathIndex];
-			// next step would enter the dock ring: hand over to the sidestep logic so it ends up square
-			if ((next - engine.breachTarget).LengthHorizontalSquared <= DockDistanceSq)
+			// next step would enter the dock ring: hand over to the sidestep logic so it ends up square.
+			// a long dock already paths to its spot
+			if (DockRange <= 2 && (next - engine.breachTarget).LengthHorizontalSquared <= DockDistanceSq)
 			{ AlignFront(engine); return; }
 			// only solid stuff blocks, breach-mod rubble gets rolled over
 			if (BlockedAhead(next, engine))
@@ -298,7 +301,12 @@ namespace RimSiege.AI
 			try
 			{
 				TraverseParms tp = TraverseParms.For(TraverseMode.NoPassClosedDoors, Danger.Deadly);
-				pp = Map.pathFinder.FindPathNow(engine.Position, engine.breachTarget, tp, peMode: PathEndMode.Touch);
+				// a long dock (the laser ram) heads for its parking spot, the others for the gate itself
+				IntVec3 spot = DockRange > 2 ? DockSpot(engine) : IntVec3.Invalid;
+				if (DockRange > 2) engine.PlanDock(spot);
+				pp = spot.IsValid
+					? Map.pathFinder.FindPathNow(engine.Position, spot, tp, peMode: PathEndMode.OnCell)
+					: Map.pathFinder.FindPathNow(engine.Position, engine.breachTarget, tp, peMode: PathEndMode.Touch);
 				if (pp.Found && pp.NodesReversed.Count >= 2)
 				{
 					path = new List<IntVec3>(pp.NodesReversed);
@@ -379,26 +387,52 @@ namespace RimSiege.AI
 			}
 		}
 
-		private int DockRange => DockDistanceSq >= 4 ? 2 : 1;
+		private int DockRange => Math.Max(1, (int)Math.Round(Math.Sqrt(DockDistanceSq)));
 
-		// sidestep onto the cell straight in front of the wall so the engine always docks square
-		private void AlignFront(Building_SiegeEngine engine)
+		// where the engine parks: DockRange cells out on a cardinal of the gate, reachable. a long dock (the laser
+		// ram) wants a line to the gate that crosses no built wall or door, trees and rock are fair game for its
+		// beam, and it creeps closer when the far spots are taken. Invalid = boxed in
+		private IntVec3 DockSpot(Building_SiegeEngine engine)
 		{
 			TraverseParms tp = TraverseParms.For(TraverseMode.NoPassClosedDoors, Danger.Deadly);
 			IntVec3 best = IntVec3.Invalid;
 			int bestD = int.MaxValue;
-			foreach (Rot4 dir in CardinalDirs)
-			{
-				IntVec3 c = engine.breachTarget + dir.FacingCell * DockRange;
-				if (!c.InBounds(Map)) continue;
-				if (c != engine.Position)
+			for (int range = DockRange; range >= 1 && !best.IsValid; range = range > 2 ? range - 1 : 0)
+				foreach (Rot4 dir in CardinalDirs)
 				{
-					if (!c.Standable(Map) || c.GetEdifice(Map) != null) continue;
-					if (!Map.reachability.CanReach(engine.Position, c, PathEndMode.OnCell, tp)) continue;
+					IntVec3 c = engine.breachTarget + dir.FacingCell * range;
+					if (!c.InBounds(Map)) continue;
+					if (c != engine.Position)
+					{
+						if (!c.Standable(Map) || c.GetEdifice(Map) != null) continue;
+						if (!Map.reachability.CanReach(engine.Position, c, PathEndMode.OnCell, tp)) continue;
+					}
+					if (range > 2 && !LineClear(c, engine.breachTarget)) continue;
+					int d = (c - engine.Position).LengthHorizontalSquared;
+					if (d < bestD) { bestD = d; best = c; }
 				}
-				int d = (c - engine.Position).LengthHorizontalSquared;
-				if (d < bestD) { bestD = d; best = c; }
+			return best;
+		}
+
+		// straight cardinal line between two aligned cells: no built wall or door on it, natural rock is fine
+		protected bool LineClear(IntVec3 from, IntVec3 to)
+		{
+			IntVec3 step = new IntVec3(Math.Sign(to.x - from.x), 0, Math.Sign(to.z - from.z));
+			if (step.x != 0 && step.z != 0) return false;
+			for (IntVec3 c = from + step; c != to; c += step)
+			{
+				if (!c.InBounds(Map)) return false;
+				Building ed = c.GetEdifice(Map);
+				if (ed == null || (ed.def.building?.isNaturalRock ?? false)) continue;
+				if (ed.def.passability == Traversability.Impassable || ed is Building_Door) return false;
 			}
+			return true;
+		}
+
+		// sidestep onto the cell straight in front of the wall so the engine always docks square
+		private void AlignFront(Building_SiegeEngine engine)
+		{
+			IntVec3 best = DockSpot(engine);
 			if (!best.IsValid) { engine.FaceTarget(); engine.docked = true; return; } // boxed in, settle
 
 			if (engine.Position == best) { engine.FaceTarget(); engine.docked = true; return; }
@@ -455,7 +489,8 @@ namespace RimSiege.AI
 
 		protected int CountPushers(Building_SiegeEngine engine)
 		{
-			// wheels: loose radius, the engine is 1 logical cell but the sprite is fat.
+			// wheels: loose radius, the engine is 1 logical cell but the sprite is fat. the wagon's crew stands
+			// past it at the back end, their own handle counts too
 			// carried: everyone on their handle, else the log runs off ahead of the guys holding it
 			int n = 0;
 			foreach (Pawn p in lord.ownedPawns)
@@ -465,7 +500,7 @@ namespace RimSiege.AI
 
 		protected static bool Pushing(Building_SiegeEngine engine, Pawn p) =>
 			p.CurJobDef == RimSiegeDefOf.RimSiege_PushSiegeEngine
-			&& (engine.OnWheels ? (p.Position - engine.Position).LengthHorizontalSquared <= 6 : engine.OnHandle(p));
+			&& (engine.OnWheels ? (p.Position - engine.Position).LengthHorizontalSquared <= 6 || engine.OnHandle(p) : engine.OnHandle(p));
 
 		private void CrushPlantsAt(IntVec3 c)
 		{
@@ -474,26 +509,7 @@ namespace RimSiege.AI
 				if (things[i] is Plant) things[i].Destroy(DestroyMode.Vanish);
 		}
 
-		private void EnsureGunners()
-		{
-			// trebuchets or mortars, and ballistas, cheapest hands man the machines while knights fight
-			var guns = SiegeLauncher.SpawnedArtillery(Map, lord.faction).Concat(SiegeLauncher.SpawnedBallistas(Map, lord.faction))
-				.Concat(SiegeLauncher.SpawnedCampGuns(Map, lord.faction)).ToList();
-			gunners.RemoveAll(g => g == null || g.Dead || g.Downed || !g.Spawned || !lord.ownedPawns.Contains(g));
-			if (guns.Count == 0) { gunners.Clear(); return; }
-
-			while (gunners.Count < guns.Count)
-			{
-				Pawn g = lord.ownedPawns
-					.Where(p => p != captain && !p.Dead && !p.Downed && p.Spawned
-						&& !gunners.Contains(p) && SiegeLauncher.CanCrew(p))
-					.OrderBy(p => p.kindDef.combatPower)
-					.FirstOrDefault();
-				if (g == null) break;
-				g.mindState.duty = new PawnDuty(RimSiegeDefOf.RimSiege_ManTrebuchet, guns[gunners.Count % guns.Count]);
-				gunners.Add(g);
-			}
-		}
+		private void EnsureGunners() => SiegeLauncher.ManTheGuns(lord, gunners, captain);
 
 		// manned MO turret shoots on its own, reload it from the camp pile. pile gone = gun goes quiet
 		private void KeepTrebuchetsLoaded()
@@ -501,9 +517,7 @@ namespace RimSiege.AI
 			int now = Find.TickManager.TicksGame;
 			if (now - lastLoadTick < LoadCheckInterval) return;
 			lastLoadTick = now;
-			SiegeLauncher.RefuelBallistasNear(Map, lord.faction);
-			SiegeLauncher.LoadArtilleryFromPiles(Map, lord.faction);
-			SiegeLauncher.RefuelCampWorks(Map, lord.faction);
+			SiegeLauncher.ReloadCamp(Map, lord.faction);
 		}
 
 		// tries every 2s until a manned mortar with a smoke shell fires, then waits out the cloud

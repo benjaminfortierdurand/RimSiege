@@ -80,21 +80,48 @@ namespace RimSiege.Debug
 			allowedGameStates = AllowedGameStates.PlayingOnMap)]
 		private static void TribeLadder() => KitSiege(SiegeLauncher.Tribal, RimSiegeDefOf.RimSiege_SiegeLadder, "tribe");
 
+		// medieval kit: wagon ram or siege tower, forced so each gets filmed
+		[DebugAction("RimSiege", "Siege now: medieval house with battering ram (4k points)",
+			actionType = DebugActionType.Action,
+			allowedGameStates = AllowedGameStates.PlayingOnMap)]
+		private static void MedievalRam() => KitSiege(Medieval, RimSiegeDefOf.RimSiege_BatteringRam, "medieval house", makeHostile: true);
+
+		[DebugAction("RimSiege", "Siege now: medieval house with siege tower (4k points)",
+			actionType = DebugActionType.Action,
+			allowedGameStates = AllowedGameStates.PlayingOnMap)]
+		private static void MedievalTower() => KitSiege(Medieval, RimSiegeDefOf.RimSiege_SiegeTower, "medieval house", makeHostile: true);
+
+		private static bool Medieval(Faction f) => SiegeLauncher.OldWorld(f) && !SiegeLauncher.Tribal(f);
+
 		// gun era kit: steel breaching ram, mortars behind sandbags, smoke on the gate. 4k so the battery shows up
 		[DebugAction("RimSiege", "Siege now: gun era (4k points)",
 			actionType = DebugActionType.Action,
 			allowedGameStates = AllowedGameStates.PlayingOnMap)]
-		private static void ModernSiege() => KitSiege(SiegeLauncher.Modern, RimSiegeDefOf.RimSiege_SteelRam, "gun era faction");
+		private static void ModernSiege() => KitSiege(f => SiegeLauncher.Modern(f) && !SiegeLauncher.Lasers(f),
+			RimSiegeDefOf.RimSiege_SteelRam, "gun era faction");
 
-		private static void KitSiege(System.Func<Faction, bool> kit, ThingDef engine, string what)
+		// spacer kit: laser battery and the laser ram on the gate. the Empire is rarely at war with you, this
+		// one turns it hostile if it has to
+		[DebugAction("RimSiege", "Siege now: spacer army, laser battery + laser ram (4k points)",
+			actionType = DebugActionType.Action,
+			allowedGameStates = AllowedGameStates.PlayingOnMap)]
+		private static void LaserSiege() => KitSiege(SiegeLauncher.Lasers, RimSiegeDefOf.RimSiege_LaserRam,
+			"spacer army", makeHostile: true);
+
+		private static void KitSiege(System.Func<Faction, bool> kit, ThingDef engine, string what, bool makeHostile = false)
 		{
 			Map map = Find.CurrentMap;
 			if (map == null) return;
-			Faction faction = Find.FactionManager.AllFactions
-				.Where(f => !f.IsPlayer && !f.defeated && !f.def.hidden && kit(f)
-					&& f.HostileTo(Faction.OfPlayer) && SiegeLauncher.CrewKindFor(f) != null)
-				.RandomElementWithFallback();
-			if (faction == null)
+			var candidates = Find.FactionManager.AllFactions
+				.Where(f => !f.IsPlayer && !f.defeated && !f.def.hidden && kit(f) && SiegeLauncher.CrewKindFor(f) != null)
+				.ToList();
+			Faction faction = candidates.Where(f => f.HostileTo(Faction.OfPlayer)).RandomElementWithFallback();
+			if (faction == null && makeHostile && candidates.TryRandomElement(out faction))
+			{
+				faction.TryAffectGoodwillWith(Faction.OfPlayer, -200, canSendMessage: false, canSendHostilityLetter: false);
+				Messages.Message("RimSiege: " + faction.Name + " made hostile for the test.", MessageTypeDefOf.NeutralEvent, historical: false);
+			}
+			if (faction == null || !faction.HostileTo(Faction.OfPlayer))
 			{
 				Messages.Message("RimSiege: no hostile " + what + " found.", MessageTypeDefOf.RejectInput, historical: false);
 				return;
