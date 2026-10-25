@@ -176,6 +176,33 @@ namespace RimSiege
 
 		private static bool HasDef(string defName) => DefDatabase<ThingDef>.GetNamedSilentFail(defName) != null;
 
+		// Combat Extended swaps shells, boulders and bolts for its own ammo, and its guns reload themselves from
+		// what lies around once manned: under it we only bring the right ammo. read by reflection, CE stays optional
+		public static bool CombatExtended => ModsConfig.IsActive("CETeam.CombatExtended");
+
+		// the ammo a CE gun takes, in its ammo set's order, and its magazine. empty = not a CE gun
+		public static List<ThingDef> CeAmmoFor(ThingDef turret, out int magazine)
+		{
+			magazine = 0;
+			var ammo = new List<ThingDef>();
+			List<CompProperties> comps = turret?.building?.turretGunDef?.comps;
+			if (comps == null || !CombatExtended) return ammo;
+			foreach (CompProperties p in comps)
+			{
+				if (p.GetType().Name != "CompProperties_AmmoUser") continue;
+				if (p.GetType().GetField("magazineSize")?.GetValue(p) is int m) magazine = m;
+				object set = p.GetType().GetField("ammoSet")?.GetValue(p);
+				if (set?.GetType().GetField("ammoTypes")?.GetValue(set) is System.Collections.IEnumerable links)
+					foreach (object link in links)
+						if (link?.GetType().GetField("ammo")?.GetValue(link) is ThingDef a) ammo.Add(a);
+			}
+			return ammo;
+		}
+
+		// MO's own ammo, or the CE ammo that replaces it
+		private static bool HasAmmo(string turret, string ammo) =>
+			HasDef(ammo) || CeAmmoFor(DefDatabase<ThingDef>.GetNamedSilentFail(turret), out _).Count > 0;
+
 		private static void MakeCaptain(Pawn p, Faction faction)
 		{
 			p.skills?.GetSkill(SkillDefOf.Shooting)?.EnsureMinLevelWithMargin(11);
@@ -231,7 +258,9 @@ namespace RimSiege
 			if (engineDef != null && !Tribal(faction)) RollArtillery(points, s, faction, out trebuchetCount, out ballistaCount);
 			if (camp != null) CapToCamp(camp, faction, ref trebuchetCount, ref ballistaCount);
 			bool tarAmmo = trebuchetCount > 0 && points >= s.tarBoulderPointsFloor; // incendiary shells for mortars
-			bool carrionAmmo = s.carrionEnabled && trebuchetCount > 0 && !Modern(faction) && points >= s.tarBoulderPointsFloor + 2000f;
+			// a carcass is no CE ammo
+			bool carrionAmmo = s.carrionEnabled && trebuchetCount > 0 && !Modern(faction) && !CombatExtended
+				&& points >= s.tarBoulderPointsFloor + 2000f;
 
 			// the siege train brings its own crews, gunners dont come out of the fighting force
 			int crews = trebuchetCount + ballistaCount;
@@ -301,7 +330,8 @@ namespace RimSiege
 				spare -= trebuchetCount + ballistaCount;
 			}
 			bool tarAmmo = trebuchetCount > 0 && points >= s.tarBoulderPointsFloor;
-			bool carrionAmmo = s.carrionEnabled && trebuchetCount > 0 && !Modern(faction) && points >= s.tarBoulderPointsFloor + 2000f;
+			bool carrionAmmo = s.carrionEnabled && trebuchetCount > 0 && !Modern(faction) && !CombatExtended
+				&& points >= s.tarBoulderPointsFloor + 2000f;
 
 			// sappers only off a big enough host, cheapest hands, the main body keeps 3 more fighters
 			var group = new List<Pawn>(troops);
@@ -489,8 +519,8 @@ namespace RimSiege
 			if (Modern(faction)) { ballistaCount = 0; return; }
 
 			// MO brings the slings and bolt throwers. without it the ram or tower goes alone
-			if (!HasDef("DankPyon_Turret_Trebuchet") || !HasDef("DankPyon_StoneBoulder")) trebuchetCount = 0;
-			if (!HasDef("DankPyon_Turret_Ballista") || !HasDef("DankPyon_BallistaBolt")) ballistaCount = 0;
+			if (!HasDef("DankPyon_Turret_Trebuchet") || !HasAmmo("DankPyon_Turret_Trebuchet", "DankPyon_StoneBoulder")) trebuchetCount = 0;
+			if (!HasDef("DankPyon_Turret_Ballista") || !HasAmmo("DankPyon_Turret_Ballista", "DankPyon_BallistaBolt")) ballistaCount = 0;
 		}
 
 		private static int RollSappers(float points, RimSiegeSettings s)
@@ -1011,21 +1041,25 @@ namespace RimSiege
 		public static bool FireSmokeAt(Map map, Faction faction, IntVec3 target)
 		{
 			ThingDef smoke = DefDatabase<ThingDef>.GetNamedSilentFail("Shell_Smoke");
-			if (smoke?.projectileWhenLoaded == null || !target.IsValid) return false;
-			foreach (Building b in SpawnedArtillery(map, faction).InRandomOrder())
+			// CE's smoke shell is ammo with no shot of its own and its mortar isnt a vanilla turret: the vanilla
+			// smoke shot flies instead
+			ThingDef shot = smoke?.projectileWhenLoaded ?? (CombatExtended ? DefDatabase<ThingDef>.GetNamedSilentFail("Bullet_Shell_Smoke") : null);
+			if (shot == null || !target.IsValid) return false;
+			foreach (Building mortar in SpawnedArtillery(map, faction).InRandomOrder())
 			{
-				if (!(b is Building_TurretGun mortar) || b.def != ThingDefOf.Turret_Mortar) continue; // lasers cant lob smoke
+				if (mortar.def != ThingDefOf.Turret_Mortar) continue; // lasers cant lob smoke
 				CompMannable man = mortar.TryGetComp<CompMannable>();
 				if (man == null || !man.MannedNow) continue;
-				if (mortar.refuelableComp != null && !mortar.refuelableComp.HasFuel) continue;
-				Thing pile = NearestPile(map, b.Position, smoke);
+				CompRefuelable barrel = (mortar as Building_TurretGun)?.refuelableComp;
+				if (barrel != null && !barrel.HasFuel) continue;
+				Thing pile = NearestPile(map, mortar.Position, smoke);
 				if (pile == null) return false;
 
 				pile.SplitOff(1).Destroy();
 				IntVec3 at = CellFinder.RandomClosewalkCellNear(target, map, 2);
-				var shell = (Projectile)GenSpawn.Spawn(smoke.projectileWhenLoaded, mortar.Position, map);
+				var shell = (Projectile)GenSpawn.Spawn(shot, mortar.Position, map);
 				shell.Launch(man.ManningPawn, mortar.DrawPos, at, at, ProjectileHitFlags.IntendedTarget, equipment: mortar);
-				mortar.refuelableComp?.ConsumeFuel(1f);
+				barrel?.ConsumeFuel(1f);
 				VerbProperties verb = mortar.def.building?.turretGunDef?.Verbs?.FirstOrDefault();
 				verb?.soundCast?.PlayOneShot(new TargetInfo(mortar.Position, map));
 				FleckMaker.Static(mortar.DrawPos, map, FleckDefOf.ShotFlash, verb?.muzzleFlashScale ?? 1f);

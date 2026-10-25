@@ -89,6 +89,13 @@ namespace RimSiege.AI
 				ThingDef trebDef = DefDatabase<ThingDef>.GetNamedSilentFail("DankPyon_Turret_Trebuchet");
 				ThingDef boulderAmmo = DefDatabase<ThingDef>.GetNamedSilentFail("DankPyon_StoneBoulder");
 				ThingDef tarredAmmo = DefDatabase<ThingDef>.GetNamedSilentFail("DankPyon_StoneBoulderTarred");
+				// CE takes MO's boulders away for its own: plain boulder first in the set, tarred second
+				List<ThingDef> ceBoulders = SiegeLauncher.CeAmmoFor(trebDef, out _);
+				if (boulderAmmo == null && ceBoulders.Count > 0)
+				{
+					boulderAmmo = ceBoulders[0];
+					tarredAmmo = ceBoulders.Count > 1 ? ceBoulders[1] : null;
+				}
 				if (trebDef != null)
 				{
 					for (int i = 0; i < trebuchetCount; i++)
@@ -107,7 +114,8 @@ namespace RimSiege.AI
 			if (engineDef != null && ballistaCount > 0)
 			{
 				ThingDef ballistaDef = DefDatabase<ThingDef>.GetNamedSilentFail("DankPyon_Turret_Ballista");
-				ThingDef boltAmmo = DefDatabase<ThingDef>.GetNamedSilentFail("DankPyon_BallistaBolt");
+				ThingDef boltAmmo = DefDatabase<ThingDef>.GetNamedSilentFail("DankPyon_BallistaBolt")
+					?? SiegeLauncher.CeAmmoFor(ballistaDef, out _).FirstOrDefault();
 				if (ballistaDef != null)
 				{
 					for (int i = 0; i < ballistaCount; i++)
@@ -152,7 +160,8 @@ namespace RimSiege.AI
 			AddResource(resources, ThingDefOf.Shell_HighExplosive, 25 * trebuchetCount - incendiary);
 			if (incendiary > 0) AddResource(resources, fire, incendiary);
 			if (smoke != null) AddResource(resources, smoke, 4 * trebuchetCount);
-			if (!Find.Storyteller.difficulty.classicMortars) AddResource(resources, ThingDefOf.ReinforcedBarrel, trebuchetCount);
+			if (!Find.Storyteller.difficulty.classicMortars && !SiegeLauncher.CombatExtended)
+				AddResource(resources, ThingDefOf.ReinforcedBarrel, trebuchetCount);
 		}
 
 		private void PlaceArtillery(ThingDef def, ThingDef stuff, Dictionary<ThingDef, int> resources)
@@ -289,6 +298,14 @@ namespace RimSiege.AI
 		// barrels bring nothing
 		private static void FuelFor(ThingDef def, Dictionary<ThingDef, int> resources)
 		{
+			// a CE camp gun spawns with a full magazine and takes ammo, not fuel: a few more magazines, the
+			// defenders reload it
+			List<ThingDef> ammo = SiegeLauncher.CeAmmoFor(def, out int magazine);
+			if (ammo.Count > 0)
+			{
+				AddResource(resources, ammo[0], 3 * Mathf.Max(1, magazine));
+				return;
+			}
 			CompProperties_Refuelable fuel = def.GetCompProperties<CompProperties_Refuelable>();
 			if (fuel?.fuelFilter == null || fuel.fuelIsMortarBarrel || fuel.initialFuelPercent >= 1f) return;
 			bool power = def.GetCompProperties<CompProperties_Power>()?.PowerConsumption < 0f;
