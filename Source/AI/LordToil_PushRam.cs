@@ -10,9 +10,9 @@ namespace RimSiege.AI
 {
 	public class LordToil_PushRam : LordToil_PushEngine
 	{
-		private const int RamInterval = 180;
 		private const int MaxChainedBreaches = 3; // gatehouses yes, eating through the whole base no
 		private int lastRamTick = -99999;
+		private int staleDocks; // not saved, a load just gives it a few more tries
 
 		private LordToilData_PushRam RData => (LordToilData_PushRam)data;
 
@@ -28,22 +28,27 @@ namespace RimSiege.AI
 
 		protected override void DockedTick(Building_SiegeEngine engine, int now)
 		{
-			// stale dock after a retarget, roll closer first
+			// stale dock after a retarget, roll closer first. AlignFront settles where it stands when the gate's
+			// front cell is taken (sandbags in the gateway): that flipped docked on and off forever, so a few
+			// tries in a row and they drop it and go in on foot
 			if ((engine.Position - engine.breachTarget).LengthHorizontalSquared > DockDistanceSq)
 			{
 				engine.docked = false;
 				InvalidatePath();
+				if (++staleDocks >= 3) lord.ReceiveMemo("RamLost");
 				return;
 			}
+			staleDocks = 0;
 
 			// no crew no bashing. the swing winds up SwingLead ticks ahead so the blow lands on the hit
 			if (CountPushers(engine) < engine.crewNeeded) return;
 			var ram = (Building_BatteringRam)engine;
+			int interval = ram.StrikeInterval;
 			// fresh dock, or crew back after a gap: wind up first instead of hitting on the spot
-			if (now - lastRamTick > RamInterval) lastRamTick = now - RamInterval + Building_BatteringRam.SwingLead;
-			if (now - lastRamTick >= RamInterval - Building_BatteringRam.SwingLead && !ram.SwingStartedAfter(lastRamTick))
+			if (now - lastRamTick > interval) lastRamTick = now - interval + Building_BatteringRam.SwingLead;
+			if (now - lastRamTick >= interval - Building_BatteringRam.SwingLead && !ram.SwingStartedAfter(lastRamTick))
 				ram.BeginSwing(now);
-			if (now - lastRamTick >= RamInterval)
+			if (now - lastRamTick >= interval)
 			{
 				RamHit(ram);
 				lastRamTick = now;

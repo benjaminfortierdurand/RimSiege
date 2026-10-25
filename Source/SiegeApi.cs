@@ -30,7 +30,7 @@ namespace RimSiege
 		// by pod and builders get construction 6 + construction-only work.
 		// engines need 5+ humanlike adults. medieval factions get a ram or tower, plus trebuchets and ballistas
 		// with Medieval Overhaul. tribes carry theirs: a log ram (6+ adults, four on the grips) or a ladder,
-		// never artillery. a gun era army gets the camp, the captain and a foot assault.
+		// never artillery. a gun era army gets a steel breaching ram (2 carriers) and mortars, with smoke on the gate.
 		// sappers need gunpowder: medieval and gun era armies only, never a tribe.
 		// survivors leave by walking off the map (or back over the tower or ladder).
 		// false = nothing done, pawns untouched: not hostile, bad pawn list, or no wall worth a siege.

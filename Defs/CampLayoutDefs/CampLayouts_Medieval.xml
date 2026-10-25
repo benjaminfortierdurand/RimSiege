@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+	<!-- petit camp médiéval de BenFD : tranchées et pieux en anneau, 4 torches, pas de marque d'artillerie. fait d'objets MO -->
+	<RimSiege.CampLayoutDef>
+		<defName>RimSiege_CampMedieval_Small</defName>
+		<label>medieval siege camp</label>
+		<kit>Medieval</kit>
+		<minPoints>0</minPoints>
+		<maxPoints>2500</maxPoints>
+		<requiredMods>
+			<li>dankpyon.medieval.overhaul</li>
+		</requiredMods>
+		<layout>
+			<li>TorchLamp_WoodLog_Fuel100,.,.,.,DankPyon_CavalrySpike_DankPyon_RawWood,DankPyon_CavalrySpike_DankPyon_RawWood,DankPyon_CavalrySpike_DankPyon_RawWood,.,.,.,TorchLamp_WoodLog_Fuel100</li>
+			<li>.,DankPyon_Trench,DankPyon_Trench,.,.,.,.,.,DankPyon_Trench,DankPyon_Trench,.</li>
+			<li>.,DankPyon_Trench,DankPyon_CavalrySpike_DankPyon_RawWood,DankPyon_CavalrySpike_DankPyon_RawWood,.,.,.,DankPyon_CavalrySpike_DankPyon_RawWood,DankPyon_CavalrySpike_DankPyon_RawWood,DankPyon_Trench,.</li>
+			<li>.,.,DankPyon_CavalrySpike_DankPyon_RawWood,.,.,.,.,.,DankPyon_CavalrySpike_DankPyon_RawWood,.,.</li>
+			<li>DankPyon_CavalrySpike_DankPyon_RawWood,.,.,.,.,.,.,.,.,.,DankPyon_CavalrySpike_DankPyon_RawWood</li>
+			<li>DankPyon_CavalrySpike_DankPyon_RawWood,.,.,.,.,.,.,.,.,.,DankPyon_CavalrySpike_DankPyon_RawWood</li>
+			<li>.,.,DankPyon_CavalrySpike_DankPyon_RawWood,.,.,.,.,.,DankPyon_CavalrySpike_DankPyon_RawWood,.,.</li>
+			<li>.,DankPyon_Trench,DankPyon_CavalrySpike_DankPyon_RawWood,DankPyon_CavalrySpike_DankPyon_RawWood,.,.,.,DankPyon_CavalrySpike_DankPyon_RawWood,DankPyon_CavalrySpike_DankPyon_RawWood,DankPyon_Trench,.</li>
+			<li>.,DankPyon_Trench,DankPyon_Trench,.,.,.,.,.,DankPyon_Trench,DankPyon_Trench,.</li>
+			<li>TorchLamp_WoodLog_Fuel100,.,.,.,DankPyon_CavalrySpike_DankPyon_RawWood,DankPyon_CavalrySpike_DankPyon_RawWood,DankPyon_CavalrySpike_DankPyon_RawWood,.,.,.,TorchLamp_WoodLog_Fuel100</li>
+		</layout>
+	</RimSiege.CampLayoutDef>
+
+	<!-- petit camp médiéval de BenFD avec un emplacement de trébuchet au centre. fait d'objets MO -->
+	<RimSiege.CampLayoutDef>
+		<defName>RimSiege_CampMedieval_SmallTrebuchet</defName>
+		<label>medieval siege camp</label>
+		<kit>Medieval</kit>
+		<minPoints>0</minPoints>
+		<maxPoints>2500</maxPoints>
+		<requiredMods>
+			<li>dankpyon.medieval.overhaul</li>
+		</requiredMods>
+		<layout>
+			<li>TorchLamp_WoodLog_Fuel100,.,.,.,DankPyon_CavalrySpike_DankPyon_RawWood,DankPyon_CavalrySpike_DankPyon_RawWood,DankPyon_CavalrySpike_DankPyon_RawWood,.,.,.,TorchLamp_WoodLog_Fuel100</li>
+			<li>.,DankPyon_Trench,DankPyon_Trench,.,.,.,.,.,DankPyon_Trench,DankPyon_Trench,.</li>
+			<li>.,DankPyon_Trench,DankPyon_CavalrySpike_DankPyon_RawWood,DankPyon_CavalrySpike_DankPyon_RawWood,.,.,.,DankPyon_CavalrySpike_DankPyon_RawWood,DankPyon_CavalrySpike_DankPyon_RawWood,DankPyon_Trench,.</li>
+			<li>.,.,DankPyon_CavalrySpike_DankPyon_RawWood,.,.,.,.,.,DankPyon_CavalrySpike_DankPyon_RawWood,.,.</li>
+			<li>DankPyon_CavalrySpike_DankPyon_RawWood,.,.,.,.,.,.,.,.,.,DankPyon_CavalrySpike_DankPyon_RawWood</li>
+			<li>DankPyon_CavalrySpike_DankPyon_RawWood,.,.,.,.,.,.,.,.,.,DankPyon_CavalrySpike_DankPyon_RawWood</li>
+			<li>.,.,DankPyon_CavalrySpike_DankPyon_RawWood,.,.,DankPyon_Turret_Trebuchet_DankPyon_RawWood_South,.,.,DankPyon_CavalrySpike_DankPyon_RawWood,.,.</li>
+			<li>.,DankPyon_Trench,DankPyon_CavalrySpike_DankPyon_RawWood,DankPyon_CavalrySpike_DankPyon_RawWood,.,.,.,DankPyon_CavalrySpike_DankPyon_RawWood,DankPyon_CavalrySpike_DankPyon_RawWood,DankPyon_Trench,.</li>
+			<li>.,DankPyon_Trench,DankPyon_Trench,.,.,.,.,.,DankPyon_Trench,DankPyon_Trench,.</li>
+			<li>TorchLamp_WoodLog_Fuel100,.,.,.,DankPyon_CavalrySpike_DankPyon_RawWood,DankPyon_CavalrySpike_DankPyon_RawWood,DankPyon_CavalrySpike_DankPyon_RawWood,.,.,.,TorchLamp_WoodLog_Fuel100</li>
+		</layout>
+	</RimSiege.CampLayoutDef>
+
+	<!-- camp médiéval moyen de BenFD : anneau de pieux et tranchées, un emplacement de trébuchet, 4 scorpios aux coins. fait d'objets MO -->
+	<RimSiege.CampLayoutDef>
+		<defName>RimSiege_CampMedieval_Medium</defName>
+		<label>medieval siege camp</label>
+		<kit>Medieval</kit>
+		<minPoints>2500</minPoints>
+		<maxPoints>5000</maxPoints>
+		<requiredMods>
+			<li>dankpyon.medieval.overhaul</li>
+		</requiredMods>
+		<layout>
+			<li>DankPyon_CavalrySpike_DankPyon_RawWood,DankPyon_CavalrySpike_DankPyon_RawWood,DankPyon_CavalrySpike_DankPyon_RawWood,DankPyon_CavalrySpike_DankPyon_RawWood,.,.,.,.,.,.,.,DankPyon_CavalrySpike_DankPyon_RawWood,DankPyon_CavalrySpike_DankPyon_RawWood,DankPyon_CavalrySpike_DankPyon_RawWood,DankPyon_CavalrySpike_DankPyon_RawWood</li>
+			<li>DankPyon_CavalrySpike_DankPyon_RawWood,DankPyon_Turret_Scorpio_DankPyon_RawWood_West_Fuel0,.,.,.,.,.,.,.,.,.,.,.,DankPyon_Turret_Scorpio_DankPyon_RawWood_East_Fuel0,DankPyon_CavalrySpike_DankPyon_RawWood</li>
+			<li>DankPyon_CavalrySpike_DankPyon_RawWood,.,TorchLamp_WoodLog_Fuel100,.,.,.,DankPyon_CavalrySpike_DankPyon_RawWood,DankPyon_CavalrySpike_DankPyon_RawWood,DankPyon_CavalrySpike_DankPyon_RawWood,.,.,.,TorchLamp_WoodLog_Fuel100,.,DankPyon_CavalrySpike_DankPyon_RawWood</li>
+			<li>DankPyon_CavalrySpike_DankPyon_RawWood,.,.,DankPyon_Trench,DankPyon_Trench,.,.,.,.,.,DankPyon_Trench,DankPyon_Trench,.,.,DankPyon_CavalrySpike_DankPyon_RawWood</li>
+			<li>DankPyon_CavalrySpike_DankPyon_RawWood,.,.,DankPyon_Trench,DankPyon_CavalrySpike_DankPyon_RawWood,DankPyon_CavalrySpike_DankPyon_RawWood,.,.,.,DankPyon_CavalrySpike_DankPyon_RawWood,DankPyon_CavalrySpike_DankPyon_RawWood,DankPyon_Trench,.,.,DankPyon_CavalrySpike_DankPyon_RawWood</li>
+			<li>.,.,.,.,DankPyon_CavalrySpike_DankPyon_RawWood,.,.,.,.,.,DankPyon_CavalrySpike_DankPyon_RawWood,.,.,.,.</li>
+			<li>.,.,DankPyon_CavalrySpike_DankPyon_RawWood,.,.,.,.,.,.,.,.,.,DankPyon_CavalrySpike_DankPyon_RawWood,.,.</li>
+			<li>.,.,DankPyon_CavalrySpike_DankPyon_RawWood,.,.,.,.,.,.,.,.,.,DankPyon_CavalrySpike_DankPyon_RawWood,.,.</li>
+			<li>.,.,.,.,DankPyon_CavalrySpike_DankPyon_RawWood,.,.,DankPyon_Turret_Trebuchet_DankPyon_RawWood_South,.,.,DankPyon_CavalrySpike_DankPyon_RawWood,.,.,.,.</li>
+			<li>DankPyon_CavalrySpike_DankPyon_RawWood,.,.,DankPyon_Trench,DankPyon_CavalrySpike_DankPyon_RawWood,DankPyon_CavalrySpike_DankPyon_RawWood,.,.,.,DankPyon_CavalrySpike_DankPyon_RawWood,DankPyon_CavalrySpike_DankPyon_RawWood,DankPyon_Trench,.,.,DankPyon_CavalrySpike_DankPyon_RawWood</li>
+			<li>DankPyon_CavalrySpike_DankPyon_RawWood,.,.,DankPyon_Trench,DankPyon_Trench,.,.,.,.,.,DankPyon_Trench,DankPyon_Trench,.,.,DankPyon_CavalrySpike_DankPyon_RawWood</li>
+			<li>DankPyon_CavalrySpike_DankPyon_RawWood,.,TorchLamp_WoodLog_Fuel100,.,.,.,DankPyon_CavalrySpike_DankPyon_RawWood,DankPyon_CavalrySpike_DankPyon_RawWood,DankPyon_CavalrySpike_DankPyon_RawWood,.,.,.,TorchLamp_WoodLog_Fuel100,.,DankPyon_CavalrySpike_DankPyon_RawWood</li>
+			<li>DankPyon_CavalrySpike_DankPyon_RawWood,DankPyon_Turret_Scorpio_DankPyon_RawWood_West_Fuel0,.,.,.,.,.,.,.,.,.,.,.,DankPyon_Turret_Scorpio_DankPyon_RawWood_East_Fuel0,DankPyon_CavalrySpike_DankPyon_RawWood</li>
+			<li>DankPyon_CavalrySpike_DankPyon_RawWood,DankPyon_CavalrySpike_DankPyon_RawWood,DankPyon_CavalrySpike_DankPyon_RawWood,DankPyon_CavalrySpike_DankPyon_RawWood,.,.,.,.,.,.,.,DankPyon_CavalrySpike_DankPyon_RawWood,DankPyon_CavalrySpike_DankPyon_RawWood,DankPyon_CavalrySpike_DankPyon_RawWood,DankPyon_CavalrySpike_DankPyon_RawWood</li>
+		</layout>
+	</RimSiege.CampLayoutDef>
+
+	<!-- deuxième camp médiéval moyen de BenFD : enceinte de palissades (à meurtrières) et tranchées, torches murales, 2 emplacements de trébuchet, 8 scorpios. fait d'objets MO -->
+	<RimSiege.CampLayoutDef>
+		<defName>RimSiege_CampMedieval_Medium2</defName>
+		<label>medieval siege camp</label>
+		<kit>Medieval</kit>
+		<minPoints>2500</minPoints>
+		<maxPoints>5000</maxPoints>
+		<requiredMods>
+			<li>dankpyon.medieval.overhaul</li>
+		</requiredMods>
+		<layout>
+			<li>.,.,.,.,DankPyon_Trench,DankPyon_Trench,DankPyon_Trench,DankPyon_Trench,.,DankPyon_Trench,DankPyon_Trench,DankPyon_Trench,DankPyon_Trench,.,.,.,.</li>
+			<li>.,.,DankPyon_Trench,DankPyon_Trench,DankPyon_Trench,DankPyon_Palisade_DankPyon_RawWood,DankPyon_EmbPalisade_DankPyon_RawWood,DankPyon_Palisade_DankPyon_RawWood,.,DankPyon_Palisade_DankPyon_RawWood,DankPyon_EmbPalisade_DankPyon_RawWood,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Trench,DankPyon_Trench,DankPyon_Trench,.,.</li>
+			<li>.,DankPyon_Trench,DankPyon_Trench,DankPyon_Palisade_DankPyon_RawWood,DankPyon_EmbPalisade_DankPyon_RawWood,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Turret_Scorpio_DankPyon_RawWood_South_Fuel0,.,.,.,DankPyon_Turret_Scorpio_DankPyon_RawWood_South_Fuel0,DankPyon_Palisade_DankPyon_RawWood,DankPyon_EmbPalisade_DankPyon_RawWood,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Trench,DankPyon_Trench,.</li>
+			<li>.,DankPyon_Trench,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Palisade_DankPyon_RawWood,.,.,.,.,.,.,.,.,.,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Trench,.</li>
+			<li>DankPyon_Trench,DankPyon_Trench,DankPyon_EmbPalisade_DankPyon_RawWood,DankPyon_WallTorch_WoodLog_South_Fuel100,.,.,.,.,.,.,.,.,.,DankPyon_WallTorch_WoodLog_South_Fuel100,DankPyon_EmbPalisade_DankPyon_RawWood,DankPyon_Trench,DankPyon_Trench</li>
+			<li>DankPyon_Trench,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Palisade_DankPyon_RawWood,.,.,.,.,.,.,.,.,.,.,.,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Trench</li>
+			<li>DankPyon_Trench,DankPyon_EmbPalisade_DankPyon_RawWood,DankPyon_Turret_Scorpio_DankPyon_RawWood_West_Fuel0,.,.,.,.,.,.,.,.,.,.,.,DankPyon_Turret_Scorpio_DankPyon_RawWood_East_Fuel0,DankPyon_EmbPalisade_DankPyon_RawWood,DankPyon_Trench</li>
+			<li>.,DankPyon_Palisade_DankPyon_RawWood,.,.,.,.,.,.,.,.,.,.,.,.,.,DankPyon_Palisade_DankPyon_RawWood,.</li>
+			<li>.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.</li>
+			<li>DankPyon_Trench,DankPyon_Palisade_DankPyon_RawWood,.,.,.,.,.,.,.,.,.,.,.,.,.,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Trench</li>
+			<li>DankPyon_Trench,DankPyon_EmbPalisade_DankPyon_RawWood,DankPyon_Turret_Scorpio_DankPyon_RawWood_West_Fuel0,.,.,DankPyon_Turret_Trebuchet_DankPyon_RawWood_South,.,.,.,.,.,DankPyon_Turret_Trebuchet_DankPyon_RawWood_South,.,.,DankPyon_Turret_Scorpio_DankPyon_RawWood_East_Fuel0,DankPyon_EmbPalisade_DankPyon_RawWood,DankPyon_Trench</li>
+			<li>DankPyon_Trench,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Palisade_DankPyon_RawWood,.,.,.,.,.,.,.,.,.,.,.,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Trench</li>
+			<li>DankPyon_Trench,DankPyon_Trench,DankPyon_EmbPalisade_DankPyon_RawWood,DankPyon_WallTorch_WoodLog_North_Fuel100,.,.,.,.,.,.,.,.,.,DankPyon_WallTorch_WoodLog_North_Fuel100,DankPyon_EmbPalisade_DankPyon_RawWood,DankPyon_Trench,DankPyon_Trench</li>
+			<li>.,DankPyon_Trench,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Palisade_DankPyon_RawWood,.,.,.,.,.,.,.,.,.,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Trench,.</li>
+			<li>.,DankPyon_Trench,DankPyon_Trench,DankPyon_Palisade_DankPyon_RawWood,DankPyon_EmbPalisade_DankPyon_RawWood,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Turret_Scorpio_DankPyon_RawWood_North_Fuel0,.,.,.,DankPyon_Turret_Scorpio_DankPyon_RawWood_North_Fuel0,DankPyon_Palisade_DankPyon_RawWood,DankPyon_EmbPalisade_DankPyon_RawWood,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Trench,DankPyon_Trench,.</li>
+			<li>.,.,DankPyon_Trench,DankPyon_Trench,DankPyon_Trench,DankPyon_Palisade_DankPyon_RawWood,DankPyon_EmbPalisade_DankPyon_RawWood,DankPyon_Palisade_DankPyon_RawWood,.,DankPyon_Palisade_DankPyon_RawWood,DankPyon_EmbPalisade_DankPyon_RawWood,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Trench,DankPyon_Trench,DankPyon_Trench,.,.</li>
+			<li>.,.,.,.,DankPyon_Trench,DankPyon_Trench,DankPyon_Trench,DankPyon_Trench,.,DankPyon_Trench,DankPyon_Trench,DankPyon_Trench,DankPyon_Trench,.,.,.,.</li>
+		</layout>
+	</RimSiege.CampLayoutDef>
+
+	<!-- grand camp médiéval de BenFD : double enceinte de palissades, tranchées, pieux, bannières de la maison, torches murales, 3 emplacements de trébuchet, 4 scorpios. fait d'objets MO -->
+	<RimSiege.CampLayoutDef>
+		<defName>RimSiege_CampMedieval_Large</defName>
+		<label>medieval siege camp</label>
+		<kit>Medieval</kit>
+		<minPoints>5000</minPoints>
+		<requiredMods>
+			<li>dankpyon.medieval.overhaul</li>
+		</requiredMods>
+		<layout>
+			<li>.,.,.,.,.,.,DankPyon_CavalrySpike_DankPyon_RawWood,DankPyon_CavalrySpike_DankPyon_RawWood,DankPyon_CavalrySpike_DankPyon_RawWood,DankPyon_CavalrySpike_DankPyon_RawWood,.,.,.,DankPyon_CavalrySpike_DankPyon_RawWood,DankPyon_CavalrySpike_DankPyon_RawWood,DankPyon_CavalrySpike_DankPyon_RawWood,DankPyon_CavalrySpike_DankPyon_RawWood,.,.,.,.,.,.</li>
+			<li>.,.,.,.,.,DankPyon_BannerPlain_WoodLog_North,DankPyon_CavalrySpike_DankPyon_RawWood,DankPyon_Palisade_DankPyon_RawWood,DankPyon_EmbPalisade_DankPyon_RawWood,DankPyon_Palisade_DankPyon_RawWood,.,.,.,DankPyon_Palisade_DankPyon_RawWood,DankPyon_EmbPalisade_DankPyon_RawWood,DankPyon_Palisade_DankPyon_RawWood,DankPyon_CavalrySpike_DankPyon_RawWood,DankPyon_BannerPlain_WoodLog_North,.,.,.,.,.</li>
+			<li>.,.,.,DankPyon_CavalrySpike_DankPyon_RawWood,DankPyon_CavalrySpike_DankPyon_RawWood,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Turret_Scorpio_DankPyon_RawWood_South_Fuel100,.,.,.,.,.,DankPyon_Turret_Scorpio_DankPyon_RawWood_South_Fuel100,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Palisade_DankPyon_RawWood,DankPyon_CavalrySpike_DankPyon_RawWood,DankPyon_CavalrySpike_DankPyon_RawWood,.,.,.</li>
+			<li>.,.,.,DankPyon_CavalrySpike_DankPyon_RawWood,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Palisade_DankPyon_RawWood,.,.,.,.,.,.,.,.,.,.,.,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Palisade_DankPyon_RawWood,DankPyon_CavalrySpike_DankPyon_RawWood,.,.,.</li>
+			<li>.,.,DankPyon_CavalrySpike_DankPyon_RawWood,DankPyon_CavalrySpike_DankPyon_RawWood,DankPyon_Palisade_DankPyon_RawWood,DankPyon_WallTorch_WoodLog_South_Fuel100,.,.,.,.,.,.,.,.,.,.,.,DankPyon_WallTorch_WoodLog_South_Fuel100,DankPyon_Palisade_DankPyon_RawWood,DankPyon_CavalrySpike_DankPyon_RawWood,DankPyon_CavalrySpike_DankPyon_RawWood,.,.</li>
+			<li>.,.,DankPyon_CavalrySpike_DankPyon_RawWood,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Palisade_DankPyon_RawWood,.,.,.,.,.,.,.,.,.,.,.,.,.,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Palisade_DankPyon_RawWood,DankPyon_CavalrySpike_DankPyon_RawWood,.,.</li>
+			<li>.,.,DankPyon_CavalrySpike_DankPyon_RawWood,DankPyon_EmbPalisade_DankPyon_RawWood,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,DankPyon_EmbPalisade_DankPyon_RawWood,DankPyon_CavalrySpike_DankPyon_RawWood,.,.</li>
+			<li>.,.,DankPyon_CavalrySpike_DankPyon_RawWood,DankPyon_EmbPalisade_DankPyon_RawWood,DankPyon_Turret_Scorpio_DankPyon_RawWood_West_Fuel100,.,.,.,.,.,.,.,.,.,.,.,.,.,DankPyon_Turret_Scorpio_DankPyon_RawWood_East_Fuel100,DankPyon_EmbPalisade_DankPyon_RawWood,DankPyon_CavalrySpike_DankPyon_RawWood,.,.</li>
+			<li>.,.,DankPyon_CavalrySpike_DankPyon_RawWood,DankPyon_EmbPalisade_DankPyon_RawWood,DankPyon_WallTorch_WoodLog_North_Fuel100,.,.,.,.,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Palisade_DankPyon_RawWood,.,.,.,.,DankPyon_WallTorch_WoodLog_North_Fuel100,DankPyon_EmbPalisade_DankPyon_RawWood,DankPyon_CavalrySpike_DankPyon_RawWood,.,.</li>
+			<li>.,.,DankPyon_CavalrySpike_DankPyon_RawWood,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Palisade_DankPyon_RawWood,.,.,.,.,DankPyon_Palisade_DankPyon_RawWood,.,.,.,DankPyon_Palisade_DankPyon_RawWood,.,.,.,.,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Palisade_DankPyon_RawWood,DankPyon_CavalrySpike_DankPyon_RawWood,.,.</li>
+			<li>.,.,DankPyon_CavalrySpike_DankPyon_RawWood,DankPyon_CavalrySpike_DankPyon_RawWood,DankPyon_EmbPalisade_DankPyon_RawWood,.,.,.,.,DankPyon_Palisade_DankPyon_RawWood,.,.,.,DankPyon_Palisade_DankPyon_RawWood,.,.,.,.,DankPyon_EmbPalisade_DankPyon_RawWood,DankPyon_CavalrySpike_DankPyon_RawWood,DankPyon_CavalrySpike_DankPyon_RawWood,.,.</li>
+			<li>.,.,.,DankPyon_Trench,DankPyon_EmbPalisade_DankPyon_RawWood,.,.,.,.,DankPyon_Palisade_DankPyon_RawWood,.,.,.,DankPyon_Palisade_DankPyon_RawWood,.,.,.,.,DankPyon_EmbPalisade_DankPyon_RawWood,DankPyon_Trench,.,.,.</li>
+			<li>.,.,DankPyon_Trench,DankPyon_Trench,DankPyon_EmbPalisade_DankPyon_RawWood,.,DankPyon_WallTorch_WoodLog_North_Fuel100,.,.,.,.,.,.,.,.,.,DankPyon_WallTorch_WoodLog_North_Fuel100,.,DankPyon_EmbPalisade_DankPyon_RawWood,DankPyon_Trench,DankPyon_Trench,.,.</li>
+			<li>.,DankPyon_Trench,DankPyon_Trench,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Palisade_DankPyon_RawWood,.,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Palisade_DankPyon_RawWood,.,.,.,DankPyon_Turret_Trebuchet_DankPyon_RawWood_South,.,.,.,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Palisade_DankPyon_RawWood,.,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Trench,DankPyon_Trench,.</li>
+			<li>DankPyon_Trench,DankPyon_Trench,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Palisade_DankPyon_RawWood,.,.,.,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Palisade_DankPyon_RawWood,.,.,.,.,.,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Palisade_DankPyon_RawWood,.,.,.,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Trench,DankPyon_Trench</li>
+			<li>DankPyon_Trench,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Palisade_DankPyon_RawWood,.,.,.,.,.,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Palisade_DankPyon_RawWood,.,DankPyon_WallTorch_WoodLog_North_Fuel100,.,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Palisade_DankPyon_RawWood,.,.,.,.,.,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Trench</li>
+			<li>DankPyon_Trench,DankPyon_Palisade_DankPyon_RawWood,.,.,.,.,.,.,.,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Palisade_DankPyon_RawWood,.,.,.,.,.,.,.,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Trench</li>
+			<li>DankPyon_Trench,DankPyon_Palisade_DankPyon_RawWood,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Trench</li>
+			<li>DankPyon_Trench,DankPyon_Palisade_DankPyon_RawWood,DankPyon_WallTorch_WoodLog_West_Fuel100,.,.,DankPyon_Turret_Trebuchet_DankPyon_RawWood_South,.,.,.,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Palisade_DankPyon_RawWood,.,.,.,DankPyon_Turret_Trebuchet_DankPyon_RawWood_South,.,.,DankPyon_WallTorch_WoodLog_East_Fuel100,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Trench</li>
+			<li>DankPyon_Trench,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Palisade_DankPyon_RawWood,.,.,.,.,.,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Trench,DankPyon_Trench,DankPyon_Trench,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Palisade_DankPyon_RawWood,.,.,.,.,.,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Trench</li>
+			<li>DankPyon_Trench,DankPyon_Trench,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Palisade_DankPyon_RawWood,.,.,.,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Trench,DankPyon_Trench,.,DankPyon_Trench,DankPyon_Trench,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Palisade_DankPyon_RawWood,.,.,.,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Trench,DankPyon_Trench</li>
+			<li>.,DankPyon_Trench,DankPyon_Trench,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Trench,DankPyon_Trench,.,.,.,DankPyon_Trench,DankPyon_Trench,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Palisade_DankPyon_RawWood,DankPyon_Trench,DankPyon_Trench,.</li>
+			<li>.,.,DankPyon_Trench,DankPyon_Trench,DankPyon_Trench,DankPyon_Trench,DankPyon_Trench,DankPyon_Trench,DankPyon_Trench,.,.,.,.,.,DankPyon_Trench,DankPyon_Trench,DankPyon_Trench,DankPyon_Trench,DankPyon_Trench,DankPyon_Trench,DankPyon_Trench,.,.</li>
+		</layout>
+	</RimSiege.CampLayoutDef>
+
+</Defs>

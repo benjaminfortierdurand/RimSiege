@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+	<!-- petit camp néolithique de BenFD : barricades de bois en carré ouvert sur les 4 côtés, feu de camp. objets vanilla, marche sans MO -->
+	<RimSiege.CampLayoutDef>
+		<defName>RimSiege_CampTribal_Small</defName>
+		<label>tribal war camp</label>
+		<kit>Tribal</kit>
+		<minPoints>0</minPoints>
+		<maxPoints>2500</maxPoints>
+		<layout>
+			<li>Barricade_WoodLog,Barricade_WoodLog,.,Barricade_WoodLog,Barricade_WoodLog</li>
+			<li>Barricade_WoodLog,.,.,.,Barricade_WoodLog</li>
+			<li>.,.,.,.,.</li>
+			<li>Barricade_WoodLog,.,Campfire_WoodLog_North_Fuel99,.,Barricade_WoodLog</li>
+			<li>Barricade_WoodLog,Barricade_WoodLog,.,Barricade_WoodLog,Barricade_WoodLog</li>
+		</layout>
+	</RimSiege.CampLayoutDef>
+
+	<!-- camp néolithique moyen de BenFD : anneau de barricades en bois ouvert de partout, 2 feux de camp. objets vanilla, marche sans MO -->
+	<RimSiege.CampLayoutDef>
+		<defName>RimSiege_CampTribal_Medium</defName>
+		<label>tribal war camp</label>
+		<kit>Tribal</kit>
+		<minPoints>2500</minPoints>
+		<maxPoints>5000</maxPoints>
+		<layout>
+			<li>.,.,.,.,Barricade_WoodLog,Barricade_WoodLog,Barricade_WoodLog,Barricade_WoodLog,.,.,.,.</li>
+			<li>.,.,.,.,.,.,.,.,.,.,.,.</li>
+			<li>.,.,Barricade_WoodLog,Barricade_WoodLog,.,.,.,.,Barricade_WoodLog,Barricade_WoodLog,.,.</li>
+			<li>.,.,Barricade_WoodLog,.,.,.,.,.,.,Barricade_WoodLog,.,.</li>
+			<li>Barricade_WoodLog,.,.,.,.,.,.,.,.,.,.,Barricade_WoodLog</li>
+			<li>Barricade_WoodLog,.,.,Campfire_WoodLog_West_Fuel100,.,.,.,.,Campfire_WoodLog_East_Fuel100,.,.,Barricade_WoodLog</li>
+			<li>Barricade_WoodLog,.,.,.,.,.,.,.,.,.,.,Barricade_WoodLog</li>
+			<li>.,.,Barricade_WoodLog,.,.,.,.,.,.,Barricade_WoodLog,.,.</li>
+			<li>.,.,Barricade_WoodLog,Barricade_WoodLog,.,.,.,.,Barricade_WoodLog,Barricade_WoodLog,.,.</li>
+			<li>.,.,.,.,.,.,.,.,.,.,.,.</li>
+			<li>.,.,.,.,Barricade_WoodLog,Barricade_WoodLog,Barricade_WoodLog,Barricade_WoodLog,.,.,.,.</li>
+		</layout>
+	</RimSiege.CampLayoutDef>
+
+	<!-- grand camp néolithique de BenFD : long anneau de barricades en bois ouvert de partout, 4 feux de camp, pièges à pointes devant les entrées. objets vanilla, marche sans MO -->
+	<RimSiege.CampLayoutDef>
+		<defName>RimSiege_CampTribal_Large</defName>
+		<label>tribal war camp</label>
+		<kit>Tribal</kit>
+		<minPoints>5000</minPoints>
+		<layout>
+			<li>.,.,.,.,.,.,.,.,TrapSpike_WoodLog,.,.,.,.,.,.,.,TrapSpike_WoodLog,.,.,.,.,.,.,.,.</li>
+			<li>.,.,.,.,Barricade_WoodLog,Barricade_WoodLog,Barricade_WoodLog,Barricade_WoodLog,.,Barricade_WoodLog,Barricade_WoodLog,Barricade_WoodLog,Barricade_WoodLog,Barricade_WoodLog,Barricade_WoodLog,Barricade_WoodLog,.,Barricade_WoodLog,Barricade_WoodLog,Barricade_WoodLog,Barricade_WoodLog,.,.,.,.</li>
+			<li>.,TrapSpike_WoodLog,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,TrapSpike_WoodLog,.</li>
+			<li>.,.,Barricade_WoodLog,Barricade_WoodLog,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,Barricade_WoodLog,Barricade_WoodLog,.,.</li>
+			<li>.,.,Barricade_WoodLog,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,Barricade_WoodLog,.,.</li>
+			<li>Barricade_WoodLog,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,Barricade_WoodLog</li>
+			<li>Barricade_WoodLog,.,.,Campfire_WoodLog_West_Fuel100,.,.,.,.,Campfire_WoodLog_East_Fuel100,.,.,.,.,.,.,.,Campfire_WoodLog_West_Fuel100,.,.,.,.,Campfire_WoodLog_East_Fuel100,.,.,Barricade_WoodLog</li>
+			<li>Barricade_WoodLog,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,Barricade_WoodLog</li>
+			<li>.,.,Barricade_WoodLog,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,Barricade_WoodLog,.,.</li>
+			<li>.,.,Barricade_WoodLog,Barricade_WoodLog,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,Barricade_WoodLog,Barricade_WoodLog,.,.</li>
+			<li>.,TrapSpike_WoodLog,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,TrapSpike_WoodLog,.</li>
+			<li>.,.,.,.,Barricade_WoodLog,Barricade_WoodLog,Barricade_WoodLog,Barricade_WoodLog,.,Barricade_WoodLog,Barricade_WoodLog,Barricade_WoodLog,Barricade_WoodLog,Barricade_WoodLog,Barricade_WoodLog,Barricade_WoodLog,.,Barricade_WoodLog,Barricade_WoodLog,Barricade_WoodLog,Barricade_WoodLog,.,.,.,.</li>
+			<li>.,.,.,.,.,.,.,.,TrapSpike_WoodLog,.,.,.,.,.,.,.,TrapSpike_WoodLog,.,.,.,.,.,.,.,.</li>
+		</layout>
+	</RimSiege.CampLayoutDef>
+
+</Defs>
