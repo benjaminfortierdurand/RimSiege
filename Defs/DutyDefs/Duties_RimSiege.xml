@@ -15,7 +15,9 @@
 		</thinkNode>
 	</DutyDef>
 
-	<!-- assaut post-breche, pas de sape ni de casse : ils passent par l'ouverture -->
+	<!-- assaut post-breche, pas de casse : ils passent par l'ouverture. la sape ne sert qu'en dernier recours,
+	     quand plus personne n'est joignable sans ouvrir une porte (sas derrière l'échelle, colons enfermés) :
+	     ils frappent alors la porte ou le mur qui bloque, comme l'assaut vanilla -->
 	<DutyDef>
 		<defName>RimSiege_AssaultThroughBreach</defName>
 		<alwaysShowWeapon>true</alwaysShowWeapon>
@@ -27,6 +29,9 @@
 					<targetKeepRadius>45</targetKeepRadius>
 				</li>
 				<li Class="JobGiver_AIGotoNearestHostile" />
+				<li Class="JobGiver_AISapper">
+					<canMineNonMineables>false</canMineNonMineables>
+				</li>
 			</subNodes>
 		</thinkNode>
 	</DutyDef>
@@ -69,6 +74,46 @@
 					<targetKeepRadius>35</targetKeepRadius>
 				</li>
 				<li Class="JobGiver_AIGotoNearestHostile" />
+			</subNodes>
+		</thinkNode>
+	</DutyDef>
+
+	<!-- le Build vanilla, mais les bâtisseurs ont le droit de travailler à 24 cases du drapeau au lieu de 16
+	     (Radius du camp). les grands camps dessinés posent le bélier et des tourelles au-delà de 16 : jamais
+	     construits, la construction se figeait et le siège tournait en assaut à pied. pas plus large : rien
+	     n'est interdit pour une faction ennemie, ils iraient chercher le bois dans les réserves de la colonie -->
+	<DutyDef>
+		<defName>RimSiege_BuildCamp</defName>
+		<thinkNode Class="ThinkNode_Priority">
+			<subNodes>
+				<li Class="JobGiver_FightFiresNearPoint">
+					<maxDistFromPoint>25</maxDistFromPoint>
+				</li>
+				<li Class="ThinkNode_ForbidOutsideFlagRadius">
+					<maxDistToSquadFlag>24</maxDistToSquadFlag>
+					<subNodes>
+						<li Class="JobGiver_Work" />
+					</subNodes>
+				</li>
+				<li Class="JobGiver_AIDefendPoint">
+					<targetAcquireRadius>35</targetAcquireRadius>
+					<targetKeepRadius>40</targetKeepRadius>
+				</li>
+				<li Class="ThinkNode_ForbidOutsideFlagRadius">
+					<maxDistToSquadFlag>24</maxDistToSquadFlag>
+					<subNodes>
+						<li Class="ThinkNode_Subtree">
+							<treeDef>SatisfyBasicNeedsAndWork</treeDef>
+						</li>
+					</subNodes>
+				</li>
+				<li Class="JobGiver_ManTurretsNearPoint">
+					<maxDistFromPoint>25</maxDistFromPoint>
+				</li>
+				<li Class="JobGiver_WanderNearDutyLocation">
+					<wanderRadius>8</wanderRadius>
+					<locomotionUrgencyOutsideRadius>Sprint</locomotionUrgencyOutsideRadius>
+				</li>
 			</subNodes>
 		</thinkNode>
 	</DutyDef>

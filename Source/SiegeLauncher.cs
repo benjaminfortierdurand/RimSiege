@@ -5,6 +5,7 @@ using UnityEngine;
 using Verse;
 using Verse.AI;
 using Verse.AI.Group;
+using Verse.Sound;
 using RimSiege.AI;
 
 namespace RimSiege
@@ -37,7 +38,7 @@ namespace RimSiege
 		// supplied = another mod's own pawns: leave them as they came, no ransom case
 		public static bool LaunchGroup(Map map, IntVec3 breach, ThingDef engineDef, int trebuchetCount, int ballistaCount,
 			bool tarAmmo, bool carrionAmmo, float points, List<Pawn> group, Faction faction, out IntVec3 muster, out IntVec3 entry, out Pawn captain,
-			bool supplied)
+			bool supplied, CampLayoutDef camp = null, IntVec3? entryAt = null, IntVec3? musterAt = null)
 		{
 			muster = breach;
 			entry = IntVec3.Invalid;
@@ -47,13 +48,9 @@ namespace RimSiege
 			if (!faction.HostileTo(Faction.OfPlayer))
 				faction.SetRelationDirect(Faction.OfPlayer, FactionRelationKind.Hostile, canSendHostilityLetter: false);
 
-			// vanilla order: entry cell first, camp spot from it. only extra: camp must reach the breach.
-			// a supplied army can already stand on the map or ride pods down onto it: camp off where it is
-			Pawn here = group.FirstOrDefault(p => p.MapHeld == map);
-			entry = here != null ? here.PositionHeld : FindEntryCell(map);
-			TraverseParms tp = TraverseParms.For(TraverseMode.NoPassClosedDoors, Danger.Deadly);
-			muster = RCellFinder.FindSiegePositionFrom(entry, map, allowRoofed: false, errorOnFail: false,
-				c => map.reachability.CanReach(c, breach, PathEndMode.Touch, tp));
+			// callers that picked a drawn camp already chose the site to fit it
+			if (entryAt.HasValue && musterAt.HasValue) { entry = entryAt.Value; muster = musterAt.Value; }
+			else FindCampSite(map, group, breach, out entry, out muster);
 
 			foreach (Pawn crew in group)
 			{
@@ -74,7 +71,7 @@ namespace RimSiege
 
 			LordMaker.MakeNewLord(faction,
 				new LordJob_MedievalSiege(faction, muster, breach, engineDef, trebuchetCount, ballistaCount, tarAmmo, carrionAmmo, points, captain)
-					{ supplied = supplied }, map, group);
+					{ supplied = supplied, camp = camp }, map, group);
 			return true;
 		}
 
@@ -84,6 +81,11 @@ namespace RimSiege
 		// tribes carry a log or a ladder: no wagons, no slings, no bolt throwers
 		public static bool Tribal(Faction f) =>
 			f?.def != null && f.def.techLevel > TechLevel.Undefined && f.def.techLevel <= TechLevel.Neolithic;
+
+		// gun era and up (pirates, outlanders, the empire): a steel breaching ram, mortars, smoke, sandbags
+		public static bool Modern(Faction f) => f?.def != null && f.def.techLevel >= TechLevel.Industrial;
+
+		public static CampKit KitOf(Faction f) => Tribal(f) ? CampKit.Tribal : Modern(f) ? CampKit.Modern : CampKit.Medieval;
 
 		// a petard is gunpowder: a tribe has none, so no sappers. undefined tech keeps them like before
 		public static bool HasGunpowder(Faction f) =>
@@ -130,7 +132,7 @@ namespace RimSiege
 			if (group.NullOrEmpty()) return false;
 
 			bool tower = false;
-			ThingDef engineDef = OldWorld(faction) ? RollEngine(points, s, faction, out tower) : null;
+			ThingDef engineDef = OldWorld(faction) || Modern(faction) ? RollEngine(points, s, faction, out tower) : null;
 
 			// engine rolled first, the tower prefers walls
 			if (!TryFindSiegeTarget(map, preferWalls: tower, out IntVec3 breach))
@@ -139,11 +141,17 @@ namespace RimSiege
 				return false;
 			}
 
+			// camp site before the battery: a drawn camp only goes where enough of it fits, and it sets the guns.
+			// a host too poor for an engine still pitches its drawn camp
+			FindCampSite(map, group, breach, out IntVec3 entryAt, out IntVec3 musterAt);
+			CampLayoutDef camp = PickCamp(map, faction, breach, points, ref musterAt);
+
 			int trebuchetCount = 0;
 			int ballistaCount = 0;
-			if (engineDef != null && !Tribal(faction)) RollArtillery(points, s, out trebuchetCount, out ballistaCount);
-			bool tarAmmo = trebuchetCount > 0 && points >= s.tarBoulderPointsFloor;
-			bool carrionAmmo = s.carrionEnabled && trebuchetCount > 0 && points >= s.tarBoulderPointsFloor + 2000f;
+			if (engineDef != null && !Tribal(faction)) RollArtillery(points, s, faction, out trebuchetCount, out ballistaCount);
+			if (camp != null) CapToCamp(camp, faction, ref trebuchetCount, ref ballistaCount);
+			bool tarAmmo = trebuchetCount > 0 && points >= s.tarBoulderPointsFloor; // incendiary shells for mortars
+			bool carrionAmmo = s.carrionEnabled && trebuchetCount > 0 && !Modern(faction) && points >= s.tarBoulderPointsFloor + 2000f;
 
 			// the siege train brings its own crews, gunners dont come out of the fighting force
 			int crews = trebuchetCount + ballistaCount;
@@ -158,7 +166,8 @@ namespace RimSiege
 							canGeneratePawnRelations: false)));
 			}
 
-			if (!LaunchGroup(map, breach, engineDef, trebuchetCount, ballistaCount, tarAmmo, carrionAmmo, points, group, faction, out IntVec3 muster, out IntVec3 entry, out Pawn captain))
+			if (!LaunchGroup(map, breach, engineDef, trebuchetCount, ballistaCount, tarAmmo, carrionAmmo, points, group, faction,
+					out IntVec3 muster, out IntVec3 entry, out Pawn captain, supplied: false, camp: camp, entryAt: entryAt, musterAt: musterAt))
 				return false;
 
 			int sappers = HasGunpowder(faction) ? RollSappers(points, s) : 0;
@@ -186,7 +195,7 @@ namespace RimSiege
 
 			bool tower = false;
 			ThingDef engineDef = null;
-			if (hands >= SuppliedEngineHands && OldWorld(faction)) engineDef = RollEngine(points, s, faction, out tower);
+			if (hands >= SuppliedEngineHands && (OldWorld(faction) || Modern(faction))) engineDef = RollEngine(points, s, faction, out tower);
 			// the log takes four on the grips, a short host brings a ladder instead
 			if (engineDef == RimSiegeDefOf.RimSiege_LogRam && hands < SuppliedEngineHands + 1)
 			{
@@ -199,15 +208,18 @@ namespace RimSiege
 			int spare = hands - SuppliedEngineHands;
 			int trebuchetCount = 0;
 			int ballistaCount = 0;
+			FindCampSite(map, troops, breach, out IntVec3 entryAt, out IntVec3 musterAt);
+			CampLayoutDef camp = PickCamp(map, faction, breach, points, ref musterAt);
 			if (engineDef != null && !Tribal(faction))
 			{
-				RollArtillery(points, s, out trebuchetCount, out ballistaCount);
+				RollArtillery(points, s, faction, out trebuchetCount, out ballistaCount);
+				if (camp != null) CapToCamp(camp, faction, ref trebuchetCount, ref ballistaCount);
 				trebuchetCount = Mathf.Clamp(trebuchetCount, 0, spare);
 				ballistaCount = Mathf.Clamp(ballistaCount, 0, spare - trebuchetCount);
 				spare -= trebuchetCount + ballistaCount;
 			}
 			bool tarAmmo = trebuchetCount > 0 && points >= s.tarBoulderPointsFloor;
-			bool carrionAmmo = s.carrionEnabled && trebuchetCount > 0 && points >= s.tarBoulderPointsFloor + 2000f;
+			bool carrionAmmo = s.carrionEnabled && trebuchetCount > 0 && !Modern(faction) && points >= s.tarBoulderPointsFloor + 2000f;
 
 			// sappers only off a big enough host, cheapest hands, the main body keeps 3 more fighters
 			var group = new List<Pawn>(troops);
@@ -221,7 +233,7 @@ namespace RimSiege
 			}
 
 			if (!LaunchGroup(map, breach, engineDef, trebuchetCount, ballistaCount, tarAmmo, carrionAmmo, points, group, faction,
-					out IntVec3 muster, out IntVec3 entry, out Pawn captain, supplied: true))
+					out IntVec3 muster, out IntVec3 entry, out Pawn captain, supplied: true, camp: camp, entryAt: entryAt, musterAt: musterAt))
 				return false;
 			if (squad.Count > 0) SendSappers(map, faction, squad, sapWall, entry, muster);
 
@@ -247,10 +259,81 @@ namespace RimSiege
 			if (!Rand.Chance(Mathf.Clamp01((points - s.enginePointsFloor) / 1300f))) return null;
 			tower = Rand.Bool;
 			if (Tribal(faction)) return tower ? RimSiegeDefOf.RimSiege_SiegeLadder : RimSiegeDefOf.RimSiege_LogRam;
+			// gun era goes for the gate, walls are the sappers' and the mortars' job
+			if (Modern(faction)) { tower = false; return RimSiegeDefOf.RimSiege_SteelRam; }
 			return tower ? RimSiegeDefOf.RimSiege_SiegeTower : RimSiegeDefOf.RimSiege_BatteringRam;
 		}
 
-		private static void RollArtillery(float points, RimSiegeSettings s, out int trebuchetCount, out int ballistaCount)
+		private static readonly TraverseParms CampTraverse = TraverseParms.For(TraverseMode.NoPassClosedDoors, Danger.Deadly);
+
+		// vanilla order: entry cell first, camp spot from it. only extra: camp must reach the breach.
+		// a supplied army can already stand on the map or ride pods down onto it: camp off where it is
+		public static void FindCampSite(Map map, List<Pawn> group, IntVec3 breach, out IntVec3 entry, out IntVec3 muster)
+		{
+			Pawn here = group.FirstOrDefault(p => p.MapHeld == map);
+			entry = here != null ? here.PositionHeld : FindEntryCell(map);
+			muster = RCellFinder.FindSiegePositionFrom(entry, map, allowRoofed: false, errorOnFail: false,
+				c => map.reachability.CanReach(c, breach, PathEndMode.Touch, CampTraverse));
+		}
+
+		private const float GoodCampFit = 0.8f, MinCampFit = 0.6f;
+
+		// a drawing that only half fits looks broken (mountain maps, narrow valleys). each of the kit's drawings
+		// made for this many points is slid to its own best spot: any that fits 80% may be picked at random, else
+		// the best one if it fits 60%, else the classic camp, which fits any nook. muster moves with the pick
+		private static CampLayoutDef PickCamp(Map map, Faction faction, IntVec3 breach, float points, ref IntVec3 muster)
+		{
+			if (!muster.IsValid) return null;
+			var good = new List<KeyValuePair<CampLayoutDef, IntVec3>>();
+			CampLayoutDef best = null;
+			IntVec3 bestSpot = muster;
+			float bestFit = MinCampFit;
+			foreach (CampLayoutDef d in CampLayoutDef.AllFor(KitOf(faction), points))
+			{
+				IntVec3 spot = BestCampSpot(map, d, muster, breach, CampTraverse);
+				float fit = d.Fit(map, spot, breach) / (float)Mathf.Max(1, d.GroundCount);
+				if (fit >= GoodCampFit) good.Add(new KeyValuePair<CampLayoutDef, IntVec3>(d, spot));
+				if (fit >= bestFit) { bestFit = fit; best = d; bestSpot = spot; }
+			}
+			if (good.Count > 0)
+			{
+				KeyValuePair<CampLayoutDef, IntVec3> pick = good.RandomElement();
+				muster = pick.Value;
+				return pick.Key;
+			}
+			if (best != null) muster = bestSpot;
+			return best;
+		}
+
+		// a drawn camp wants room: slide it within 12 cells of vanilla's spot to where most of the drawing lands
+		// on usable ground. never closer to the walls than vanilla put it, still reaching the breach
+		private static IntVec3 BestCampSpot(Map map, CampLayoutDef camp, IntVec3 start, IntVec3 breach, TraverseParms tp)
+		{
+			float keep = (start - breach).LengthHorizontal - 2f;
+			var spots = new List<IntVec3>();
+			var scores = new List<int>();
+			foreach (IntVec3 c in GenRadial.RadialCellsAround(start, 12f, useCenter: true))
+			{
+				if (!c.InBounds(map) || !c.Standable(map) || c.Roofed(map)) continue;
+				if ((c - breach).LengthHorizontal < keep) continue;
+				spots.Add(c);
+				scores.Add(camp.Fit(map, c, breach) * 100 - (c - start).LengthHorizontalSquared); // ties go to the near spot
+			}
+			foreach (int i in Enumerable.Range(0, spots.Count).OrderByDescending(i => scores[i]))
+				if (map.reachability.CanReach(spots[i], breach, PathEndMode.Touch, tp)) return spots[i];
+			return start;
+		}
+
+		// a drawn camp sets the battery: no more guns than it has marks for. the extras used to land at random
+		// spots in the middle of the drawing, and no ballistas at all when it draws none (its scorpios guard it)
+		private static void CapToCamp(CampLayoutDef camp, Faction faction, ref int trebuchetCount, ref int ballistaCount)
+		{
+			trebuchetCount = Mathf.Min(trebuchetCount, camp.MarksFor(ArtilleryDefFor(faction)));
+			ballistaCount = Mathf.Min(ballistaCount, camp.MarksFor(DefDatabase<ThingDef>.GetNamedSilentFail("DankPyon_Turret_Ballista")));
+		}
+
+		// trebuchetCount is the battery whatever it fires: trebuchets for houses, mortars for the gun era
+		private static void RollArtillery(float points, RimSiegeSettings s, Faction faction, out int trebuchetCount, out int ballistaCount)
 		{
 			trebuchetCount = 0;
 			ballistaCount = 0;
@@ -258,12 +341,16 @@ namespace RimSiege
 			if (Rand.Chance(Mathf.Clamp01((points - tf) / 2000f))) trebuchetCount = 1;
 			if (trebuchetCount == 1 && Rand.Chance(Mathf.Clamp01((points - (tf + 2000f)) / 2500f))) trebuchetCount = 2;
 			if (trebuchetCount == 2 && Rand.Chance(Mathf.Clamp01((points - (tf + 4500f)) / 3000f))) trebuchetCount = 3;
+			if (trebuchetCount == 3 && Rand.Chance(Mathf.Clamp01((points - (tf + 7500f)) / 3500f))) trebuchetCount = 4;
 			trebuchetCount = Mathf.Min(trebuchetCount, s.maxTrebuchets);
 
 			float bf = s.ballistaPointsFloor;
 			if (Rand.Chance(Mathf.Clamp01((points - bf) / 2500f))) ballistaCount = 1;
 			if (ballistaCount == 1 && Rand.Chance(Mathf.Clamp01((points - (bf + 2500f)) / 3000f))) ballistaCount = 2;
 			ballistaCount = Mathf.Min(ballistaCount, s.maxBallistas);
+
+			// mortars are vanilla, no bolt throwers in the gun era
+			if (Modern(faction)) { ballistaCount = 0; return; }
 
 			// MO brings the slings and bolt throwers. without it the ram or tower goes alone
 			if (!HasDef("DankPyon_Turret_Trebuchet") || !HasDef("DankPyon_StoneBoulder")) trebuchetCount = 0;
@@ -317,6 +404,11 @@ namespace RimSiege
 				label = "RimSiege_LabelLogRam".Translate();
 				text = "RimSiege_TextLogRam".Translate(faction.Name);
 			}
+			else if (engineDef == RimSiegeDefOf.RimSiege_SteelRam)
+			{
+				label = "RimSiege_LabelSteelRam".Translate();
+				text = "RimSiege_TextSteelRam".Translate(faction.Name);
+			}
 			else if (engineDef == RimSiegeDefOf.RimSiege_SiegeLadder)
 			{
 				label = "RimSiege_LabelLadder".Translate();
@@ -333,8 +425,10 @@ namespace RimSiege
 				text = "RimSiege_TextRam".Translate(faction.Name);
 			}
 
-			if (trebuchetCount == 1) text += " " + "RimSiege_TrebOne".Translate();
-			else if (trebuchetCount > 1) text += " " + "RimSiege_TrebMany".Translate(trebuchetCount);
+			bool mortars = Modern(faction);
+			if (trebuchetCount == 1) text += " " + (mortars ? "RimSiege_MortarOne" : "RimSiege_TrebOne").Translate();
+			else if (trebuchetCount > 1) text += " " + (mortars ? "RimSiege_MortarMany" : "RimSiege_TrebMany").Translate(trebuchetCount);
+			if (mortars && trebuchetCount > 0 && engineDef != null) text += " " + "RimSiege_SmokeHint".Translate();
 			if (ballistaCount > 0) text += " " + "RimSiege_BallistaHint".Translate();
 			if (sappers > 0) text += " " + "RimSiege_SappersHint".Translate();
 			if (RimSiegeMod.S.captainRout && captain != null)
@@ -620,6 +714,20 @@ namespace RimSiege
 			return h == null ? null : DefDatabase<PawnKindDef>.GetNamedSilentFail("DankPyon_Standard" + h);
 		}
 
+		// manned guns a drawn camp brought (MO scorpios): crewed out of the host like the battery
+		public static List<Building> SpawnedCampGuns(Map map, Faction faction)
+		{
+			var guns = new List<Building>();
+			if (map == null) return guns;
+			ThingDef arty = ArtilleryDefFor(faction);
+			ThingDef ballista = DefDatabase<ThingDef>.GetNamedSilentFail("DankPyon_Turret_Ballista");
+			foreach (Building b in map.listerBuildings.allBuildingsNonColonist)
+				if (b.Faction == faction && b is Building_TurretGun && b.def != arty && b.def != ballista
+					&& b.TryGetComp<CompMannable>() != null)
+					guns.Add(b);
+			return guns;
+		}
+
 		public static List<Building> SpawnedBallistas(Map map, Faction faction)
 		{
 			ThingDef d = DefDatabase<ThingDef>.GetNamedSilentFail("DankPyon_Turret_Ballista");
@@ -629,9 +737,13 @@ namespace RimSiege
 				.Cast<Building>().ToList();
 		}
 
-		public static List<Building> SpawnedTrebuchets(Map map, Faction faction)
+		// the battery's gun: MO trebuchet for houses, vanilla mortar for the gun era
+		public static ThingDef ArtilleryDefFor(Faction f) =>
+			Modern(f) ? ThingDefOf.Turret_Mortar : DefDatabase<ThingDef>.GetNamedSilentFail("DankPyon_Turret_Trebuchet");
+
+		public static List<Building> SpawnedArtillery(Map map, Faction faction)
 		{
-			ThingDef d = DefDatabase<ThingDef>.GetNamedSilentFail("DankPyon_Turret_Trebuchet");
+			ThingDef d = ArtilleryDefFor(faction);
 			if (d == null || map == null) return new List<Building>();
 			return map.listerThings.ThingsOfDef(d)
 				.Where(t => t.Faction == faction && t.Spawned)
@@ -640,12 +752,13 @@ namespace RimSiege
 
 		// mixed volleys: fire favored, the dead and plain stone fill the gaps. strict
 		// fire-first meant the tar stock outlasted the siege and carrion never flew
-		public static void LoadTrebuchetsFromPiles(Map map, Faction faction)
+		public static void LoadArtilleryFromPiles(Map map, Faction faction)
 		{
+			if (Modern(faction)) { LoadMortarsFromPiles(map, faction); return; }
 			ThingDef stone = DefDatabase<ThingDef>.GetNamedSilentFail("DankPyon_StoneBoulder");
 			ThingDef tarred = DefDatabase<ThingDef>.GetNamedSilentFail("DankPyon_StoneBoulderTarred");
 			bool carrionOk = RimSiegeMod.S.carrionEnabled && RimSiegeDefOf.RimSiege_CarrionShell != null;
-			foreach (Building treb in SpawnedTrebuchets(map, faction))
+			foreach (Building treb in SpawnedArtillery(map, faction))
 			{
 				Thing gun = (treb as Building_TurretGun)?.gun;
 				CompChangeableProjectile changeable = gun?.TryGetComp<CompChangeableProjectile>();
@@ -678,6 +791,96 @@ namespace RimSiege
 					changeable.LoadShell(stone, 1);
 				}
 			}
+		}
+
+		// mortars: incendiary favored like tar, high explosive fills in. smoke stays in the pile for the
+		// cover salvos. a worn barrel gets swapped from the camp's spares, pile stolen = the mortar goes quiet
+		private static void LoadMortarsFromPiles(Map map, Faction faction)
+		{
+			ThingDef he = ThingDefOf.Shell_HighExplosive;
+			ThingDef fire = DefDatabase<ThingDef>.GetNamedSilentFail("Shell_Incendiary");
+			foreach (Building b in SpawnedArtillery(map, faction))
+			{
+				if (!(b is Building_TurretGun mortar)) continue;
+				SwapBarrel(map, mortar);
+
+				CompChangeableProjectile changeable = mortar.gun?.TryGetComp<CompChangeableProjectile>();
+				if (changeable == null || changeable.Loaded) continue;
+				Thing firePile = NearestPile(map, b.Position, fire);
+				Thing hePile = NearestPile(map, b.Position, he);
+				float wFire = firePile != null ? 3f : 0f;
+				float wHe = hePile != null ? 2f : 0f;
+				if (wFire + wHe <= 0f) continue;
+
+				Thing pile = Rand.Value * (wFire + wHe) < wFire ? firePile : hePile;
+				ThingDef shell = pile.def;
+				pile.SplitOff(1).Destroy();
+				changeable.LoadShell(shell, 1);
+			}
+		}
+
+		private static void SwapBarrel(Map map, Building_TurretGun mortar)
+		{
+			CompRefuelable barrel = mortar.refuelableComp;
+			if (barrel == null || barrel.HasFuel || Find.Storyteller.difficulty.classicMortars) return;
+			Thing spare = NearestPile(map, mortar.Position, ThingDefOf.ReinforcedBarrel);
+			if (spare == null) return;
+			spare.SplitOff(1).Destroy();
+			barrel.Refuel(1f); // one barrel fills it (fuelMultiplier)
+		}
+
+		// a drawn camp's generators and manned guns run on what the pods brought: chemfuel, scorpio bolts.
+		// pile stolen = the turrets go dark. mortar barrels and mini-turret rearming stay out of it
+		public static void RefuelCampWorks(Map map, Faction faction)
+		{
+			foreach (Thing t in map.listerThings.ThingsInGroup(ThingRequestGroup.Refuelable))
+			{
+				if (t.Faction != faction || !t.Spawned) continue;
+				bool power = t.TryGetComp<CompPowerPlant>() != null;
+				bool manned = t is Building_TurretGun && t.TryGetComp<CompMannable>() != null;
+				if (!power && !manned) continue;
+				CompRefuelable fuel = t.TryGetComp<CompRefuelable>();
+				if (fuel == null || fuel.Props.fuelIsMortarBarrel) continue;
+				if (power ? fuel.FuelPercentOfMax >= 0.5f : fuel.Props.fuelCapacity - fuel.Fuel < 1f) continue;
+				int missing = Mathf.CeilToInt((fuel.Props.fuelCapacity - fuel.Fuel) / fuel.Props.FuelMultiplierCurrentDifficulty);
+				foreach (ThingDef fuelDef in fuel.Props.fuelFilter.AllowedThingDefs)
+				{
+					Thing pile = NearestPile(map, t.Position, fuelDef);
+					if (pile == null) continue;
+					int take = Mathf.Min(missing, pile.stackCount);
+					pile.SplitOff(take).Destroy();
+					fuel.Refuel(take);
+					break;
+				}
+			}
+		}
+
+		// cover for the breaching team: one manned mortar lobs a smoke shell on the gate. the cloud blinds
+		// turrets and shooters there for a while. shell comes off the camp pile, true if one flew
+		public static bool FireSmokeAt(Map map, Faction faction, IntVec3 target)
+		{
+			ThingDef smoke = DefDatabase<ThingDef>.GetNamedSilentFail("Shell_Smoke");
+			if (smoke?.projectileWhenLoaded == null || !target.IsValid) return false;
+			foreach (Building b in SpawnedArtillery(map, faction).InRandomOrder())
+			{
+				if (!(b is Building_TurretGun mortar)) continue;
+				CompMannable man = mortar.TryGetComp<CompMannable>();
+				if (man == null || !man.MannedNow) continue;
+				if (mortar.refuelableComp != null && !mortar.refuelableComp.HasFuel) continue;
+				Thing pile = NearestPile(map, b.Position, smoke);
+				if (pile == null) return false;
+
+				pile.SplitOff(1).Destroy();
+				IntVec3 at = CellFinder.RandomClosewalkCellNear(target, map, 2);
+				var shell = (Projectile)GenSpawn.Spawn(smoke.projectileWhenLoaded, mortar.Position, map);
+				shell.Launch(man.ManningPawn, mortar.DrawPos, at, at, ProjectileHitFlags.IntendedTarget, equipment: mortar);
+				mortar.refuelableComp?.ConsumeFuel(1f);
+				VerbProperties verb = mortar.def.building?.turretGunDef?.Verbs?.FirstOrDefault();
+				verb?.soundCast?.PlayOneShot(new TargetInfo(mortar.Position, map));
+				FleckMaker.Static(mortar.DrawPos, map, FleckDefOf.ShotFlash, verb?.muzzleFlashScale ?? 1f);
+				return true;
+			}
+			return false;
 		}
 
 		// a rotten carcass, dropped at the camp pile or where the shot lands

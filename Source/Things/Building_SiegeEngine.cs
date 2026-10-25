@@ -97,7 +97,34 @@ namespace RimSiege.Things
 		private bool Crewing(Pawn q) =>
 			q.Spawned && !q.Dead && q.CurJob?.def == RimSiegeDefOf.RimSiege_PushSiegeEngine && q.CurJob.targetA.Thing == this;
 
-		public bool UsableHandle(IntVec3 c) => c.IsValid && c.InBounds(Map) && c.Standable(Map);
+		// a closed door is standable, but a raider cant step into the colony's door: the crewman sent there
+		// never arrived and the log waited along the wall
+		public bool UsableHandle(IntVec3 c) => c.IsValid && c.InBounds(Map) && c.Standable(Map) && c.GetDoor(Map) == null;
+
+		// one-flank carry (ladder, breaching ram): both men on the same side, the sprite eased toward them,
+		// side swaps when a wall or trees take it. not saved, it settles again within a few ticks
+		protected int carrySide = 1;
+		protected float carryShift;
+		protected IntVec3 Perp => Rotation.Rotated(RotationDirection.Clockwise).FacingCell;
+		protected IntVec3 CarryFlank => Perp * carrySide;
+
+		// handles = how many cells back from Position each carrier stands
+		protected void TickCarryFlank(float toward, int[] handles)
+		{
+			if (!docked && this.IsHashIntervalTick(10))
+			{
+				IntVec3 s = CarryFlank;
+				int here = 0, there = 0;
+				foreach (int k in handles)
+				{
+					IntVec3 c = Position - Rotation.FacingCell * k;
+					if (UsableHandle(c + s)) here++;
+					if (UsableHandle(c - s)) there++;
+				}
+				if (there > here) carrySide = -carrySide;
+			}
+			carryShift = Mathf.MoveTowards(carryShift, carrySide * toward, 0.05f);
+		}
 
 		// carried engines only move with the crew under them, each one standing on their own spot.
 		// nowhere set (boxed in): they hold on from wherever they could get to
@@ -111,6 +138,24 @@ namespace RimSiege.Things
 
 		// where a crewman in place looks: pushers lean on the engine, carriers look where they march
 		public virtual IntVec3 CrewLookAt(Pawn p) => Position;
+
+		// carriers on both flanks stand a whole cell off the axis: their body is drawn this much closer,
+		// so the hands meet the load. 0 = drawn on their cell
+		protected virtual float CrewPull => 0f;
+
+		// in toward the axis from the flank of the crewman's spot, faded in over the last cell (JobDriver.ForcedBodyOffset)
+		public Vector3 CrewDrawOffset(Pawn p, IntVec3 spot)
+		{
+			if (CrewPull <= 0f || !spot.IsValid) return Vector3.zero;
+			IntVec3 perp = Perp;
+			IntVec3 d = spot - Position;
+			int side = Math.Sign(d.x * perp.x + d.z * perp.z);
+			if (side == 0) return Vector3.zero;
+			// tweened pos, not DrawPos: DrawPos adds this offset and would call back in here
+			Vector3 gap = p.Drawer.tweener.TweenedPos - spot.ToVector3Shifted();
+			float near = Mathf.Clamp01(2f - new Vector2(gap.x, gap.z).magnitude);
+			return -perp.ToVector3() * (side * CrewPull * near);
+		}
 
 		// wheels throw dust and rumble. a log or a ladder in someone's arms does neither
 		public virtual bool OnWheels => true;

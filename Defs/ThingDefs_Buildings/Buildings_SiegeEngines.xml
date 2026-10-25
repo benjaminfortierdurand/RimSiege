@@ -22,7 +22,9 @@
 			<WorkToBuild>3500</WorkToBuild>
 		</statBases>
 		<!-- constructible = les blueprints existent pour le chantier ennemi.
-		     Archotech le cache du menu du joueur sans bloquer les assiégeants -->
+		     Archotech le cache du menu du joueur sans bloquer les assiégeants. en mode dieu c'est le code
+		     (HideEngineDesignators) qui les retire du menu. surtout pas canGenerateDefaultDesignator=false :
+		     avec Ideology ça en fait des bâtiments d'idéologie que personne dans le siège n'a le droit de construire -->
 		<designationCategory>Security</designationCategory>
 		<minTechLevelToBuild>Archotech</minTechLevelToBuild>
 		<constructionSkillPrerequisite>4</constructionSkillPrerequisite>
@@ -107,6 +109,43 @@
 		<!-- sprites 4 directions (art : BenFD), poignées à 2 cases d'écart avec drawSize 5 -->
 		<graphicData>
 			<texPath>Things/Building/LogRam/LogRam</texPath>
+			<graphicClass>Graphic_Multi</graphicClass>
+			<drawSize>(5,5)</drawSize>
+		</graphicData>
+		<building>
+			<isEdifice>false</isEdifice>
+		</building>
+	</ThingDef>
+
+	<!-- kit moderne : le même tronc en acier, porté par deux breachers (une poignée chacun, de part et d'autre).
+	     ne brûle pas, il faut abattre les porteurs -->
+	<ThingDef ParentName="BuildingBase">
+		<defName>RimSiege_SteelRam</defName>
+		<label>breaching ram</label>
+		<description>A heavy steel tube with a strike plate at each end and a handle bar on top. Two breachers carry it up to a door, one on each side, and batter it until it gives. It won't burn: stop the men carrying it.</description>
+		<thingClass>RimSiege.Things.Building_SteelRam</thingClass>
+		<drawerType>RealtimeOnly</drawerType>
+		<tickerType>Normal</tickerType>
+		<altitudeLayer>Pawn</altitudeLayer>
+		<selectable>true</selectable>
+		<useHitPoints>true</useHitPoints>
+		<fillPercent>0.2</fillPercent>
+		<passability>Standable</passability>
+		<castEdgeShadows>false</castEdgeShadows>
+		<rotatable>true</rotatable>
+		<statBases>
+			<MaxHitPoints>600</MaxHitPoints>
+			<Flammability>0</Flammability>
+			<WorkToBuild>1500</WorkToBuild>
+		</statBases>
+		<designationCategory>Security</designationCategory>
+		<minTechLevelToBuild>Archotech</minTechLevelToBuild>
+		<costList>
+			<Steel>120</Steel>
+		</costList>
+		<!-- d'après les béliers des forces spéciales (_concept/modern/make_breachram.py), même gabarit que le bélier porté -->
+		<graphicData>
+			<texPath>Things/Building/SteelRam/SteelRam</texPath>
 			<graphicClass>Graphic_Multi</graphicClass>
 			<drawSize>(5,5)</drawSize>
 		</graphicData>

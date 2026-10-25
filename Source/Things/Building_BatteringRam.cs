@@ -17,9 +17,11 @@ namespace RimSiege.Things
 		// how far it pulls back, in cells. the wheeled ram only jolts, the log ram swings from the arms
 		protected virtual float SwingBack => 0.1f;
 		public virtual float ShakeOnHit => 0.1f;
+		public virtual int StrikeInterval => 180; // ticks between blows
 
 		public void BeginSwing(int now) => swingStart = now;
 		public bool SwingStartedAfter(int tick) => swingStart > tick;
+		protected int SwingTick => Find.TickManager.TicksGame - swingStart; // ticks since the wind-up began
 
 		protected Vector3 SwingOffset
 		{

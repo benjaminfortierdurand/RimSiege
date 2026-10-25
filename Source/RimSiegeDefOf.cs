@@ -11,6 +11,7 @@ namespace RimSiege
 		public static ThingDef RimSiege_SiegeTower;
 		public static ThingDef RimSiege_LogRam;
 		public static ThingDef RimSiege_SiegeLadder;
+		public static ThingDef RimSiege_SteelRam;
 		public static ThingDef RimSiege_TrebuchetBoulder;
 		public static ThingDef RimSiege_Petard;
 		public static ThingDef RimSiege_CondemnedFlyer;
@@ -31,6 +32,7 @@ namespace RimSiege
 		public static DutyDef RimSiege_Sap;
 
 		public static DutyDef RimSiege_ManTrebuchet;
+		public static DutyDef RimSiege_BuildCamp;
 		public static DutyDef RimSiege_RetrieveCaptain;
 		public static DutyDef Escort; // vanilla, captain bodyguards
 		public static JobDef CarryDownedPawnToExit; // vanilla, envoy carries the captain out

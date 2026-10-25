@@ -73,24 +73,30 @@ namespace RimSiege.Debug
 		[DebugAction("RimSiege", "Siege now: tribe with log ram (4k points)",
 			actionType = DebugActionType.Action,
 			allowedGameStates = AllowedGameStates.PlayingOnMap)]
-		private static void TribeLogRam() => TribeSiege(RimSiegeDefOf.RimSiege_LogRam);
+		private static void TribeLogRam() => KitSiege(SiegeLauncher.Tribal, RimSiegeDefOf.RimSiege_LogRam, "tribe");
 
 		[DebugAction("RimSiege", "Siege now: tribe with ladder (4k points)",
 			actionType = DebugActionType.Action,
 			allowedGameStates = AllowedGameStates.PlayingOnMap)]
-		private static void TribeLadder() => TribeSiege(RimSiegeDefOf.RimSiege_SiegeLadder);
+		private static void TribeLadder() => KitSiege(SiegeLauncher.Tribal, RimSiegeDefOf.RimSiege_SiegeLadder, "tribe");
 
-		private static void TribeSiege(ThingDef engine)
+		// gun era kit: steel breaching ram, mortars behind sandbags, smoke on the gate. 4k so the battery shows up
+		[DebugAction("RimSiege", "Siege now: gun era (4k points)",
+			actionType = DebugActionType.Action,
+			allowedGameStates = AllowedGameStates.PlayingOnMap)]
+		private static void ModernSiege() => KitSiege(SiegeLauncher.Modern, RimSiegeDefOf.RimSiege_SteelRam, "gun era faction");
+
+		private static void KitSiege(System.Func<Faction, bool> kit, ThingDef engine, string what)
 		{
 			Map map = Find.CurrentMap;
 			if (map == null) return;
 			Faction faction = Find.FactionManager.AllFactions
-				.Where(f => !f.IsPlayer && !f.defeated && !f.def.hidden && SiegeLauncher.Tribal(f)
+				.Where(f => !f.IsPlayer && !f.defeated && !f.def.hidden && kit(f)
 					&& f.HostileTo(Faction.OfPlayer) && SiegeLauncher.CrewKindFor(f) != null)
 				.RandomElementWithFallback();
 			if (faction == null)
 			{
-				Messages.Message("RimSiege: no hostile tribe found.", MessageTypeDefOf.RejectInput, historical: false);
+				Messages.Message("RimSiege: no hostile " + what + " found.", MessageTypeDefOf.RejectInput, historical: false);
 				return;
 			}
 			SiegeLauncher.debugNextEngine = engine;

@@ -50,6 +50,9 @@ namespace RimSiege.Things
 
 		public override IntVec3 CrewLookAt(Pawn p) => p.Position + Rotation.FacingCell;
 
+		// a pawn seen from the side is narrower than from the front: a log running north-south pulls them in more
+		protected override float CrewPull => Perp.x != 0 ? 0.4f : 0.3f;
+
 		protected override Vector3 ExtraDrawOffset => -Rotation.FacingCell.ToVector3() + SwingOffset;
 	}
 }

@@ -23,6 +23,7 @@ namespace RimSiege.AI
 		public bool reinforced;     // second column already marched in
 		public bool lateOfferSent;  // the engines-are-up tribute letter went out
 		public bool supplied;       // another mod's army (SiegeApi): no second column, no late tribute
+		public CampLayoutDef camp;  // drawn camp picked at launch with the battery it caps. null = classic camp
 		// this siege's own engine. engines from older sieges stay on the map and the same house comes back,
 		// so finding "the faction's ram" picked up the old one
 		public Building_SiegeEngine engine;
@@ -189,6 +190,7 @@ namespace RimSiege.AI
 			Scribe_Values.Look(ref reinforced, "reinforced");
 			Scribe_Values.Look(ref lateOfferSent, "lateOfferSent");
 			Scribe_Values.Look(ref supplied, "supplied");
+			Scribe_Defs.Look(ref camp, "camp");
 			if (Scribe.mode == LoadSaveMode.Saving && engine != null && engine.Destroyed) engine = null;
 			Scribe_References.Look(ref engine, "engine");
 			Scribe_Values.Look(ref engineSpot, "engineSpot", IntVec3.Invalid);

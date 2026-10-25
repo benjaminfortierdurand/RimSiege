@@ -11,7 +11,7 @@ namespace RimSiege
 
 		public float enginePointsFloor = 700f; // engine chance ramps from here to floor+1300
 		public float trebuchetPointsFloor = 1500f;
-		public int maxTrebuchets = 3;
+		public int maxTrebuchets = 4;
 		public float sapperPointsFloor = 1200f;
 		public int maxSappers = 2;
 		public float ballistaPointsFloor = 2500f; // camp guard artillery, punishes sorties
@@ -36,7 +36,7 @@ namespace RimSiege
 			Scribe_Values.Look(ref ultimatumHours, "ultimatumHours", 6);
 			Scribe_Values.Look(ref enginePointsFloor, "enginePointsFloor", 700f);
 			Scribe_Values.Look(ref trebuchetPointsFloor, "trebuchetPointsFloor", 1500f);
-			Scribe_Values.Look(ref maxTrebuchets, "maxTrebuchets", 3);
+			Scribe_Values.Look(ref maxTrebuchets, "maxTrebuchets", 4);
 			Scribe_Values.Look(ref sapperPointsFloor, "sapperPointsFloor", 1200f);
 			Scribe_Values.Look(ref maxSappers, "maxSappers", 2);
 			Scribe_Values.Look(ref ballistaPointsFloor, "ballistaPointsFloor", 2500f);
@@ -107,7 +107,7 @@ namespace RimSiege
 			l.Label("RimSiege_SetTrebFloor".Translate((int)S.trebuchetPointsFloor));
 			S.trebuchetPointsFloor = Mathf.Round(l.Slider(S.trebuchetPointsFloor, 0f, 6000f) / 50f) * 50f;
 			l.Label("RimSiege_SetMaxTrebs".Translate(S.maxTrebuchets));
-			S.maxTrebuchets = Mathf.RoundToInt(l.Slider(S.maxTrebuchets, 0f, 3f));
+			S.maxTrebuchets = Mathf.RoundToInt(l.Slider(S.maxTrebuchets, 0f, 4f));
 			l.Label("RimSiege_SetBallistaFloor".Translate((int)S.ballistaPointsFloor));
 			S.ballistaPointsFloor = Mathf.Round(l.Slider(S.ballistaPointsFloor, 0f, 8000f) / 50f) * 50f;
 			l.Label("RimSiege_SetMaxBallistas".Translate(S.maxBallistas));

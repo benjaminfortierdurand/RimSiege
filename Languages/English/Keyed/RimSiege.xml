@@ -12,8 +12,13 @@
   <RimSiege_TextLogRam>A war band of {0} is setting up camp outside your walls. They are lashing together a LOG RAM: four of them will carry it at a run up to your gate and pound it until it gives. Hit the camp before they finish, or get ready to hold the breach.</RimSiege_TextLogRam>
   <RimSiege_LabelLadder>Tribal siege: ladder</RimSiege_LabelLadder>
   <RimSiege_TextLadder>A war band of {0} is setting up camp outside your walls and binding a SIEGE LADDER. Two of them will run it up to your rampart, then the whole band goes over the wall one at a time. Wreck their worksite before it's ready.</RimSiege_TextLadder>
+  <RimSiege_LabelSteelRam>Siege: breaching ram</RimSiege_LabelSteelRam>
+  <RimSiege_TextSteelRam>A force of {0} is setting up camp outside your walls. They brought a steel BREACHING RAM: two of them will carry it to your gate and batter it open. Hit the camp before they're ready, or get ready to hold the breach.</RimSiege_TextSteelRam>
   <RimSiege_TrebOne>A trebuchet will support the assault from a distance.</RimSiege_TrebOne>
   <RimSiege_TrebMany>A battery of {0} trebuchets will pound your walls from a distance.</RimSiege_TrebMany>
+  <RimSiege_MortarOne>A mortar will shell your base from their camp.</RimSiege_MortarOne>
+  <RimSiege_MortarMany>A battery of {0} mortars will shell your base from their camp.</RimSiege_MortarMany>
+  <RimSiege_SmokeHint>When the ram goes in, expect smoke shells on your gate.</RimSiege_SmokeHint>
   <RimSiege_BallistaHint>Ballistas will guard their camp - a sally will ride into bolt fire.</RimSiege_BallistaHint>
   <RimSiege_BombardBegins>The siege engines are complete. The bombardment begins.</RimSiege_BombardBegins>
   <RimSiege_SappersHint>Sappers will try to blow a second breach elsewhere in your wall.</RimSiege_SappersHint>
@@ -70,7 +75,7 @@
   <RimSiege_SetHours>Time to decide: {0} h</RimSiege_SetHours>
   <RimSiege_SetEngineFloor>Minimum threat points - siege engine (ram/tower): {0}</RimSiege_SetEngineFloor>
   <RimSiege_SetTrebFloor>Minimum points - trebuchets: {0}</RimSiege_SetTrebFloor>
-  <RimSiege_SetMaxTrebs>Maximum trebuchets: {0}</RimSiege_SetMaxTrebs>
+  <RimSiege_SetMaxTrebs>Maximum trebuchets or mortars: {0}</RimSiege_SetMaxTrebs>
   <RimSiege_SetSapperFloor>Minimum points - sappers: {0}</RimSiege_SetSapperFloor>
   <RimSiege_SetMaxSappers>Maximum sappers: {0}</RimSiege_SetMaxSappers>
   <RimSiege_SetBallistaFloor>Minimum points - camp ballistas: {0}</RimSiege_SetBallistaFloor>

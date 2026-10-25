@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+	<!-- petit camp moderne de BenFD : carré de sacs de sable ouvert sur les 4 côtés, feu de camp au centre, pas de marque d'artillerie. objets vanilla, marche sans MO -->
+	<RimSiege.CampLayoutDef>
+		<defName>RimSiege_CampModern_Small</defName>
+		<label>gun era siege camp</label>
+		<kit>Modern</kit>
+		<minPoints>0</minPoints>
+		<maxPoints>2500</maxPoints>
+		<layout>
+			<li>Sandbags_Cloth,Sandbags_Cloth,Sandbags_Cloth,.,Sandbags_Cloth,Sandbags_Cloth,Sandbags_Cloth</li>
+			<li>Sandbags_Cloth,.,.,.,.,.,Sandbags_Cloth</li>
+			<li>Sandbags_Cloth,.,.,.,.,.,Sandbags_Cloth</li>
+			<li>.,.,.,Campfire_DankPyon_RawWood_North_Fuel100,.,.,.</li>
+			<li>Sandbags_Cloth,.,.,.,.,.,Sandbags_Cloth</li>
+			<li>Sandbags_Cloth,.,.,.,.,.,Sandbags_Cloth</li>
+			<li>Sandbags_Cloth,Sandbags_Cloth,Sandbags_Cloth,.,Sandbags_Cloth,Sandbags_Cloth,Sandbags_Cloth</li>
+		</layout>
+	</RimSiege.CampLayoutDef>
+
+	<!-- petit camp moderne de BenFD avec 2 mini-tourelles et un générateur à chemfuel qui les alimente, construits sur place. carré de sacs de sable ouvert sur les 4 côtés, pas de marque d'artillerie. objets vanilla, marche sans MO -->
+	<RimSiege.CampLayoutDef>
+		<defName>RimSiege_CampModern_SmallTurrets</defName>
+		<label>gun era siege camp</label>
+		<kit>Modern</kit>
+		<minPoints>0</minPoints>
+		<maxPoints>2500</maxPoints>
+		<layout>
+			<li>Sandbags_Cloth,Sandbags_Cloth,Sandbags_Cloth,.,.,Sandbags_Cloth,Sandbags_Cloth,Sandbags_Cloth</li>
+			<li>Sandbags_Cloth,Turret_MiniTurret_Steel_Fuel100,.,.,.,.,Turret_MiniTurret_Steel_Fuel100,Sandbags_Cloth</li>
+			<li>Sandbags_Cloth,.,.,.,.,.,.,Sandbags_Cloth</li>
+			<li>.,.,.,ChemfuelPoweredGenerator_Fuel99,.,.,.,.</li>
+			<li>.,.,.,.,.,.,.,.</li>
+			<li>Sandbags_Cloth,.,.,.,.,.,.,Sandbags_Cloth</li>
+			<li>Sandbags_Cloth,.,.,.,.,.,.,Sandbags_Cloth</li>
+			<li>Sandbags_Cloth,Sandbags_Cloth,Sandbags_Cloth,.,.,Sandbags_Cloth,Sandbags_Cloth,Sandbags_Cloth</li>
+		</layout>
+	</RimSiege.CampLayoutDef>
+
+	<!-- camp moderne moyen de BenFD : enceinte de sacs de sable ouverte sur les 4 côtés, un emplacement de mortier dans un nid de sacs de sable au centre. objets vanilla, marche sans MO -->
+	<RimSiege.CampLayoutDef>
+		<defName>RimSiege_CampModern_Medium</defName>
+		<label>gun era siege camp</label>
+		<kit>Modern</kit>
+		<minPoints>2500</minPoints>
+		<maxPoints>5000</maxPoints>
+		<layout>
+			<li>Sandbags_Cloth,Sandbags_Cloth,Sandbags_Cloth,Sandbags_Cloth,.,.,Sandbags_Cloth,Sandbags_Cloth,Sandbags_Cloth,Sandbags_Cloth</li>
+			<li>Sandbags_Cloth,.,.,.,.,.,.,.,.,Sandbags_Cloth</li>
+			<li>Sandbags_Cloth,.,.,.,.,.,.,.,.,Sandbags_Cloth</li>
+			<li>Sandbags_Cloth,.,.,Sandbags_Cloth,Sandbags_Cloth,Sandbags_Cloth,Sandbags_Cloth,.,.,Sandbags_Cloth</li>
+			<li>Sandbags_Cloth,.,.,Sandbags_Cloth,.,.,Sandbags_Cloth,.,.,Sandbags_Cloth</li>
+			<li>.,.,.,.,.,Turret_Mortar_Steel_South_Fuel100,.,.,.,.</li>
+			<li>Sandbags_Cloth,.,.,Sandbags_Cloth,.,.,Sandbags_Cloth,.,.,Sandbags_Cloth</li>
+			<li>Sandbags_Cloth,.,.,Sandbags_Cloth,Sandbags_Cloth,Sandbags_Cloth,Sandbags_Cloth,.,.,Sandbags_Cloth</li>
+			<li>Sandbags_Cloth,.,.,.,.,.,.,.,.,Sandbags_Cloth</li>
+			<li>Sandbags_Cloth,.,.,.,.,.,.,.,.,Sandbags_Cloth</li>
+			<li>Sandbags_Cloth,Sandbags_Cloth,Sandbags_Cloth,Sandbags_Cloth,.,.,Sandbags_Cloth,Sandbags_Cloth,Sandbags_Cloth,Sandbags_Cloth</li>
+		</layout>
+	</RimSiege.CampLayoutDef>
+
+	<!-- deuxième camp moderne moyen de BenFD : enceinte de sacs de sable, un emplacement de mortier dans un nid au centre, 4 mini-tourelles aux coins reliées par un anneau de câbles au générateur à chemfuel (dans son abri côté colonie), construits sur place. objets vanilla, marche sans MO -->
+	<RimSiege.CampLayoutDef>
+		<defName>RimSiege_CampModern_Medium2</defName>
+		<label>gun era siege camp</label>
+		<kit>Modern</kit>
+		<minPoints>2500</minPoints>
+		<maxPoints>5000</maxPoints>
+		<layout>
+			<li>Sandbags_Cloth,Sandbags_Cloth,Sandbags_Cloth,Sandbags_Cloth,.,.,Sandbags_Cloth,Sandbags_Cloth,Sandbags_Cloth,Sandbags_Cloth</li>
+			<li>Sandbags_Cloth,Turret_MiniTurret_Steel_Fuel100,PowerConduit,PowerConduit,PowerConduit,PowerConduit,PowerConduit,PowerConduit,Turret_MiniTurret_Steel_Fuel100,Sandbags_Cloth</li>
+			<li>Sandbags_Cloth,PowerConduit,.,.,.,.,.,.,PowerConduit,Sandbags_Cloth</li>
+			<li>Sandbags_Cloth,PowerConduit,.,Sandbags_Cloth,Sandbags_Cloth,Sandbags_Cloth,Sandbags_Cloth,.,PowerConduit,Sandbags_Cloth</li>
+			<li>Sandbags_Cloth,PowerConduit,.,Sandbags_Cloth,.,.,Sandbags_Cloth,.,PowerConduit,Sandbags_Cloth</li>
+			<li>.,PowerConduit,.,.,.,Turret_Mortar_Steel_South_Fuel100,.,.,PowerConduit,.</li>
+			<li>Sandbags_Cloth,PowerConduit,.,Sandbags_Cloth,.,.,Sandbags_Cloth,.,PowerConduit,Sandbags_Cloth</li>
+			<li>Sandbags_Cloth,PowerConduit,.,Sandbags_Cloth,Sandbags_Cloth,Sandbags_Cloth,Sandbags_Cloth,.,PowerConduit,Sandbags_Cloth</li>
+			<li>Sandbags_Cloth,PowerConduit,.,.,.,.,.,.,PowerConduit,Sandbags_Cloth</li>
+			<li>Sandbags_Cloth,Turret_MiniTurret_Steel_Fuel100,PowerConduit,PowerConduit,PowerConduit,PowerConduit,PowerConduit,PowerConduit,Turret_MiniTurret_Steel_Fuel100,Sandbags_Cloth</li>
+			<li>Sandbags_Cloth,Sandbags_Cloth,Sandbags_Cloth,Sandbags_Cloth,ChemfuelPoweredGenerator_Fuel0,.,Sandbags_Cloth,Sandbags_Cloth,Sandbags_Cloth,Sandbags_Cloth</li>
+			<li>.,.,.,Sandbags_Cloth,.,.,Sandbags_Cloth,.,.,.</li>
+			<li>.,.,.,Sandbags_Cloth,Sandbags_Cloth,Sandbags_Cloth,Sandbags_Cloth,.,.,.</li>
+		</layout>
+		<onTop>
+			<li>
+				<li>.,.,.,.,.,.,.,.,.,.</li>
+				<li>.,PowerConduit,.,.,.,.,.,.,PowerConduit,.</li>
+				<li>.,.,.,.,.,.,.,.,.,.</li>
+				<li>.,.,.,.,.,.,.,.,.,.</li>
+				<li>.,.,.,.,.,.,.,.,.,.</li>
+				<li>.,.,.,.,.,.,.,.,.,.</li>
+				<li>.,.,.,.,.,.,.,.,.,.</li>
+				<li>.,.,.,.,.,.,.,.,.,.</li>
+				<li>.,.,.,.,.,.,.,.,.,.</li>
+				<li>.,PowerConduit,.,.,.,.,.,.,PowerConduit,.</li>
+				<li>.,.,.,.,.,.,.,.,.,.</li>
+				<li>.,.,.,.,.,.,.,.,.,.</li>
+				<li>.,.,.,.,.,.,.,.,.,.</li>
+			</li>
+		</onTop>
+	</RimSiege.CampLayoutDef>
+
+	<!-- troisième camp moderne moyen de BenFD : 2 emplacements de mortier côte à côte au centre, 4 mini-tourelles aux coins sur câbles, 2 générateurs à chemfuel côté colonie, une lampe sur pied (lampe solaire de l export remplacée : 2900 W, jamais allumée sur 2000 W), construits sur place. objets vanilla, marche sans MO -->
+	<RimSiege.CampLayoutDef>
+		<defName>RimSiege_CampModern_Medium3</defName>
+		<label>gun era siege camp</label>
+		<kit>Modern</kit>
+		<minPoints>2500</minPoints>
+		<maxPoints>5000</maxPoints>
+		<layout>
+			<li>.,.,.,.,.,.,Sandbags_Cloth,Sandbags_Cloth,Sandbags_Cloth,Sandbags_Cloth,Sandbags_Cloth,.,.,.,.,.,.</li>
+			<li>.,.,.,.,.,.,.,.,Sandbags_Cloth,.,.,.,.,.,.,.,.</li>
+			<li>.,.,Sandbags_Cloth,Sandbags_Cloth,Sandbags_Cloth,.,.,Sandbags_Cloth,Sandbags_Cloth,Sandbags_Cloth,.,.,Sandbags_Cloth,Sandbags_Cloth,Sandbags_Cloth,.,.</li>
+			<li>.,.,Sandbags_Cloth,Turret_MiniTurret_Steel_Fuel100,.,.,.,.,.,.,.,.,.,Turret_MiniTurret_Steel_Fuel100,Sandbags_Cloth,.,.</li>
+			<li>Sandbags_Cloth,.,Sandbags_Cloth,PowerConduit,.,.,.,.,StandingLamp,.,.,.,.,PowerConduit,Sandbags_Cloth,.,Sandbags_Cloth</li>
+			<li>Sandbags_Cloth,.,.,PowerConduit,.,Sandbags_Cloth,Sandbags_Cloth,Sandbags_Cloth,Sandbags_Cloth,Sandbags_Cloth,Sandbags_Cloth,Sandbags_Cloth,.,PowerConduit,.,.,Sandbags_Cloth</li>
+			<li>Sandbags_Cloth,Sandbags_Cloth,Sandbags_Cloth,PowerConduit,.,Sandbags_Cloth,.,.,Sandbags_Cloth,.,.,Sandbags_Cloth,.,PowerConduit,Sandbags_Cloth,Sandbags_Cloth,Sandbags_Cloth</li>
+			<li>Sandbags_Cloth,.,.,PowerConduit,.,Sandbags_Cloth,.,Turret_Mortar_Steel_South_Fuel100,Sandbags_Cloth,.,Turret_Mortar_Steel_South_Fuel100,Sandbags_Cloth,.,PowerConduit,.,.,Sandbags_Cloth</li>
+			<li>Sandbags_Cloth,.,Sandbags_Cloth,PowerConduit,.,.,.,.,.,.,.,.,.,PowerConduit,Sandbags_Cloth,.,Sandbags_Cloth</li>
+			<li>.,.,Sandbags_Cloth,Turret_MiniTurret_Steel_Fuel100,PowerConduit,PowerConduit,PowerConduit,.,.,.,PowerConduit,PowerConduit,PowerConduit,Turret_MiniTurret_Steel_Fuel100,Sandbags_Cloth,.,.</li>
+			<li>.,.,Sandbags_Cloth,Sandbags_Cloth,Sandbags_Cloth,Sandbags_Cloth,PowerConduit,Sandbags_Cloth,Sandbags_Cloth,Sandbags_Cloth,PowerConduit,Sandbags_Cloth,Sandbags_Cloth,Sandbags_Cloth,Sandbags_Cloth,.,.</li>
+			<li>.,.,.,.,.,Sandbags_Cloth,ChemfuelPoweredGenerator_Fuel99,.,Sandbags_Cloth,ChemfuelPoweredGenerator_Fuel99,.,Sandbags_Cloth,.,.,.,.,.</li>
+			<li>.,.,.,.,.,Sandbags_Cloth,.,.,Sandbags_Cloth,.,.,Sandbags_Cloth,.,.,.,.,.</li>
+			<li>.,.,.,.,.,Sandbags_Cloth,Sandbags_Cloth,Sandbags_Cloth,Sandbags_Cloth,Sandbags_Cloth,Sandbags_Cloth,Sandbags_Cloth,.,.,.,.,.</li>
+		</layout>
+		<onTop>
+			<li>
+				<li>.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.</li>
+				<li>.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.</li>
+				<li>.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.</li>
+				<li>.,.,.,PowerConduit,.,.,.,.,.,.,.,.,.,PowerConduit,.,.,.</li>
+				<li>.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.</li>
+				<li>.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.</li>
+				<li>.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.</li>
+				<li>.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.</li>
+				<li>.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.</li>
+				<li>.,.,.,PowerConduit,.,.,.,.,.,.,.,.,.,PowerConduit,.,.,.</li>
+				<li>.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.</li>
+				<li>.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.</li>
+				<li>.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.</li>
+				<li>.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.</li>
+			</li>
+		</onTop>
+	</RimSiege.CampLayoutDef>
+
+	<!-- grand camp moderne de BenFD : enceinte octogonale de sacs de sable, 4 emplacements de mortier au centre, 8 mini-tourelles sur un anneau de câbles, un générateur à chemfuel côté colonie, construits sur place. objets vanilla, marche sans MO -->
+	<RimSiege.CampLayoutDef>
+		<defName>RimSiege_CampModern_Large</defName>
+		<label>gun era siege camp</label>
+		<kit>Modern</kit>
+		<minPoints>5000</minPoints>
+		<layout>
+			<li>.,.,.,.,Sandbags_Cloth,Sandbags_Cloth,Sandbags_Cloth,.,.,Sandbags_Cloth,Sandbags_Cloth,Sandbags_Cloth,.,.,.,.</li>
+			<li>.,.,.,Sandbags_Cloth,Sandbags_Cloth,Turret_MiniTurret_Steel_Fuel100,PowerConduit,PowerConduit,PowerConduit,PowerConduit,Turret_MiniTurret_Steel_Fuel100,Sandbags_Cloth,Sandbags_Cloth,.,.,.</li>
+			<li>.,.,Sandbags_Cloth,Sandbags_Cloth,PowerConduit,PowerConduit,.,.,.,.,PowerConduit,PowerConduit,Sandbags_Cloth,Sandbags_Cloth,.,.</li>
+			<li>.,Sandbags_Cloth,Sandbags_Cloth,PowerConduit,PowerConduit,.,.,.,.,.,.,PowerConduit,PowerConduit,Sandbags_Cloth,Sandbags_Cloth,.</li>
+			<li>Sandbags_Cloth,Sandbags_Cloth,PowerConduit,PowerConduit,Sandbags_Cloth,Sandbags_Cloth,Sandbags_Cloth,.,.,Sandbags_Cloth,Sandbags_Cloth,Sandbags_Cloth,PowerConduit,PowerConduit,Sandbags_Cloth,Sandbags_Cloth</li>
+			<li>Sandbags_Cloth,Turret_MiniTurret_Steel_Fuel100,PowerConduit,.,Sandbags_Cloth,.,.,.,.,.,.,Sandbags_Cloth,.,PowerConduit,Turret_MiniTurret_Steel_Fuel100,Sandbags_Cloth</li>
+			<li>Sandbags_Cloth,PowerConduit,.,.,Sandbags_Cloth,.,Turret_Mortar_Steel_South_Fuel100,.,.,.,Turret_Mortar_Steel_South_Fuel100,Sandbags_Cloth,.,.,PowerConduit,Sandbags_Cloth</li>
+			<li>.,PowerConduit,.,.,Sandbags_Cloth,.,.,.,.,.,.,Sandbags_Cloth,.,.,PowerConduit,.</li>
+			<li>.,PowerConduit,.,.,Sandbags_Cloth,Sandbags_Cloth,Sandbags_Cloth,.,.,Sandbags_Cloth,Sandbags_Cloth,Sandbags_Cloth,.,.,PowerConduit,.</li>
+			<li>Sandbags_Cloth,PowerConduit,.,.,Sandbags_Cloth,.,.,.,.,.,.,Sandbags_Cloth,.,.,PowerConduit,Sandbags_Cloth</li>
+			<li>Sandbags_Cloth,Turret_MiniTurret_Steel_Fuel100,PowerConduit,.,Sandbags_Cloth,.,Turret_Mortar_Steel_South_Fuel100,.,.,.,Turret_Mortar_Steel_South_Fuel100,Sandbags_Cloth,.,PowerConduit,Turret_MiniTurret_Steel_Fuel100,Sandbags_Cloth</li>
+			<li>Sandbags_Cloth,Sandbags_Cloth,PowerConduit,PowerConduit,.,.,.,.,.,.,.,.,.,PowerConduit,Sandbags_Cloth,Sandbags_Cloth</li>
+			<li>.,Sandbags_Cloth,Sandbags_Cloth,PowerConduit,PowerConduit,.,.,.,.,.,.,PowerConduit,PowerConduit,Sandbags_Cloth,Sandbags_Cloth,.</li>
+			<li>.,.,Sandbags_Cloth,Sandbags_Cloth,PowerConduit,PowerConduit,Sandbags_Cloth,.,Sandbags_Cloth,Sandbags_Cloth,PowerConduit,PowerConduit,Sandbags_Cloth,Sandbags_Cloth,.,.</li>
+			<li>.,.,.,Sandbags_Cloth,Sandbags_Cloth,Turret_MiniTurret_Steel_Fuel100,PowerConduit,ChemfuelPoweredGenerator_Fuel99,.,PowerConduit,Turret_MiniTurret_Steel_Fuel100,Sandbags_Cloth,Sandbags_Cloth,.,.,.</li>
+			<li>.,.,.,.,Sandbags_Cloth,Sandbags_Cloth,Sandbags_Cloth,.,.,Sandbags_Cloth,Sandbags_Cloth,Sandbags_Cloth,.,.,.,.</li>
+			<li>.,.,.,.,.,.,Sandbags_Cloth,Sandbags_Cloth,Sandbags_Cloth,Sandbags_Cloth,.,.,.,.,.,.</li>
+		</layout>
+		<onTop>
+			<li>
+				<li>.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.</li>
+				<li>.,.,.,.,.,PowerConduit,.,.,.,.,PowerConduit,.,.,.,.,.</li>
+				<li>.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.</li>
+				<li>.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.</li>
+				<li>.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.</li>
+				<li>.,PowerConduit,.,.,.,.,.,.,.,.,.,.,.,.,PowerConduit,.</li>
+				<li>.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.</li>
+				<li>.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.</li>
+				<li>.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.</li>
+				<li>.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.</li>
+				<li>.,PowerConduit,.,.,.,.,.,.,.,.,.,.,.,.,PowerConduit,.</li>
+				<li>.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.</li>
+				<li>.,.,.,.,.,.,.,.,.,.,.,.,.,PowerConduit,.,.</li>
+				<li>.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.</li>
+				<li>.,.,.,.,.,PowerConduit,Sandbags_Cloth,.,.,Sandbags_Cloth,PowerConduit,.,.,.,.,.</li>
+				<li>.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.</li>
+				<li>.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.</li>
+			</li>
+		</onTop>
+	</RimSiege.CampLayoutDef>
+
+</Defs>

@@ -35,20 +35,10 @@ namespace RimSiege.AI
 
 		protected bool IsGunner(Pawn p) => gunners.Contains(p);
 
-		private static bool trebLookedUp;
-		private static ThingDef trebDef;
-		private static ThingDef TrebuchetDef
-		{
-			get
-			{
-				if (!trebLookedUp)
-				{
-					trebDef = DefDatabase<ThingDef>.GetNamedSilentFail("DankPyon_Turret_Trebuchet");
-					trebLookedUp = true;
-				}
-				return trebDef;
-			}
-		}
+		// gun era: a smoke shell on the gate every so often while the breaching team closes in and batters it
+		private const int SmokeInterval = 1500;
+		private const int SmokeRangeSq = 625;   // ram within 25 cells of the gate
+		private int lastSmokeTick = -99999;
 
 		protected int lastBreachCheckTick = -99999;
 
@@ -195,6 +185,7 @@ namespace RimSiege.AI
 			}
 
 			KeepTrebuchetsLoaded();
+			CoverWithSmoke(engine, now);
 			CheckEngineReachable(engine, now);
 
 			if (!engine.docked)
@@ -483,14 +474,11 @@ namespace RimSiege.AI
 				if (things[i] is Plant) things[i].Destroy(DestroyMode.Vanish);
 		}
 
-		private IEnumerable<Building> Trebuchets =>
-			TrebuchetDef == null ? Enumerable.Empty<Building>() :
-			Map.listerThings.ThingsOfDef(TrebuchetDef).Where(t => t.Faction == lord.faction && t.Spawned).Cast<Building>();
-
 		private void EnsureGunners()
 		{
-			// trebuchets and ballistas both, cheapest hands man the machines while knights fight
-			var guns = Trebuchets.Concat(SiegeLauncher.SpawnedBallistas(Map, lord.faction)).ToList();
+			// trebuchets or mortars, and ballistas, cheapest hands man the machines while knights fight
+			var guns = SiegeLauncher.SpawnedArtillery(Map, lord.faction).Concat(SiegeLauncher.SpawnedBallistas(Map, lord.faction))
+				.Concat(SiegeLauncher.SpawnedCampGuns(Map, lord.faction)).ToList();
 			gunners.RemoveAll(g => g == null || g.Dead || g.Downed || !g.Spawned || !lord.ownedPawns.Contains(g));
 			if (guns.Count == 0) { gunners.Clear(); return; }
 
@@ -514,7 +502,17 @@ namespace RimSiege.AI
 			if (now - lastLoadTick < LoadCheckInterval) return;
 			lastLoadTick = now;
 			SiegeLauncher.RefuelBallistasNear(Map, lord.faction);
-			SiegeLauncher.LoadTrebuchetsFromPiles(Map, lord.faction);
+			SiegeLauncher.LoadArtilleryFromPiles(Map, lord.faction);
+			SiegeLauncher.RefuelCampWorks(Map, lord.faction);
+		}
+
+		// tries every 2s until a manned mortar with a smoke shell fires, then waits out the cloud
+		private void CoverWithSmoke(Building_SiegeEngine engine, int now)
+		{
+			if (!(engine is Building_SteelRam) || !engine.breachTarget.IsValid) return;
+			if (now - lastSmokeTick < SmokeInterval || now % 120 != 0) return;
+			if ((engine.Position - engine.breachTarget).LengthHorizontalSquared > SmokeRangeSq) return;
+			if (SiegeLauncher.FireSmokeAt(Map, lord.faction, engine.breachTarget)) lastSmokeTick = now;
 		}
 	}
 }

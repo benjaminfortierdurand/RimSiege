@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using RimWorld;
+using UnityEngine;
 using Verse;
 using Verse.AI;
 using RimSiege.Things;
@@ -11,6 +12,19 @@ namespace RimSiege.Jobs
 	public class JobDriver_PushSiegeEngine : JobDriver
 	{
 		private Building_SiegeEngine Engine => job.GetTarget(TargetIndex.A).Thing as Building_SiegeEngine;
+
+		// last spot the tick handed out. not saved, set again on the next tick
+		private IntVec3 spot = IntVec3.Invalid;
+
+		// carriers lean in to the load (vanilla adds this to DrawPos, no patch)
+		public override Vector3 ForcedBodyOffset
+		{
+			get
+			{
+				var engine = Engine;
+				return engine != null && engine.Spawned ? engine.CrewDrawOffset(pawn, spot) : Vector3.zero;
+			}
+		}
 
 		// handles move with the engine -> no hard reservation
 		public override bool TryMakePreToilReservations(bool errorOnFailed) => true;
@@ -28,7 +42,7 @@ namespace RimSiege.Jobs
 				if (engine == null || !engine.Spawned) return;
 
 				// own handle or a spare. nothing set (boxed in) -> nearest free handle
-				IntVec3 spot = engine.SpotOf(pawn);
+				spot = engine.SpotOf(pawn);
 				bool own = spot.IsValid;
 				if (!own)
 					spot = engine.HandleCells
