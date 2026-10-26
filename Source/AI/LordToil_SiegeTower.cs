@@ -13,7 +13,7 @@ namespace RimSiege.AI
 {
 	public class LordToil_SiegeTower : LordToil_PushEngine
 	{
-		protected virtual int DeployInterval => 90;  // one climb every ~1.5s
+		protected virtual int DeployInterval => 120; // one climber sets off every 2s, the climb itself takes 2.5s
 		private const int PickupRangeSq = 144;
 		private const int WaitRangeSq = 1600;   // someone this close is still expected, hold the door
 		private const int StallTimeout = 2500;
@@ -74,6 +74,9 @@ namespace RimSiege.AI
 			{
 				// whole army goes over, only the gunners stay. dont wait forever on a guy stuck in a brawl
 				if (AnyEligibleWithin(engine, WaitRangeSq) && now - lastDeployProgress < StallTimeout) return;
+				// the last ones still on the rungs: the breach assault would call them off halfway up
+				if (now - lastDeployProgress < StallTimeout && lord.ownedPawns.Any(p => p.Spawned
+					&& p.mindState.duty?.def == RimSiegeDefOf.RimSiege_ClimbOver)) return;
 				lord.ReceiveMemo("BreachOpen");
 				return;
 			}
@@ -94,17 +97,8 @@ namespace RimSiege.AI
 			if (!inside.IsValid) { lord.ReceiveMemo("BreachOpen"); return; }
 			lastDeployTick = now;
 
-			// landing might be on a bush, squash it
-			var things = inside.GetThingList(Map);
-			for (int i = things.Count - 1; i >= 0; i--)
-				if (things[i] is Plant) things[i].Destroy(DestroyMode.Vanish);
-
-			RimSiegeDefOf.RimSiege_CrewPush?.PlayOneShot(new TargetInfo(inside, Map));
-			FleckMaker.ThrowDustPuffThick(inside.ToVector3Shifted(), Map, 1.6f, Color.white);
-
-			climber.Position = inside;
-			climber.Notify_Teleported(false, false);
-			climber.mindState.duty = new PawnDuty(RimSiegeDefOf.RimSiege_AssaultThroughBreach);
+			// up, over and down in plain sight (JobDriver_ClimbOver), the climber can be shot off on the way
+			climber.mindState.duty = new PawnDuty(RimSiegeDefOf.RimSiege_ClimbOver, engine, inside);
 			climber.jobs?.EndCurrentJob(JobCondition.InterruptForced);
 			boarding.Remove(climber);
 			deployed.Add(climber);

@@ -36,6 +36,17 @@
 		</thinkNode>
 	</DutyDef>
 
+	<!-- grimpeur de la tour ou de l'échelle : monte, passe le mur, redescend de l'autre côté, à la vue de tous -->
+	<DutyDef>
+		<defName>RimSiege_ClimbOver</defName>
+		<hook>HighPriority</hook>
+		<thinkNode Class="ThinkNode_Priority">
+			<subNodes>
+				<li Class="RimSiege.AI.JobGiver_ClimbOver" />
+			</subNodes>
+		</thinkNode>
+	</DutyDef>
+
 	<!-- servant de trebuchet -->
 	<DutyDef>
 		<defName>RimSiege_ManTrebuchet</defName>
