@@ -32,6 +32,7 @@ namespace RimSiege
 
 		public static JobDef RimSiege_PushSiegeEngine;
 		public static JobDef RimSiege_SapJob;
+		public static JobDef RimSiege_ClimbOverJob;
 		public static JobDef RimSiege_ManTrebuchetJob;
 		public static JobDef RimSiege_ExecuteCaptainJob;
 		public static JobDef RimSiege_ExecutionCeremonyJob;
@@ -43,6 +44,7 @@ namespace RimSiege
 		public static DutyDef RimSiege_AssaultThroughBreach;
 
 		public static DutyDef RimSiege_Sap;
+		public static DutyDef RimSiege_ClimbOver;
 
 		public static DutyDef RimSiege_ManTrebuchet;
 		public static DutyDef RimSiege_BuildCamp;

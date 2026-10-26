@@ -9,6 +9,13 @@
 	</JobDef>
 
 	<JobDef>
+		<defName>RimSiege_ClimbOverJob</defName>
+		<driverClass>RimSiege.Jobs.JobDriver_ClimbOver</driverClass>
+		<reportString>climbing over the wall.</reportString>
+		<casualInterruptible>false</casualInterruptible>
+	</JobDef>
+
+	<JobDef>
 		<defName>RimSiege_SapJob</defName>
 		<driverClass>RimSiege.Jobs.JobDriver_Sap</driverClass>
 		<reportString>planting a charge against the wall.</reportString>
