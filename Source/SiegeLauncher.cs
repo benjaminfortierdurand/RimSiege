@@ -242,7 +242,8 @@ namespace RimSiege
 			if (group.NullOrEmpty()) return false;
 
 			// engine rolled first, the tower prefers walls
-			if (!TryFindSiegeTarget(map, preferWalls: tower, out IntVec3 breach))
+			IntVec3 from = ArmyEntry(map, group);
+			if (!TryFindSiegeTarget(map, tower, from, out IntVec3 breach))
 			{
 				foreach (Pawn p in group) if (!p.Destroyed) p.Destroy();
 				return false;
@@ -250,7 +251,7 @@ namespace RimSiege
 
 			// camp site before the battery: a drawn camp only goes where enough of it fits, and it sets the guns.
 			// a host too poor for an engine still pitches its drawn camp
-			FindCampSite(map, group, breach, out IntVec3 entryAt, out IntVec3 musterAt);
+			FindCampSite(map, group, breach, out IntVec3 entryAt, out IntVec3 musterAt, from);
 			CampLayoutDef camp = PickCamp(map, faction, breach, points, ref musterAt);
 
 			int trebuchetCount = 0;
@@ -313,13 +314,14 @@ namespace RimSiege
 			}
 			// the laser ram takes four pushers too and has no smaller engine: a short host goes on foot
 			if (engineDef == RimSiegeDefOf.RimSiege_LaserRam && hands < SuppliedEngineHands + 1) engineDef = null;
-			if (!TryFindSiegeTarget(map, preferWalls: tower, out IntVec3 breach)) return false;
+			IntVec3 from = ArmyEntry(map, troops);
+			if (!TryFindSiegeTarget(map, tower, from, out IntVec3 breach)) return false;
 
 			// guns get manned out of the host, so only what it can spare
 			int spare = hands - SuppliedEngineHands;
 			int trebuchetCount = 0;
 			int ballistaCount = 0;
-			FindCampSite(map, troops, breach, out IntVec3 entryAt, out IntVec3 musterAt);
+			FindCampSite(map, troops, breach, out IntVec3 entryAt, out IntVec3 musterAt, from);
 			CampLayoutDef camp = PickCamp(map, faction, breach, points, ref musterAt);
 			if (engineDef != null && !Tribal(faction))
 			{
@@ -433,10 +435,17 @@ namespace RimSiege
 
 		// vanilla order: entry cell first, camp spot from it. only extra: camp must reach the breach.
 		// a supplied army can already stand on the map or ride pods down onto it: camp off where it is
-		public static void FindCampSite(Map map, List<Pawn> group, IntVec3 breach, out IntVec3 entry, out IntVec3 muster)
+		// where the army comes from: where it already stands, else a map edge cell
+		public static IntVec3 ArmyEntry(Map map, List<Pawn> group)
 		{
 			Pawn here = group.FirstOrDefault(p => p.MapHeld == map);
-			entry = here != null ? here.PositionHeld : FindEntryCell(map);
+			return here != null ? here.PositionHeld : FindEntryCell(map);
+		}
+
+		public static void FindCampSite(Map map, List<Pawn> group, IntVec3 breach, out IntVec3 entry, out IntVec3 muster,
+			IntVec3? from = null)
+		{
+			entry = from ?? ArmyEntry(map, group);
 			muster = RCellFinder.FindSiegePositionFrom(entry, map, allowRoofed: false, errorOnFail: false,
 				c => map.reachability.CanReach(c, breach, PathEndMode.Touch, CampTraverse));
 		}
@@ -687,52 +696,186 @@ namespace RimSiege
 		{
 			breach = IntVec3.Invalid;
 			float minSq = minDist * minDist;
-			var cache = new Dictionary<Region, bool>();
-			List<Building> candidates = map.listerBuildings.allBuildingsColonist
-				.Where(b => b.def.passability == Traversability.Impassable && b.def.fillPercent >= 0.9f
-					&& !b.Destroyed && (b.Position - avoid).LengthHorizontalSquared >= minSq
-					&& GuardsColony(map, b.Position, cache))
-				.ToList();
-			if (candidates.Count == 0) return false;
-			breach = candidates.RandomElement().Position;
+			List<SiegeTarget> walls = SiegeTargets(map, IntVec3.Invalid)
+				.Where(t => !t.door && (t.cell - avoid).LengthHorizontalSquared >= minSq).ToList();
+			if (walls.Count == 0) return false;
+			breach = walls.RandomElement().cell;
 			return true;
 		}
 
-		public static bool TryFindSiegeTarget(Map map, out IntVec3 breach) =>
-			TryFindSiegeTarget(map, preferWalls: false, out breach);
+		// is there anything to siege at all. the incident and the API ask often, so no walk grids here
+		public static bool TryFindSiegeTarget(Map map, out IntVec3 breach)
+		{
+			var cache = new Dictionary<Region, bool>();
+			List<Building> built = BreachableBuilt(map);
+			List<Building> pick = built.Where(b => GuardsColony(map, b.Position, cache)).ToList();
+			if (pick.Count == 0) pick = built.Where(b => HasOpenSide(map, b.Position)).ToList();
+			breach = pick.Count > 0 ? pick.RandomElement().Position : IntVec3.Invalid;
+			return pick.Count > 0;
+		}
 
-		// ram goes for the gate, tower goes for walls
-		public static bool TryFindSiegeTarget(Map map, bool preferWalls, out IntVec3 breach)
+		public static bool TryFindSiegeTarget(Map map, bool preferWalls, out IntVec3 breach) =>
+			TryFindSiegeTarget(map, preferWalls, IntVec3.Invalid, out breach);
+
+		// a gate or wall this much farther to walk than the nearest is still fair game
+		private const int NearBand = 15;
+		// a ram walks this much farther for a gate before it settles for a wall, a tower the other way round
+		private const int KindDetour = 25;
+
+		// ram goes for the gate, tower goes for walls. coming from `from` (their entry or where they stand):
+		// one of the nearest on foot, not a random one across the map. Invalid = no bias
+		public static bool TryFindSiegeTarget(Map map, bool preferWalls, IntVec3 from, out IntVec3 breach)
 		{
 			breach = IntVec3.Invalid;
+			List<SiegeTarget> all = SiegeTargets(map, from);
+			if (all.Count == 0) return false;
+			List<SiegeTarget> liked = all.Where(t => t.door != preferWalls).ToList();
+			int best = all.Min(t => t.walk);
+			if (liked.Count == 0 || (best < int.MaxValue && liked.Min(t => t.walk) > best + KindDetour)) liked = all;
+			int near = liked.Min(t => t.walk);
+			breach = (near == int.MaxValue ? liked : liked.Where(t => t.walk <= near + NearBand).ToList()).RandomElement().cell;
+			return true;
+		}
+
+		private struct SiegeTarget
+		{
+			public IntVec3 cell;
+			public bool door;
+			public int walk; // on foot from `from` to the side it gets hit from, int.MaxValue = unknown
+		}
+
+		// breaking it has to save the army this much walking to the base. an outer wall round a yard that an
+		// open gate or a killbox leads into seals nothing, but going through it beats walking the killbox
+		private const int ShortcutGain = 25;
+
+		// what a siege can hit: the walls and gates that seal the colony, plus outer ones that cut a long walk
+		// short. no enclosure at all: anything with an open side, the way in is open already
+		private static List<SiegeTarget> SiegeTargets(Map map, IntVec3 from)
+		{
 			var cache = new Dictionary<Region, bool>();
-
-			List<Building> doors = map.listerBuildings.allBuildingsColonist
-				.Where(b => b is Building_Door && !b.Destroyed && GuardsColony(map, b.Position, cache))
-				.ToList();
-			List<Building> walls = map.listerBuildings.allBuildingsColonist
-				.Where(b => b.def.passability == Traversability.Impassable && b.def.fillPercent >= 0.9f
-					&& GuardsColony(map, b.Position, cache))
-				.ToList();
-
-			if (doors.Count == 0 && walls.Count == 0)
+			List<Building> built = BreachableBuilt(map);
+			List<Building> sealing = built.Where(b => GuardsColony(map, b.Position, cache)).ToList();
+			int[] fromWalk = from.IsValid ? WalkGrid(map, NearbyCells(map, from)) : null;
+			var targets = new List<SiegeTarget>();
+			if (sealing.Count == 0)
 			{
-				// gate left open, or no real enclosure: nothing guards the colony. take anything with
-				// an open side so sieges keep coming, the ram will find the way in already open
-				doors = map.listerBuildings.allBuildingsColonist
-					.Where(b => b is Building_Door && !b.Destroyed && HasOpenSide(map, b.Position))
-					.ToList();
-				walls = map.listerBuildings.allBuildingsColonist
-					.Where(b => b.def.passability == Traversability.Impassable && b.def.fillPercent >= 0.9f
-						&& HasOpenSide(map, b.Position))
-					.ToList();
+				foreach (Building b in built)
+					if (HasOpenSide(map, b.Position)) targets.Add(Target(map, b, fromWalk));
+				return targets;
 			}
+			foreach (Building b in sealing) targets.Add(Target(map, b, fromWalk));
 
-			List<Building> first = preferWalls ? walls : doors;
-			List<Building> second = preferWalls ? doors : walls;
-			if (first.Count > 0) { breach = first.RandomElement().Position; return true; }
-			if (second.Count > 0) { breach = second.RandomElement().Position; return true; }
-			return false;
+			// how far each cell walks to the nearest spot the sealing walls and gates can be hit from
+			var sealingSet = new HashSet<Building>(sealing);
+			int[] toBase = WalkGrid(map, sealing.SelectMany(b => GenAdj.CardinalDirections.Select(d => b.Position + d)));
+			CellIndices idx = map.cellIndices;
+			foreach (Building b in built)
+			{
+				if (sealingSet.Contains(b)) continue;
+				int bestGain = 0, bestWalk = int.MaxValue;
+				foreach (IntVec3 dir in new[] { IntVec3.North, IntVec3.East })
+				{
+					if (!Across(map, b.Position, dir, out IntVec3 a, out IntVec3 c, out int span)) continue;
+					int ga = toBase[idx.CellToIndex(a)], gc = toBase[idx.CellToIndex(c)];
+					if (ga < 0 || gc < 0) continue;
+					// hit from the face farther from the base. the army has to get to that face first, or the
+					// engine docks on the yard side and knocks the wall outward for nothing
+					IntVec3 outer = ga >= gc ? a : c, inner = ga >= gc ? c : a;
+					int wo = fromWalk == null ? -1 : fromWalk[idx.CellToIndex(outer)];
+					int wi = fromWalk == null ? -1 : fromWalk[idx.CellToIndex(inner)];
+					if (fromWalk != null && (wo < 0 || (wi >= 0 && wi < wo))) continue;
+					int gain = Mathf.Abs(ga - gc) - span;
+					if (gain <= bestGain) continue;
+					bestGain = gain;
+					bestWalk = wo < 0 ? int.MaxValue : wo;
+				}
+				if (bestGain >= ShortcutGain)
+					targets.Add(new SiegeTarget { cell = b.Position, door = b is Building_Door, walk = bestWalk });
+			}
+			return targets;
+		}
+
+		// gates and solid walls the colony built
+		private static List<Building> BreachableBuilt(Map map) => map.listerBuildings.allBuildingsColonist
+			.Where(b => !b.Destroyed && (b is Building_Door || (b.def.passability == Traversability.Impassable && b.def.fillPercent >= 0.9f)))
+			.ToList();
+
+		private static SiegeTarget Target(Map map, Building b, int[] fromWalk)
+		{
+			int walk = int.MaxValue;
+			if (fromWalk != null)
+				foreach (IntVec3 d in GenAdj.CardinalDirections)
+				{
+					IntVec3 n = b.Position + d;
+					if (!n.InBounds(map)) continue;
+					int w = fromWalk[map.cellIndices.CellToIndex(n)];
+					if (w >= 0 && w < walk) walk = w;
+				}
+			return new SiegeTarget { cell = b.Position, door = b is Building_Door, walk = walk };
+		}
+
+		// the cell itself, or its neighbours when it stands on something (an army spawned in a doorway)
+		private static IEnumerable<IntVec3> NearbyCells(Map map, IntVec3 c)
+		{
+			yield return c;
+			foreach (IntVec3 d in GenAdj.AdjacentCells) yield return c + d;
+		}
+
+		// open ground an army walks without opening a door
+		private static bool OpenGround(Map map, IntVec3 c) => c.InBounds(map) && c.Walkable(map) && c.GetDoor(map) == null;
+
+		// cells walked from the seeds to every cell over open ground, -1 = cant get there
+		private static int[] WalkGrid(Map map, IEnumerable<IntVec3> seeds)
+		{
+			CellIndices idx = map.cellIndices;
+			var walk = new int[idx.NumGridCells];
+			for (int i = 0; i < walk.Length; i++) walk[i] = -1;
+			var open = new Queue<IntVec3>();
+			foreach (IntVec3 s in seeds)
+			{
+				if (!OpenGround(map, s) || walk[idx.CellToIndex(s)] >= 0) continue;
+				walk[idx.CellToIndex(s)] = 0;
+				open.Enqueue(s);
+			}
+			while (open.Count > 0)
+			{
+				IntVec3 c = open.Dequeue();
+				int next = walk[idx.CellToIndex(c)] + 1;
+				foreach (IntVec3 d in GenAdj.CardinalDirections)
+				{
+					IntVec3 n = c + d;
+					if (!OpenGround(map, n) || walk[idx.CellToIndex(n)] >= 0) continue;
+					walk[idx.CellToIndex(n)] = next;
+					open.Enqueue(n);
+				}
+			}
+			return walk;
+		}
+
+		// open ground right through a wall or gate along one axis, up to a few layers thick. one face at least
+		// has to touch open ground, or this is the wall's own length and its two ends
+		private static bool Across(Map map, IntVec3 c, IntVec3 dir, out IntVec3 a, out IntVec3 b, out int span)
+		{
+			a = b = IntVec3.Invalid;
+			span = 0;
+			if (!OpenGround(map, c + dir) && !OpenGround(map, c - dir)) return false;
+			int ia = OpenAlong(map, c, dir, out a), ib = OpenAlong(map, c, -dir, out b);
+			if (ia < 0 || ib < 0) return false;
+			span = ia + ib - 1;
+			return true;
+		}
+
+		private static int OpenAlong(Map map, IntVec3 c, IntVec3 dir, out IntVec3 open)
+		{
+			open = IntVec3.Invalid;
+			for (int i = 1; i <= 4; i++)
+			{
+				IntVec3 x = c + dir * i;
+				if (!x.InBounds(map)) return -1;
+				if (OpenGround(map, x)) { open = x; return i; }
+				if (!BlocksBreach(map, x)) return -1; // a pond or a tree line, not more wall
+			}
+			return -1;
 		}
 
 		private static bool HasOpenSide(Map map, IntVec3 c)

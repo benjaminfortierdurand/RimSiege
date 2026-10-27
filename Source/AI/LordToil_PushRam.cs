@@ -135,7 +135,7 @@ namespace RimSiege.AI
 			}
 
 			// hole leads nowhere. pick a fresh target instead of storming empty ground
-			if (!open && RData.chainedBreaches < MaxChainedBreaches && SiegeLauncher.TryFindSiegeTarget(Map, out IntVec3 fresh))
+			if (!open && RData.chainedBreaches < MaxChainedBreaches && SiegeLauncher.TryFindSiegeTarget(Map, false, engine.Position, out IntVec3 fresh))
 			{
 				Retarget(engine, fresh);
 				return;
