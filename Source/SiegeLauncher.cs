@@ -147,21 +147,44 @@ namespace RimSiege
 			return true;
 		}
 
+		// World Tech Level keeps the factions above the world's level and only swaps their gear: pirates in a
+		// medieval world carry swords, so they get the medieval kit. read by reflection, it stays optional
+		private static System.Reflection.MethodInfo worldCap;
+		private static bool worldCapLooked;
+
+		public static TechLevel Tech(Faction f)
+		{
+			TechLevel tech = f.def.techLevel;
+			if (!worldCapLooked)
+			{
+				worldCapLooked = true;
+				worldCap = GenTypes.GetTypeInAnyAssembly("WorldTechLevel.TechLevelUtility")
+					?.GetMethod("CurrentFilterLevel", new[] { typeof(FactionDef) });
+			}
+			if (worldCap == null || tech == TechLevel.Undefined) return tech;
+			try
+			{
+				var cap = (TechLevel)worldCap.Invoke(null, new object[] { f.def });
+				return tech > cap ? cap : tech;
+			}
+			catch { return tech; }
+		}
+
 		// wooden engines, slings, banners: a pre-gunpowder thing. pirates with rifles get no ram
-		public static bool OldWorld(Faction f) => f?.def != null && f.def.techLevel <= TechLevel.Medieval;
+		public static bool OldWorld(Faction f) => f?.def != null && Tech(f) <= TechLevel.Medieval;
 
 		// tribes carry a log or a ladder: no wagons, no slings, no bolt throwers
 		public static bool Tribal(Faction f) =>
-			f?.def != null && f.def.techLevel > TechLevel.Undefined && f.def.techLevel <= TechLevel.Neolithic;
+			f?.def != null && Tech(f) > TechLevel.Undefined && Tech(f) <= TechLevel.Neolithic;
 
 		// gun era and up (pirates, outlanders, the empire): a steel breaching ram, mortars, smoke, sandbags
-		public static bool Modern(Faction f) => f?.def != null && f.def.techLevel >= TechLevel.Industrial;
+		public static bool Modern(Faction f) => f?.def != null && Tech(f) >= TechLevel.Industrial;
 
 		// spacer armies (the Empire, modded spacer factions) field a laser battery instead of the mortars.
 		// pirates (vanilla, cannibal, waster, yttakin, modded ones named so) and Odyssey's salvagers are spacer
 		// tech too but they are raiders, they keep the mortars
 		public static bool Lasers(Faction f) =>
-			f?.def != null && f.def.techLevel >= TechLevel.Spacer
+			f?.def != null && Tech(f) >= TechLevel.Spacer
 			&& !f.def.defName.Contains("Pirate") && f.def.defName != "Salvagers";
 
 		public static CampKit KitOf(Faction f) =>
@@ -169,7 +192,7 @@ namespace RimSiege
 
 		// a petard is gunpowder: a tribe has none, so no sappers. undefined tech keeps them like before
 		public static bool HasGunpowder(Faction f) =>
-			f?.def != null && (f.def.techLevel >= TechLevel.Medieval || f.def.techLevel == TechLevel.Undefined);
+			f?.def != null && (Tech(f) >= TechLevel.Medieval || Tech(f) == TechLevel.Undefined);
 
 		private static readonly string[] GildedHelms =
 			{ "DankPyon_Headgear_ArmetGilded", "DankPyon_Headgear_SalletGryphon", "DankPyon_Headgear_HeraldicGreatHelm1c" };
@@ -212,7 +235,7 @@ namespace RimSiege
 			// captain keeps his own lid
 			ThingDef headdress = DefDatabase<ThingDef>.GetNamedSilentFail("Apparel_TribalHeaddress");
 			ThingDef hat = null;
-			if (faction?.def?.techLevel == TechLevel.Neolithic) hat = headdress;
+			if (faction?.def != null && Tech(faction) == TechLevel.Neolithic) hat = headdress;
 			else if (OldWorld(faction))
 				hat = GildedHelms.Select(n => DefDatabase<ThingDef>.GetNamedSilentFail(n)).FirstOrDefault(d => d != null)
 					?? headdress;
@@ -719,6 +742,8 @@ namespace RimSiege
 
 		// a gate or wall this much farther to walk than the nearest is still fair game
 		private const int NearBand = 15;
+		// each of your turrets covering the spot they would hit from counts as this many cells more to walk
+		private const int TurretCost = 20;
 		// a ram walks this much farther for a gate before it settles for a wall, a tower the other way round
 		private const int KindDetour = 25;
 
@@ -730,10 +755,10 @@ namespace RimSiege
 			List<SiegeTarget> all = SiegeTargets(map, from);
 			if (all.Count == 0) return false;
 			List<SiegeTarget> liked = all.Where(t => t.door != preferWalls).ToList();
-			int best = all.Min(t => t.walk);
-			if (liked.Count == 0 || (best < int.MaxValue && liked.Min(t => t.walk) > best + KindDetour)) liked = all;
-			int near = liked.Min(t => t.walk);
-			breach = (near == int.MaxValue ? liked : liked.Where(t => t.walk <= near + NearBand).ToList()).RandomElement().cell;
+			int best = all.Min(t => t.Score);
+			if (liked.Count == 0 || (best < int.MaxValue && liked.Min(t => t.Score) > best + KindDetour)) liked = all;
+			int near = liked.Min(t => t.Score);
+			breach = (near == int.MaxValue ? liked : liked.Where(t => t.Score <= near + NearBand).ToList()).RandomElement().cell;
 			return true;
 		}
 
@@ -742,6 +767,9 @@ namespace RimSiege
 			public IntVec3 cell;
 			public bool door;
 			public int walk; // on foot from `from` to the side it gets hit from, int.MaxValue = unknown
+			public IntVec3 spot; // where they stand to hit it
+			public int turrets; // how many of the colony's turrets cover that spot
+			public int Score => walk == int.MaxValue ? int.MaxValue : walk + TurretCost * turrets;
 		}
 
 		// breaking it has to save the army this much walking to the base. an outer wall round a yard that an
@@ -756,14 +784,15 @@ namespace RimSiege
 			List<Building> built = BreachableBuilt(map);
 			List<Building> sealing = built.Where(b => GuardsColony(map, b.Position, cache)).ToList();
 			int[] fromWalk = from.IsValid ? WalkGrid(map, NearbyCells(map, from)) : null;
+			int[] covered = from.IsValid ? TurretCover(map) : null;
 			var targets = new List<SiegeTarget>();
 			if (sealing.Count == 0)
 			{
 				foreach (Building b in built)
-					if (HasOpenSide(map, b.Position)) targets.Add(Target(map, b, fromWalk));
+					if (HasOpenSide(map, b.Position)) targets.Add(Target(map, b, fromWalk, covered));
 				return targets;
 			}
-			foreach (Building b in sealing) targets.Add(Target(map, b, fromWalk));
+			foreach (Building b in sealing) targets.Add(Target(map, b, fromWalk, covered));
 
 			// how far each cell walks to the nearest spot the sealing walls and gates can be hit from
 			var sealingSet = new HashSet<Building>(sealing);
@@ -773,6 +802,7 @@ namespace RimSiege
 			{
 				if (sealingSet.Contains(b)) continue;
 				int bestGain = 0, bestWalk = int.MaxValue;
+				IntVec3 bestSpot = IntVec3.Invalid;
 				foreach (IntVec3 dir in new[] { IntVec3.North, IntVec3.East })
 				{
 					if (!Across(map, b.Position, dir, out IntVec3 a, out IntVec3 c, out int span)) continue;
@@ -788,30 +818,76 @@ namespace RimSiege
 					if (gain <= bestGain) continue;
 					bestGain = gain;
 					bestWalk = wo < 0 ? int.MaxValue : wo;
+					bestSpot = outer;
 				}
 				if (bestGain >= ShortcutGain)
-					targets.Add(new SiegeTarget { cell = b.Position, door = b is Building_Door, walk = bestWalk });
+					targets.Add(new SiegeTarget { cell = b.Position, door = b is Building_Door, walk = bestWalk, spot = bestSpot,
+						turrets = covered == null ? 0 : covered[idx.CellToIndex(bestSpot)] });
 			}
 			return targets;
 		}
 
 		// gates and solid walls the colony built
 		private static List<Building> BreachableBuilt(Map map) => map.listerBuildings.allBuildingsColonist
-			.Where(b => !b.Destroyed && (b is Building_Door || (b.def.passability == Traversability.Impassable && b.def.fillPercent >= 0.9f)))
+			.Where(b => !b.Destroyed && (b is Building_Door || (b.def.passability == Traversability.Impassable
+				// embrasures (Fortifications' citadel walls) are only 0.7 full, a turret that low is no wall
+				&& (b.def.fillPercent >= 0.9f || (b.def.fillPercent >= 0.65f && !(b is Building_Turret))))))
 			.ToList();
 
-		private static SiegeTarget Target(Map map, Building b, int[] fromWalk)
+		private static SiegeTarget Target(Map map, Building b, int[] fromWalk, int[] covered)
 		{
 			int walk = int.MaxValue;
+			IntVec3 spot = IntVec3.Invalid;
 			if (fromWalk != null)
 				foreach (IntVec3 d in GenAdj.CardinalDirections)
 				{
 					IntVec3 n = b.Position + d;
 					if (!n.InBounds(map)) continue;
 					int w = fromWalk[map.cellIndices.CellToIndex(n)];
-					if (w >= 0 && w < walk) walk = w;
+					if (w >= 0 && w < walk) { walk = w; spot = n; }
 				}
-			return new SiegeTarget { cell = b.Position, door = b is Building_Door, walk = walk };
+			int turrets = covered != null && spot.IsValid ? covered[map.cellIndices.CellToIndex(spot)] : 0;
+			return new SiegeTarget { cell = b.Position, door = b is Building_Door, walk = walk, spot = spot, turrets = turrets };
+		}
+
+		// how many of the colony's turrets can shoot each cell of open ground. only direct fire guns that are
+		// running and in sight: a turret switched off at the breaker, or one sunk in the floor (VFE Security's
+		// concealed turret drops IsEverThreat), reads as harmless, a fair trap. one with no power at all (modded
+		// crossbow towers) is always on. judged by what it fires, not ai_combatDangerous: modded turrets often
+		// leave that off, and VFE's searchlight and anti-air gun set it with nothing that hurts a man
+		private static int[] TurretCover(Map map)
+		{
+			var cover = new int[map.cellIndices.NumGridCells];
+			foreach (Building b in map.listerBuildings.allBuildingsColonist)
+			{
+				if (!(b is Building_Turret tur) || b.Destroyed || !tur.IsEverThreat) continue;
+				if (b.TryGetComp<CompPowerTrader>() is CompPowerTrader power && !power.PowerOn) continue;
+				VerbProperties verb = tur.AttackVerb?.verbProps;
+				if (verb == null || !verb.requireLineOfSight) continue; // mortars lob over, they dont guard a gate
+				if (verb.defaultProjectile?.projectile?.damageDef?.harmsHealth != true) continue;
+				// out of ammo (Castle Walls Reborn towers rearm with steel, mini turrets too) shoots nothing
+				if (b is Building_TurretGun gun && gun.refuelableComp != null && !gun.refuelableComp.Props.fuelIsMortarBarrel
+					&& !gun.refuelableComp.HasFuel) continue;
+				float range = Mathf.Min(verb.range, GenRadial.MaxRadialPatternRadius - 1f);
+				int cells = GenRadial.NumCellsInRadius(range);
+				CellRect body = b.OccupiedRect();
+				for (int i = 0; i < cells; i++)
+				{
+					IntVec3 c = b.Position + GenRadial.RadialPattern[i];
+					if (!OpenGround(map, c) || !Sees(map, c, body)) continue;
+					cover[map.cellIndices.CellToIndex(c)]++;
+				}
+			}
+			return cover;
+		}
+
+		// line of sight to any cell of the turret: a 2x2 tower's own other cells would hide half the field
+		// from its root cell
+		private static bool Sees(Map map, IntVec3 c, CellRect body)
+		{
+			foreach (IntVec3 t in body)
+				if (GenSight.LineOfSight(c, t, map, skipFirstCell: true)) return true;
+			return false;
 		}
 
 		// the cell itself, or its neighbours when it stands on something (an army spawned in a doorway)

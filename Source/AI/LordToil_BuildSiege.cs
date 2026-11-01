@@ -47,9 +47,11 @@ namespace RimSiege.AI
 		private const int MaxReach = 18; // + the 4 cell search stays inside the builders' 24 (RimSiege_BuildCamp)
 		public Pawn captain;
 
-		public LordToil_BuildSiege() { }
+		// walk in and set up out of your turrets' reach where they can, like vanilla's smart raids
+		public LordToil_BuildSiege() { useAvoidGrid = true; }
 
 		public LordToil_BuildSiege(IntVec3 center, IntVec3 breach, ThingDef engineDef, int trebuchetCount, int ballistaCount, bool tarAmmo, bool carrionAmmo)
+			: this()
 		{
 			this.center = center;
 			this.breach = breach;
