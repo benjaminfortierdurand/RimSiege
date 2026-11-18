@@ -118,7 +118,7 @@
 		</subSounds>
 	</SoundDef>
 
-	<!-- charge avant la rafale, synthétisé par nous (_concept/laser/laser_audio.py) -->
+	<!-- charge avant la rafale, synthétisé par nous -->
 	<SoundDef>
 		<defName>RimSiege_LaserBattery_Charge</defName>
 		<context>MapOnly</context>
@@ -154,7 +154,7 @@
 		</subSounds>
 	</SoundDef>
 
-	<!-- sifflement des évents après la rafale, synthétisé par nous (_concept/laser/make_vent.py) -->
+	<!-- sifflement des évents après la rafale, synthétisé par nous -->
 	<SoundDef>
 		<defName>RimSiege_LaserBattery_Vent</defName>
 		<context>MapOnly</context>

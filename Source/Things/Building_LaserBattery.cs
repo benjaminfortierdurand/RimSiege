@@ -6,7 +6,7 @@ using Verse.Sound;
 
 namespace RimSiege.Things
 {
-	// spacer battery, manned like the mortar. follows _concept/laser/laser_charge.mp4: it swings onto the
+	// spacer battery, manned like the mortar. follows our charge preview: it swings onto the
 	// target (vanilla snaps, we ease it), charges for ChargeTicks (panels light up, a light pool on the ground,
 	// motes spiral into the muzzle, arcs crackle near full), fires 3 bolts with the orb topped up between them,
 	// then the vents blow cold steam on both sides

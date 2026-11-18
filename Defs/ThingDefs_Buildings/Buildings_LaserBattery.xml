@@ -214,7 +214,7 @@
 	</DamageDef>
 
 	<!-- bélier laser des armées spacer : la tête du Drakken Laser Drill de 空曜 (Steam 2941974740), reprise avec
-	     l'accord de l'auteur et créditée dans About.xml (_concept/laser/make_laserram_tex.py). poussé par 4, il se
+	     l'accord de l'auteur et créditée dans About.xml. poussé par 4, il se
 	     poste à 12 cases de la porte et la fait fondre au rayon, qui brûle tout sur son passage. lumières et rayon aux couleurs de la faction -->
 	<ThingDef ParentName="BuildingBase">
 		<defName>RimSiege_LaserRam</defName>

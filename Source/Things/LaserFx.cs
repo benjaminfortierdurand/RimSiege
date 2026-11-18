@@ -5,7 +5,7 @@ using Verse;
 namespace RimSiege.Things
 {
 	// the laser battery's flecks: textures are white, the colour comes in here. white core, blue edge.
-	// sizes follow the previews in _concept/laser (64 px per cell)
+	// sizes follow our previews (64 px per cell)
 	public static class LaserFx
 	{
 		public static readonly Color Blue = new Color(0.35f, 0.65f, 1f);

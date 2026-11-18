@@ -143,7 +143,7 @@
 		<costList>
 			<Steel>120</Steel>
 		</costList>
-		<!-- d'après les béliers des forces spéciales (_concept/modern/make_breachram.py), même gabarit que le bélier porté -->
+		<!-- d'après les béliers des forces spéciales, même gabarit que le bélier porté -->
 		<graphicData>
 			<texPath>Things/Building/SteelRam/SteelRam</texPath>
 			<graphicClass>Graphic_Multi</graphicClass>
